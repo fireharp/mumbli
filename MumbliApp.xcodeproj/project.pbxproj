@@ -1,0 +1,508 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1AF3B3968904D6D8101DCCF2 /* AudioCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */; };
+		327FDCCE939515139E397501 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D5D4882A5CE31FBB97A63F /* OverlayController.swift */; };
+		4B95C30CA7F8B5186CE33EC2 /* MumbliAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F32245244E251BF662F7382 /* MumbliAppUITests.swift */; };
+		59541765A3E0EB4CD5BC2D42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */; };
+		7233BC2EAFADAE3FB527F4DC /* DictationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */; };
+		86B47EC991F3F963C464F3A2 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0321570D69C58E74FE5660C /* HistoryManager.swift */; };
+		88C694EC4EC4E7E38BFAE210 /* OverlayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */; };
+		A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */; };
+		A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */; };
+		912315065A740F9ADAD6E3D9 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */; };
+		916AD1D2D93D72F3F2D4BEB3 /* MumbliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3800F7704BAEA44000E8C14D /* MumbliApp.swift */; };
+		9A1DF4B2E24DDE76DEEF96A3 /* MenuBarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6763F3B0C74642088E7ABAA7 /* MenuBarUITests.swift */; };
+		AE70B4298FFA673B4DBD7343 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */; };
+		B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A71BD33E19529E403D5933 /* SettingsView.swift */; };
+		C062D335C5BE7B44240B39AA /* FirstLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */; };
+		CE04E35C3499838C53063884 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */; };
+		D13137787ABA5B09FFEC937A /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */; };
+		DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */; };
+		DF6AFCB1273D1D9445327479 /* FirstLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */; };
+		F8D24EC935CEA740CDD878E4 /* HistoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7807B0E85666A499BC1620 /* HistoryUITests.swift */; };
+		F1A2B3C4D5E6F708192A3B4C /* FileLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AC224A07615AB049D1945E2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 342BF4A03393AB6D3B181B51 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D9455DF12ECC63ADAB0FC823;
+			remoteInfo = MumbliApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureManager.swift; sourceTree = "<group>"; };
+		25A71BD33E19529E403D5933 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2A7807B0E85666A499BC1620 /* HistoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryUITests.swift; sourceTree = "<group>"; };
+		3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MumbliAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3800F7704BAEA44000E8C14D /* MumbliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MumbliApp.swift; sourceTree = "<group>"; };
+		49D5D4882A5CE31FBB97A63F /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+		4F32245244E251BF662F7382 /* MumbliAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MumbliAppUITests.swift; sourceTree = "<group>"; };
+		57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayUITests.swift; sourceTree = "<group>"; };
+		6395DFBDEC44CC6120B7D654 /* MumbliApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MumbliApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6763F3B0C74642088E7ABAA7 /* MenuBarUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarUITests.swift; sourceTree = "<group>"; };
+		6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
+		703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
+		86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchView.swift; sourceTree = "<group>"; };
+		B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
+		C0321570D69C58E74FE5660C /* HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
+		E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationServiceProtocol.swift; sourceTree = "<group>"; };
+		E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchUITests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsSTTService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLogger.swift; sourceTree = "<group>"; };
+		FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		18B3121FB459804165292DFF /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		1C394ED19CC321F6CA058081 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6395DFBDEC44CC6120B7D654 /* MumbliApp.app */,
+				3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		313C38829398023E7176CA97 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C0321570D69C58E74FE5660C /* HistoryManager.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		39071F15E27F20677C657AF9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */,
+				A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */,
+				A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		3EDEF5433CED0CA6EFAAF9E2 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */,
+				F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */,
+				E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */,
+				703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		70B854ABF5718032377ED746 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */,
+				FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */,
+				6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */,
+				49D5D4882A5CE31FBB97A63F /* OverlayController.swift */,
+				25A71BD33E19529E403D5933 /* SettingsView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		B249151573D6E42435251586 = {
+			isa = PBXGroup;
+			children = (
+				C40158D9D2DE79EC148401C6 /* MumbliApp */,
+				BD08B7364EB3519990D25370 /* MumbliAppUITests */,
+				1C394ED19CC321F6CA058081 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BD08B7364EB3519990D25370 /* MumbliAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */,
+				2A7807B0E85666A499BC1620 /* HistoryUITests.swift */,
+				6763F3B0C74642088E7ABAA7 /* MenuBarUITests.swift */,
+				4F32245244E251BF662F7382 /* MumbliAppUITests.swift */,
+				57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */,
+				B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */,
+			);
+			path = MumbliAppUITests;
+			sourceTree = "<group>";
+		};
+		C40158D9D2DE79EC148401C6 /* MumbliApp */ = {
+			isa = PBXGroup;
+			children = (
+				FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */,
+				3800F7704BAEA44000E8C14D /* MumbliApp.swift */,
+				3EDEF5433CED0CA6EFAAF9E2 /* Core */,
+				313C38829398023E7176CA97 /* Models */,
+				18B3121FB459804165292DFF /* Protocols */,
+				39071F15E27F20677C657AF9 /* Services */,
+				70B854ABF5718032377ED746 /* UI */,
+			);
+			path = MumbliApp;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0CAB2739FF91F1CECF4C1799 /* MumbliAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B8D4BCF21916C490F8FF37C8 /* Build configuration list for PBXNativeTarget "MumbliAppUITests" */;
+			buildPhases = (
+				6BFC84D480C9F4C4BE7C4E20 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				14121005CDD3B5FA27B82453 /* PBXTargetDependency */,
+			);
+			name = MumbliAppUITests;
+			packageProductDependencies = (
+			);
+			productName = MumbliAppUITests;
+			productReference = 3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		D9455DF12ECC63ADAB0FC823 /* MumbliApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AFE63E54C298B1E9949B7A95 /* Build configuration list for PBXNativeTarget "MumbliApp" */;
+			buildPhases = (
+				6274DC3B787C426A200DB8D7 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MumbliApp;
+			packageProductDependencies = (
+			);
+			productName = MumbliApp;
+			productReference = 6395DFBDEC44CC6120B7D654 /* MumbliApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		342BF4A03393AB6D3B181B51 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					0CAB2739FF91F1CECF4C1799 = {
+						TestTargetID = D9455DF12ECC63ADAB0FC823;
+					};
+				};
+			};
+			buildConfigurationList = 449B0EF979B901DA2B4B37F5 /* Build configuration list for PBXProject "MumbliApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = B249151573D6E42435251586;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1C394ED19CC321F6CA058081 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D9455DF12ECC63ADAB0FC823 /* MumbliApp */,
+				0CAB2739FF91F1CECF4C1799 /* MumbliAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6274DC3B787C426A200DB8D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE04E35C3499838C53063884 /* AppDelegate.swift in Sources */,
+				1AF3B3968904D6D8101DCCF2 /* AudioCaptureManager.swift in Sources */,
+				7233BC2EAFADAE3FB527F4DC /* DictationServiceProtocol.swift in Sources */,
+				C062D335C5BE7B44240B39AA /* FirstLaunchView.swift in Sources */,
+				86B47EC991F3F963C464F3A2 /* HistoryManager.swift in Sources */,
+				AE70B4298FFA673B4DBD7343 /* HistoryView.swift in Sources */,
+				59541765A3E0EB4CD5BC2D42 /* HotkeyManager.swift in Sources */,
+				912315065A740F9ADAD6E3D9 /* MenuBarController.swift in Sources */,
+				916AD1D2D93D72F3F2D4BEB3 /* MumbliApp.swift in Sources */,
+				327FDCCE939515139E397501 /* OverlayController.swift in Sources */,
+				B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */,
+				DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */,
+				A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */,
+				A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */,
+				F1A2B3C4D5E6F708192A3B4C /* FileLogger.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6BFC84D480C9F4C4BE7C4E20 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF6AFCB1273D1D9445327479 /* FirstLaunchUITests.swift in Sources */,
+				F8D24EC935CEA740CDD878E4 /* HistoryUITests.swift in Sources */,
+				9A1DF4B2E24DDE76DEEF96A3 /* MenuBarUITests.swift in Sources */,
+				4B95C30CA7F8B5186CE33EC2 /* MumbliAppUITests.swift in Sources */,
+				88C694EC4EC4E7E38BFAE210 /* OverlayUITests.swift in Sources */,
+				D13137787ABA5B09FFEC937A /* TestHelpers.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		14121005CDD3B5FA27B82453 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D9455DF12ECC63ADAB0FC823 /* MumbliApp */;
+			targetProxy = AC224A07615AB049D1945E2D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D2D54523EF4D7E2D9E73249 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MumbliApp/MumbliApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MumbliApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
+				PRODUCT_NAME = Mumbli;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		290E46B16B43E87E8DE630AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		5C030DAC3C42A6664E0C097F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app.uitests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_TARGET_NAME = MumbliApp;
+			};
+			name = Debug;
+		};
+		72854F292635E19F04D07CB7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A34C6C33EE373366D729E312 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MumbliApp/MumbliApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MumbliApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
+				PRODUCT_NAME = Mumbli;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		AE31305C8CB1B834F6009B14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app.uitests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_TARGET_NAME = MumbliApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		449B0EF979B901DA2B4B37F5 /* Build configuration list for PBXProject "MumbliApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72854F292635E19F04D07CB7 /* Debug */,
+				290E46B16B43E87E8DE630AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AFE63E54C298B1E9949B7A95 /* Build configuration list for PBXNativeTarget "MumbliApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A34C6C33EE373366D729E312 /* Debug */,
+				0D2D54523EF4D7E2D9E73249 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B8D4BCF21916C490F8FF37C8 /* Build configuration list for PBXNativeTarget "MumbliAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C030DAC3C42A6664E0C097F /* Debug */,
+				AE31305C8CB1B834F6009B14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 342BF4A03393AB6D3B181B51 /* Project object */;
+}

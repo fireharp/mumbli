@@ -1,0 +1,514 @@
+import Cocoa
+import SwiftUI
+import AVFoundation
+
+/// App delegate that wires together all core and UI components.
+/// Connects: HotkeyManager -> AudioCapture -> ElevenLabs STT -> OpenAI Polish -> TextInjector + HistoryManager
+/// Handles first-launch flow, menu bar setup, and UI test launch arguments.
+@MainActor
+class AppDelegate: NSObject, NSApplicationDelegate {
+    // Core
+    private let hotkeyManager = HotkeyManager()
+    private let audioCaptureManager = AudioCaptureManager()
+    private let textInjector = TextInjector()
+    private var currentMode: ActivationMode?
+
+    // Services (direct API)
+    private let sttService = ElevenLabsSTTService()
+    private let polishingService = OpenAIPolishingService()
+
+    // Audio accumulation buffer
+    private var audioBuffer = Data()
+
+    // UI
+    private let historyManager = HistoryManager()
+    private var menuBarController: MenuBarController?
+    private let overlayController = OverlayController()
+    private var firstLaunchWindow: NSWindow?
+
+    // Test mode flags
+    private var isUITesting: Bool {
+        CommandLine.arguments.contains("--ui-testing")
+    }
+
+    // MARK: - App Lifecycle
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSLog("[AppDelegate] applicationDidFinishLaunching")
+
+        if isUITesting {
+            NSApp.setActivationPolicy(.regular)
+            NSApp.activate(ignoringOtherApps: true)
+        }
+
+        handleLaunchArguments()
+        setupMenuBar()
+        NSLog("[AppDelegate] shouldShowFirstLaunch = %d", shouldShowFirstLaunch())
+
+        if shouldShowFirstLaunch() {
+            showFirstLaunchFlow()
+        } else {
+            startApp()
+        }
+
+        handleTestSimulations()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        hotkeyManager.stop()
+        audioCaptureManager.stopCapture()
+    }
+
+    // MARK: - Launch Arguments (UI Testing Support)
+
+    private func handleLaunchArguments() {
+        let args = CommandLine.arguments
+
+        if args.contains("--reset-first-launch") {
+            UserDefaults.standard.removeObject(forKey: "hasCompletedFirstLaunch")
+        }
+
+        if args.contains("--seed-history") {
+            seedHistoryForTesting()
+        }
+    }
+
+    private func handleTestSimulations() {
+        let args = CommandLine.arguments
+
+        if args.contains("--simulate-dictation") {
+            overlayController.show()
+        }
+
+        if args.contains("--simulate-dictation-complete") {
+            overlayController.show()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                self?.overlayController.dismiss()
+            }
+        }
+
+        if args.contains("--test-fn-hold") {
+            NSLog("[AppDelegate] --test-fn-hold: will simulate Fn hold in 3s")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                self?.simulateFnHold()
+            }
+        }
+
+        if args.contains("--test-fn-doubletap") {
+            NSLog("[AppDelegate] --test-fn-doubletap: will simulate Fn double-tap in 3s")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                self?.simulateFnDoubleTap()
+            }
+        }
+
+        if args.contains("--test-inject") {
+            NSLog("[AppDelegate] --test-inject: will inject test text in 3s (no mic, no API)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                guard let self = self else { return }
+                let target = TextInjector.captureFocusedTarget()
+                NSLog("[AppDelegate] --test-inject: captured target = %@", target?.description ?? "nil")
+                let result = self.textInjector.inject(text: "Hello from Mumbli!", target: target)
+                NSLog("[AppDelegate] --test-inject: result = %@", "\(result)")
+            }
+        }
+
+        if args.contains("--test-full") {
+            NSLog("[AppDelegate] --test-full: simulating full flow in 3s (no mic, no API)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                guard let self = self else { return }
+                let target = TextInjector.captureFocusedTarget()
+                NSLog("[AppDelegate] --test-full: captured target = %@", target?.description ?? "nil")
+                self.overlayController.show()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self = self else { return }
+                    let testText = "Test dictation text"
+                    let result = self.textInjector.inject(text: testText, target: target)
+                    NSLog("[AppDelegate] --test-full: inject result = %@", "\(result)")
+                    self.historyManager.addEntry(text: testText)
+                    NSLog("[AppDelegate] --test-full: saved to history")
+                    self.overlayController.dismiss(afterDelay: 0.3)
+                }
+            }
+        }
+
+        if args.contains("--preview-overlay") {
+            showPreviewWindow(
+                title: "Overlay Preview",
+                view: ListeningIndicatorView(audioLevelProvider: AudioLevelProvider(), mode: .hold),
+                size: NSSize(width: 200, height: 80),
+                darkBackground: true
+            )
+            setupOverlayPreviewHotkeys()
+            NSLog("[AppDelegate] --preview-overlay: Fn key wired to overlay show/dismiss")
+        }
+
+        if args.contains("--preview-settings") {
+            showPreviewWindow(
+                title: "Settings Preview",
+                view: SettingsView(),
+                size: NSSize(width: 460, height: 480),
+                darkBackground: false
+            )
+        }
+    }
+
+    // MARK: - Component Preview Windows
+
+    private func showPreviewWindow<V: View>(title: String, view: V, size: NSSize, darkBackground: Bool) {
+        let controller = NSHostingController(rootView: view)
+        let window = NSWindow(contentViewController: controller)
+        window.title = title
+        window.styleMask = [.titled, .closable, .resizable]
+        window.setContentSize(size)
+        if darkBackground {
+            window.backgroundColor = .black
+        }
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func setupOverlayPreviewHotkeys() {
+        hotkeyManager.onHoldStart = { [weak self] in
+            guard let self = self else { return }
+            NSLog("[Preview] Hold start — showing overlay with audio")
+            try? self.audioCaptureManager.startCapture()
+            self.overlayController.show(audioCaptureManager: self.audioCaptureManager)
+        }
+        hotkeyManager.onHoldStop = { [weak self] in
+            guard let self = self else { return }
+            NSLog("[Preview] Hold stop — dismissing overlay")
+            self.audioCaptureManager.stopCapture()
+            self.overlayController.dismiss(afterDelay: 0.3)
+        }
+        hotkeyManager.onHandsFreeToggle = { [weak self] in
+            guard let self = self else { return }
+            NSLog("[Preview] Hands-free toggle — showing overlay with audio")
+            try? self.audioCaptureManager.startCapture()
+            self.overlayController.show(audioCaptureManager: self.audioCaptureManager)
+        }
+        hotkeyManager.onHandsFreeStop = { [weak self] in
+            guard let self = self else { return }
+            NSLog("[Preview] Hands-free stop — dismissing overlay")
+            self.audioCaptureManager.stopCapture()
+            self.overlayController.dismiss(afterDelay: 0.3)
+        }
+    }
+
+    // MARK: - Synthetic Fn Key Simulation
+
+    private func simulateFnHold() {
+        hotkeyManager.resetState()
+        NSLog("[AppDelegate] simulateFnHold: sending Fn DOWN")
+        hotkeyManager.simulateFnState(fnDown: true)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            NSLog("[AppDelegate] simulateFnHold: sending Fn UP")
+            self?.hotkeyManager.simulateFnState(fnDown: false)
+        }
+    }
+
+    private func simulateFnDoubleTap() {
+        hotkeyManager.resetState()
+        NSLog("[AppDelegate] simulateFnDoubleTap: sending first tap DOWN")
+        hotkeyManager.simulateFnState(fnDown: true)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            NSLog("[AppDelegate] simulateFnDoubleTap: sending first tap UP")
+            self?.hotkeyManager.simulateFnState(fnDown: false)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                NSLog("[AppDelegate] simulateFnDoubleTap: sending second tap DOWN")
+                self?.hotkeyManager.simulateFnState(fnDown: true)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+                    NSLog("[AppDelegate] simulateFnDoubleTap: sending second tap UP")
+                    self?.hotkeyManager.simulateFnState(fnDown: false)
+                }
+            }
+        }
+    }
+
+    private func seedHistoryForTesting() {
+        historyManager.addEntry(text: "This is a test dictation entry for UI testing purposes.")
+        historyManager.addEntry(text: "Here is another example of dictated text that was polished by the LLM.")
+        historyManager.addEntry(text: "Quick voice note from earlier today.")
+    }
+
+    // MARK: - First Launch
+
+    private func shouldShowFirstLaunch() -> Bool {
+        if isUITesting && !CommandLine.arguments.contains("--reset-first-launch") {
+            return false
+        }
+        if CommandLine.arguments.contains("--reset-first-launch") {
+            return true
+        }
+        return !UserDefaults.standard.bool(forKey: "hasCompletedFirstLaunch")
+    }
+
+    private func showFirstLaunchFlow() {
+        let firstLaunchView = FirstLaunchView(onComplete: { [weak self] in
+            self?.dismissFirstLaunch()
+            self?.startApp()
+        })
+
+        let controller = NSHostingController(rootView: firstLaunchView)
+        let window = NSWindow(contentViewController: controller)
+        window.title = "Welcome to Mumbli"
+        window.styleMask = [.titled, .closable]
+        window.setContentSize(NSSize(width: 400, height: 350))
+        window.setAccessibilityIdentifier("mumbli-first-launch")
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        self.firstLaunchWindow = window
+    }
+
+    private func dismissFirstLaunch() {
+        firstLaunchWindow?.orderOut(nil)
+        firstLaunchWindow = nil
+    }
+
+    // MARK: - App Startup (post first-launch)
+
+    private func startApp() {
+        log.log("[AppDelegate] startApp() called")
+        if !isUITesting {
+            requestPermissions()
+            checkGlobeKeySetting()
+        }
+        setupHotkeyManager()
+        setupAudioCallbacks()
+        log.log("[AppDelegate] startApp() completed — hotkey manager running")
+    }
+
+    // MARK: - Menu Bar
+
+    private func setupMenuBar() {
+        let controller = MenuBarController(historyManager: historyManager)
+        controller.setup()
+        menuBarController = controller
+    }
+
+    // MARK: - Permissions
+
+    private func requestPermissions() {
+        AudioCaptureManager.requestPermission { granted in
+            if !granted {
+                print("[AppDelegate] Microphone permission denied")
+            }
+        }
+
+        let trusted = AXIsProcessTrustedWithOptions(
+            [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+        )
+        if !trusted {
+            print("[AppDelegate] Accessibility permission not yet granted")
+        }
+    }
+
+    // MARK: - Globe Key Setting Check
+
+    private func checkGlobeKeySetting() {
+        // The "Press Globe key to" setting is stored in com.apple.HIToolbox.
+        // When set to "Do Nothing", the value is either absent or a specific int.
+        // When set to anything else (e.g., "Show Emoji & Symbols", "Start Dictation",
+        // "Change Input Source"), macOS intercepts the Fn/Globe key before our event tap.
+        //
+        // We read the AppleFnUsageType from HIToolbox prefs:
+        //   0 = Do Nothing
+        //   1 = Change Input Source
+        //   2 = Show Emoji & Symbols
+        //   3 = Start Dictation (macOS built-in)
+        // If not 0, warn the user.
+
+        let hiToolboxDefaults = UserDefaults(suiteName: "com.apple.HIToolbox")
+        let fnType = hiToolboxDefaults?.integer(forKey: "AppleFnUsageType") ?? -1
+
+        log.log("[AppDelegate] Globe key setting check: AppleFnUsageType = \(fnType)")
+
+        // fnType == 0 means "Do Nothing" which is what we need.
+        // fnType == -1 means the key wasn't found (default behavior, usually "Change Input Source").
+        // Any non-zero value means the Globe key is mapped to something that will
+        // intercept it before our event tap sees it.
+        if fnType != 0 {
+            log.log("[AppDelegate] Globe key is NOT set to 'Do Nothing' — showing guidance alert")
+            showGlobeKeyAlert()
+        } else {
+            log.log("[AppDelegate] Globe key is set to 'Do Nothing' — good")
+        }
+    }
+
+    private func showGlobeKeyAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Globe Key Setup Required"
+        alert.informativeText = """
+            Mumbli uses the Globe (🌐) key for dictation, but macOS currently intercepts it.
+
+            To fix this:
+            1. Open System Settings → Keyboard
+            2. Set "Press 🌐 key to" → "Do Nothing"
+
+            Without this change, the Globe key will trigger the macOS input switcher instead of Mumbli.
+            """
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open Keyboard Settings")
+        alert.addButton(withTitle: "Later")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            // Open System Settings → Keyboard
+            if let url = URL(string: "x-apple.systempreferences:com.apple.Keyboard-Settings.extension") {
+                NSWorkspace.shared.open(url)
+            }
+        }
+    }
+
+    // MARK: - Hotkey Setup
+
+    private func setupHotkeyManager() {
+        hotkeyManager.onHoldStart = { [weak self] in
+            self?.startDictation(mode: .hold)
+        }
+
+        hotkeyManager.onHoldStop = { [weak self] in
+            self?.stopDictation()
+        }
+
+        hotkeyManager.onHandsFreeToggle = { [weak self] in
+            self?.startDictation(mode: .handsFree)
+        }
+
+        hotkeyManager.onHandsFreeStop = { [weak self] in
+            self?.stopDictation()
+        }
+
+        hotkeyManager.start()
+    }
+
+    // MARK: - Audio Callbacks
+
+    private func setupAudioCallbacks() {
+        audioCaptureManager.onAudioChunk = { [weak self] data in
+            self?.audioBuffer.append(data)
+        }
+    }
+
+    // MARK: - Dictation Flow
+
+    private let log = FileLogger.shared
+
+    private func startDictation(mode: ActivationMode) {
+        currentMode = mode
+        audioBuffer = Data()
+
+        log.log("[Dictation] startDictation mode=\(mode)")
+
+        overlayController.show(audioCaptureManager: audioCaptureManager, mode: mode)
+        NotificationCenter.default.post(name: .mumbliDictationStarted, object: nil)
+
+        do {
+            try audioCaptureManager.startCapture()
+            log.log("[Dictation] Started capturing audio")
+        } catch {
+            log.log("[Dictation] Failed to start capture: \(error)")
+            NotificationCenter.default.post(
+                name: .mumbliDictationError,
+                object: nil,
+                userInfo: ["error": error.localizedDescription]
+            )
+        }
+    }
+
+    private func stopDictation() {
+        log.log("[Dictation] stopDictation called")
+        audioCaptureManager.stopCapture()
+        NotificationCenter.default.post(name: .mumbliDictationStopped, object: nil)
+
+        let capturedAudio = audioBuffer
+        audioBuffer = Data()
+        currentMode = nil
+
+        guard !capturedAudio.isEmpty else {
+            log.log("[Dictation] No audio captured")
+            overlayController.dismiss(afterDelay: 0.3)
+            return
+        }
+
+        // Capture the focused element and frontmost app BEFORE async processing,
+        // since focus will likely shift during transcription + polishing (~1s).
+        let capturedTarget = TextInjector.captureFocusedTarget()
+        log.log("[Dictation] Captured target before async: \(capturedTarget?.description ?? "nil")")
+
+        // Log current frontmost app at capture time
+        let frontApp = NSWorkspace.shared.frontmostApplication
+        log.log("[Dictation] Frontmost app at capture: \(frontApp?.bundleIdentifier ?? "nil") pid=\(frontApp?.processIdentifier ?? -1)")
+
+        // Switch overlay to processing state (keeps it visible during transcription + polishing)
+        overlayController.showProcessing()
+
+        Task {
+            do {
+                // Step 1: Transcribe audio via ElevenLabs
+                log.log("[Dictation] Sending \(capturedAudio.count) bytes to ElevenLabs STT")
+                let transcription = try await sttService.transcribe(audioData: capturedAudio)
+
+                guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    log.log("[Dictation] Empty transcription received")
+                    overlayController.dismiss(afterDelay: 0.3)
+                    return
+                }
+
+                log.log("[Dictation] Transcription result: \(transcription)")
+
+                // Step 2: Polish via OpenAI
+                log.log("[Dictation] Sending transcription to OpenAI for polishing")
+                let polished = try await polishingService.polish(text: transcription)
+                log.log("[Dictation] Polished result: \(polished)")
+
+                let finalText = polished.isEmpty ? transcription : polished
+                log.log("[Dictation] Final text to inject: \(finalText)")
+
+                // Log state just before injection
+                let preInjectFrontApp = NSWorkspace.shared.frontmostApplication
+                log.log("[Dictation] Pre-inject frontmost app: \(preInjectFrontApp?.bundleIdentifier ?? "nil") pid=\(preInjectFrontApp?.processIdentifier ?? -1)")
+                log.log("[Dictation] Captured target still valid? element=\(capturedTarget != nil)")
+
+                // Step 3: Inject into the pre-captured target and save
+                log.log("[Dictation] Calling textInjector.inject()")
+                let result = textInjector.inject(text: finalText, target: capturedTarget)
+                log.log("[Dictation] TextInjector result: \(result)")
+                historyManager.addEntry(text: finalText)
+                log.log("[Dictation] Saved to history")
+
+                NotificationCenter.default.post(
+                    name: .mumbliDictationCompleted,
+                    object: nil,
+                    userInfo: ["text": finalText, "timestamp": Date()]
+                )
+            } catch {
+                log.log("[Dictation] Error in async flow: \(error)")
+                NotificationCenter.default.post(
+                    name: .mumbliDictationError,
+                    object: nil,
+                    userInfo: ["error": error.localizedDescription]
+                )
+            }
+
+            // Dismiss overlay after processing completes (success or error)
+            overlayController.dismiss(afterDelay: 0.3)
+        }
+    }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    static let mumbliDictationCompleted = Notification.Name("mumbliDictationCompleted")
+    static let mumbliDictationStarted = Notification.Name("mumbliDictationStarted")
+    static let mumbliDictationStopped = Notification.Name("mumbliDictationStopped")
+    static let mumbliDictationError = Notification.Name("mumbliDictationError")
+}

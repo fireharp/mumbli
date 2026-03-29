@@ -1,0 +1,58 @@
+name: MumbliApp
+options:
+  bundleIdPrefix: com.mumbli
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  objectVersion: 56
+  generateEmptyDirectories: true
+
+targets:
+  MumbliApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: MumbliApp
+        excludes:
+          - "**/*.entitlements"
+          - "**/*.plist"
+    info:
+      path: MumbliApp/Info.plist
+      properties:
+        LSUIElement: true
+        NSMicrophoneUsageDescription: "Mumbli needs microphone access to capture your voice for dictation."
+        LSMinimumSystemVersion: "13.0"
+    entitlements:
+      path: MumbliApp/MumbliApp.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.device.audio-input: true
+        com.apple.security.network.client: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mumbli.app
+        PRODUCT_NAME: Mumbli
+        INFOPLIST_FILE: MumbliApp/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MumbliApp/MumbliApp.entitlements
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        SWIFT_VERSION: "5.9"
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+    frameworks:
+      - AVFoundation.framework
+      - ApplicationServices.framework
+      - Carbon.framework
+
+  MumbliAppUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: MumbliAppUITests
+    dependencies:
+      - target: MumbliApp
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mumbli.app.uitests
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        TEST_TARGET_NAME: MumbliApp
+        GENERATE_INFOPLIST_FILE: "YES"
