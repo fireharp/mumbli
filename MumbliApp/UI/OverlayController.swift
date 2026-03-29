@@ -209,7 +209,7 @@ struct ListeningIndicatorView: View {
         // Glow when audio level > 0.3
         .shadow(
             color: audioLevelProvider.audioLevel > 0.3
-                ? Color.accentColor.opacity(Double(audioLevelProvider.audioLevel) * 0.25)
+                ? (isHandsFree ? Color.orange : Color.accentColor).opacity(Double(audioLevelProvider.audioLevel) * 0.25)
                 : .black.opacity(0.12),
             radius: audioLevelProvider.audioLevel > 0.3 ? 8 : 12,
             x: 0, y: audioLevelProvider.audioLevel > 0.3 ? 0 : 4
@@ -245,28 +245,54 @@ struct OverlayRootView: View {
     }
 }
 
-/// A compact processing indicator with a native macOS spinner.
+/// A compact processing indicator that reuses the 5 waveform bars at rest height,
+/// cycling opacity left-to-right as a loading animation.
 /// Shown after Fn release while transcription + polishing API calls happen.
 struct ProcessingIndicatorView: View {
     let wasHandsFree: Bool
 
-    var body: some View {
-        ProgressView()
-            .scaleEffect(0.6)
-            .frame(width: 16, height: 16)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 12)
-            .background {
-                ZStack {
-                    VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
+    private let barCount = 5
+    private let barWidth: CGFloat = 3
+    private let restHeights: [CGFloat] = [6, 6, 8, 6, 6]
 
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+    @State private var highlightedIndex: Int = 0
+    @State private var cycleTimer: Timer?
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<barCount, id: \.self) { index in
+                Capsule()
+                    .fill(index == highlightedIndex ? Color.accentColor : Color.secondary)
+                    .frame(width: barWidth, height: restHeights[index])
+                    .opacity(index == highlightedIndex ? 1.0 : 0.35)
+                    .animation(.easeInOut(duration: 0.15), value: highlightedIndex)
             }
-            .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
-            .accessibilityIdentifier("mumbli-processing-indicator")
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background {
+            ZStack {
+                VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
+
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
+        .accessibilityIdentifier("mumbli-processing-indicator")
+        .onAppear {
+            highlightedIndex = 0
+            cycleTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
+                DispatchQueue.main.async {
+                    highlightedIndex = (highlightedIndex + 1) % barCount
+                }
+            }
+        }
+        .onDisappear {
+            cycleTimer?.invalidate()
+            cycleTimer = nil
+        }
     }
 }
 
