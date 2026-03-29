@@ -10,6 +10,8 @@ private let logger = Logger(subsystem: "com.mumbli.app", category: "HotkeyManage
 ///
 /// Detects hold (300ms) for hold mode and double-tap (500ms window) for hands-free mode.
 final class HotkeyManager {
+    private let log = FileLogger.shared
+
     /// Called when hold mode should start (Fn held for 300ms+).
     var onHoldStart: (() -> Void)?
     /// Called when hold mode should stop (Fn released after hold).
@@ -27,6 +29,9 @@ final class HotkeyManager {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
 
+    // Tap health monitoring
+    private var tapHealthTimer: Timer?
+
     // State
     private var fnDownTime: Date?
     private var holdTimer: Timer?
@@ -41,6 +46,14 @@ final class HotkeyManager {
     private let holdReleaseDebounce: TimeInterval = 0.15
 
     func start() {
+        // Preflight check: verify we have event listening access before creating the tap
+        if !CGPreflightListenEventAccess() {
+            log.log("[HotkeyManager] CGPreflightListenEventAccess() returned false — requesting access")
+            CGRequestListenEventAccess()
+        } else {
+            log.log("[HotkeyManager] CGPreflightListenEventAccess() OK")
+        }
+
         // Approach 1: NSEvent global + local monitors
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
             self?.handleNSEvent(event)
@@ -53,6 +66,28 @@ final class HotkeyManager {
         // Approach 2: CGEvent tap as PRIMARY — .defaultTap allows consuming the event
         // to prevent macOS from processing the Fn/Globe key (which triggers language switch).
         // Return nil from the callback to swallow the Fn flagsChanged event.
+        installEventTap()
+
+        // Monitor tap health every 5 seconds — macOS can silently disable the tap
+        // after re-signing or permission changes.
+        tapHealthTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            self?.checkTapHealth()
+        }
+
+        log.log("[HotkeyManager] Started — listening for Fn key")
+    }
+
+    private func installEventTap() {
+        // Clean up any existing tap first
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+        }
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        }
+        eventTap = nil
+        runLoopSource = nil
+
         let eventMask: CGEventMask = (1 << CGEventType.flagsChanged.rawValue)
         if let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -60,10 +95,23 @@ final class HotkeyManager {
             options: .defaultTap,
             eventsOfInterest: eventMask,
             callback: { _, type, cgEvent, refcon -> Unmanaged<CGEvent>? in
-                guard let refcon = refcon, type == .flagsChanged else {
+                guard let refcon = refcon else {
                     return Unmanaged.passUnretained(cgEvent)
                 }
                 let manager = Unmanaged<HotkeyManager>.fromOpaque(refcon).takeUnretainedValue()
+
+                // If the tap was disabled by the system and is being re-enabled,
+                // type will be .tapDisabledByTimeout or .tapDisabledByUserInput.
+                if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+                    FileLogger.shared.log("[HotkeyManager] Tap was disabled (type=\(type.rawValue)), re-enabling")
+                    CGEvent.tapEnable(tap: manager.eventTap!, enable: true)
+                    return Unmanaged.passUnretained(cgEvent)
+                }
+
+                guard type == .flagsChanged else {
+                    return Unmanaged.passUnretained(cgEvent)
+                }
+
                 let fnDown = cgEvent.flags.contains(.maskSecondaryFn)
 
                 // Always dispatch Fn state to the manager
@@ -87,12 +135,23 @@ final class HotkeyManager {
             runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
             CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
-            NSLog("[HotkeyManager] CGEvent tap created successfully (defaultTap — will consume Fn events)")
+            log.log("[HotkeyManager] CGEvent tap created successfully (defaultTap — will consume Fn events)")
         } else {
-            NSLog("[HotkeyManager] CGEvent tap failed — using NSEvent monitors only (Fn key may trigger language switch)")
+            log.log("[HotkeyManager] CGEvent tap failed — using NSEvent monitors only (Fn key may trigger language switch)")
+        }
+    }
+
+    private func checkTapHealth() {
+        guard let tap = eventTap else {
+            log.log("[HotkeyManager] Tap health check: no tap exists, reinstalling")
+            installEventTap()
+            return
         }
 
-        NSLog("[HotkeyManager] Started — listening for Fn key")
+        if !CGEvent.tapIsEnabled(tap: tap) {
+            log.log("[HotkeyManager] Tap health check: tap is disabled, reinstalling")
+            installEventTap()
+        }
     }
 
     func stop() {
@@ -104,6 +163,9 @@ final class HotkeyManager {
         }
         globalMonitor = nil
         localMonitor = nil
+
+        tapHealthTimer?.invalidate()
+        tapHealthTimer = nil
 
         if let tap = eventTap {
             CGEvent.tapEnable(tap: tap, enable: false)
@@ -131,14 +193,14 @@ final class HotkeyManager {
 
     private func handleFnState(fnDown: Bool, source: String) {
         if fnDown && !fnWasDown {
-            NSLog("[HotkeyManager] Fn DOWN (\(source))")
+            log.log("[HotkeyManager] Fn DOWN (\(source))")
             fnWasDown = true
             // Cancel any pending hold-release debounce since Fn is back down
             holdReleaseDebounceTimer?.invalidate()
             holdReleaseDebounceTimer = nil
             handleFnDown()
         } else if !fnDown && fnWasDown {
-            NSLog("[HotkeyManager] Fn UP (\(source))")
+            log.log("[HotkeyManager] Fn UP (\(source))")
             fnWasDown = false
             handleFnUp()
         }
@@ -177,11 +239,11 @@ final class HotkeyManager {
             // Debounce: wait before confirming release to avoid spurious Fn flag toggles.
             // If Fn comes back down within the debounce window, the timer is cancelled
             // in handleFnState and hold mode continues uninterrupted.
-            NSLog("[HotkeyManager] Hold release debounce started (%.0fms)", holdReleaseDebounce * 1000)
+            log.log("[HotkeyManager] Hold release debounce started (\(Int(holdReleaseDebounce * 1000))ms)")
             holdReleaseDebounceTimer?.invalidate()
             holdReleaseDebounceTimer = Timer.scheduledTimer(withTimeInterval: holdReleaseDebounce, repeats: false) { [weak self] _ in
                 guard let self = self else { return }
-                NSLog("[HotkeyManager] Hold release confirmed — stopping hold mode")
+                FileLogger.shared.log("[HotkeyManager] Hold release confirmed — stopping hold mode")
                 self.isHolding = false
                 self.holdReleaseDebounceTimer = nil
                 DispatchQueue.main.async {
@@ -224,7 +286,7 @@ final class HotkeyManager {
         isHolding = false
         isHandsFreeActive = false
         fnWasDown = false
-        NSLog("[HotkeyManager] State reset for testing")
+        log.log("[HotkeyManager] State reset for testing")
     }
 
     deinit {

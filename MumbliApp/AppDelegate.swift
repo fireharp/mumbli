@@ -275,13 +275,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - App Startup (post first-launch)
 
     private func startApp() {
-        NSLog("[AppDelegate] startApp() called")
+        log.log("[AppDelegate] startApp() called")
         if !isUITesting {
             requestPermissions()
+            checkGlobeKeySetting()
         }
         setupHotkeyManager()
         setupAudioCallbacks()
-        NSLog("[AppDelegate] startApp() completed — hotkey manager running")
+        log.log("[AppDelegate] startApp() completed — hotkey manager running")
     }
 
     // MARK: - Menu Bar
@@ -306,6 +307,63 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
         if !trusted {
             print("[AppDelegate] Accessibility permission not yet granted")
+        }
+    }
+
+    // MARK: - Globe Key Setting Check
+
+    private func checkGlobeKeySetting() {
+        // The "Press Globe key to" setting is stored in com.apple.HIToolbox.
+        // When set to "Do Nothing", the value is either absent or a specific int.
+        // When set to anything else (e.g., "Show Emoji & Symbols", "Start Dictation",
+        // "Change Input Source"), macOS intercepts the Fn/Globe key before our event tap.
+        //
+        // We read the AppleFnUsageType from HIToolbox prefs:
+        //   0 = Do Nothing
+        //   1 = Change Input Source
+        //   2 = Show Emoji & Symbols
+        //   3 = Start Dictation (macOS built-in)
+        // If not 0, warn the user.
+
+        let hiToolboxDefaults = UserDefaults(suiteName: "com.apple.HIToolbox")
+        let fnType = hiToolboxDefaults?.integer(forKey: "AppleFnUsageType") ?? -1
+
+        log.log("[AppDelegate] Globe key setting check: AppleFnUsageType = \(fnType)")
+
+        // fnType == 0 means "Do Nothing" which is what we need.
+        // fnType == -1 means the key wasn't found (default behavior, usually "Change Input Source").
+        // Any non-zero value means the Globe key is mapped to something that will
+        // intercept it before our event tap sees it.
+        if fnType != 0 {
+            log.log("[AppDelegate] Globe key is NOT set to 'Do Nothing' — showing guidance alert")
+            showGlobeKeyAlert()
+        } else {
+            log.log("[AppDelegate] Globe key is set to 'Do Nothing' — good")
+        }
+    }
+
+    private func showGlobeKeyAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Globe Key Setup Required"
+        alert.informativeText = """
+            Mumbli uses the Globe (🌐) key for dictation, but macOS currently intercepts it.
+
+            To fix this:
+            1. Open System Settings → Keyboard
+            2. Set "Press 🌐 key to" → "Do Nothing"
+
+            Without this change, the Globe key will trigger the macOS input switcher instead of Mumbli.
+            """
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open Keyboard Settings")
+        alert.addButton(withTitle: "Later")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            // Open System Settings → Keyboard
+            if let url = URL(string: "x-apple.systempreferences:com.apple.Keyboard-Settings.extension") {
+                NSWorkspace.shared.open(url)
+            }
         }
     }
 
@@ -341,18 +399,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Dictation Flow
 
+    private let log = FileLogger.shared
+
     private func startDictation(mode: ActivationMode) {
         currentMode = mode
         audioBuffer = Data()
+
+        log.log("[Dictation] startDictation mode=\(mode)")
 
         overlayController.show(audioCaptureManager: audioCaptureManager)
         NotificationCenter.default.post(name: .mumbliDictationStarted, object: nil)
 
         do {
             try audioCaptureManager.startCapture()
-            NSLog("[Dictation] Started capturing audio")
+            log.log("[Dictation] Started capturing audio")
         } catch {
-            NSLog("[Dictation] Failed to start capture: %@", "\(error)")
+            log.log("[Dictation] Failed to start capture: \(error)")
             NotificationCenter.default.post(
                 name: .mumbliDictationError,
                 object: nil,
@@ -362,7 +424,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func stopDictation() {
-        NSLog("[Dictation] stopDictation called")
+        log.log("[Dictation] stopDictation called")
         audioCaptureManager.stopCapture()
         NotificationCenter.default.post(name: .mumbliDictationStopped, object: nil)
 
@@ -371,7 +433,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         currentMode = nil
 
         guard !capturedAudio.isEmpty else {
-            NSLog("[Dictation] No audio captured")
+            log.log("[Dictation] No audio captured")
             overlayController.dismiss(afterDelay: 0.3)
             return
         }
@@ -379,32 +441,45 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Capture the focused element and frontmost app BEFORE async processing,
         // since focus will likely shift during transcription + polishing (~1s).
         let capturedTarget = TextInjector.captureFocusedTarget()
-        NSLog("[Dictation] Captured target before async: %@", capturedTarget?.description ?? "nil")
+        log.log("[Dictation] Captured target before async: \(capturedTarget?.description ?? "nil")")
+
+        // Log current frontmost app at capture time
+        let frontApp = NSWorkspace.shared.frontmostApplication
+        log.log("[Dictation] Frontmost app at capture: \(frontApp?.bundleIdentifier ?? "nil") pid=\(frontApp?.processIdentifier ?? -1)")
 
         Task {
             do {
                 // Step 1: Transcribe audio via ElevenLabs
-                NSLog("[Dictation] Sending %d bytes to ElevenLabs STT", capturedAudio.count)
+                log.log("[Dictation] Sending \(capturedAudio.count) bytes to ElevenLabs STT")
                 let transcription = try await sttService.transcribe(audioData: capturedAudio)
 
                 guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                    NSLog("[Dictation] Empty transcription received")
+                    log.log("[Dictation] Empty transcription received")
                     overlayController.dismiss(afterDelay: 0.3)
                     return
                 }
 
-                NSLog("[Dictation] Transcription: %@", transcription)
+                log.log("[Dictation] Transcription result: \(transcription)")
 
                 // Step 2: Polish via OpenAI
+                log.log("[Dictation] Sending transcription to OpenAI for polishing")
                 let polished = try await polishingService.polish(text: transcription)
-                NSLog("[Dictation] Polished: %@", polished)
+                log.log("[Dictation] Polished result: \(polished)")
 
                 let finalText = polished.isEmpty ? transcription : polished
+                log.log("[Dictation] Final text to inject: \(finalText)")
+
+                // Log state just before injection
+                let preInjectFrontApp = NSWorkspace.shared.frontmostApplication
+                log.log("[Dictation] Pre-inject frontmost app: \(preInjectFrontApp?.bundleIdentifier ?? "nil") pid=\(preInjectFrontApp?.processIdentifier ?? -1)")
+                log.log("[Dictation] Captured target still valid? element=\(capturedTarget != nil)")
 
                 // Step 3: Inject into the pre-captured target and save
+                log.log("[Dictation] Calling textInjector.inject()")
                 let result = textInjector.inject(text: finalText, target: capturedTarget)
-                NSLog("[Dictation] TextInjector result: %@", "\(result)")
+                log.log("[Dictation] TextInjector result: \(result)")
                 historyManager.addEntry(text: finalText)
+                log.log("[Dictation] Saved to history")
 
                 NotificationCenter.default.post(
                     name: .mumbliDictationCompleted,
@@ -412,7 +487,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     userInfo: ["text": finalText, "timestamp": Date()]
                 )
             } catch {
-                NSLog("[Dictation] Error: %@", "\(error)")
+                log.log("[Dictation] Error in async flow: \(error)")
                 NotificationCenter.default.post(
                     name: .mumbliDictationError,
                     object: nil,
