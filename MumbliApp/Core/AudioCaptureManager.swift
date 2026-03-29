@@ -131,18 +131,32 @@ final class AudioCaptureManager {
     func startCapture() throws {
         guard !isCapturing else { return }
 
+        // Tear down any existing engine before switching devices
+        if let existingEngine = audioEngine {
+            existingEngine.inputNode.removeTap(onBus: 0)
+            existingEngine.stop()
+            audioEngine = nil
+        }
+
         // Force built-in mic to prevent Bluetooth A2DP → HFP switch
         selectBuiltInMicrophone()
 
+        // Create engine after device switch so inputNode picks up the new device
         let engine = AVAudioEngine()
-        let inputNode = engine.inputNode
-        let inputFormat = inputNode.outputFormat(forBus: 0)
+        engine.reset()
 
-        guard let converter = AVAudioConverter(from: inputFormat, to: outputFormat) else {
+        let inputNode = engine.inputNode
+        let nativeFormat = inputNode.outputFormat(forBus: 0)
+
+        NSLog("[AudioCaptureManager] Input node native format: %@", nativeFormat.description)
+
+        guard let converter = AVAudioConverter(from: nativeFormat, to: outputFormat) else {
             throw AudioCaptureError.converterCreationFailed
         }
 
-        inputNode.installTap(onBus: 0, bufferSize: 4096, format: inputFormat) { [weak self] buffer, _ in
+        // Install tap using the input node's native format, not the target format.
+        // Conversion to PCM 16-bit 16kHz mono happens inside the callback.
+        inputNode.installTap(onBus: 0, bufferSize: 4096, format: nativeFormat) { [weak self] buffer, _ in
             guard let self = self else { return }
             self.updateAudioLevel(buffer: buffer)
             self.convertAndDeliver(buffer: buffer, converter: converter)
