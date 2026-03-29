@@ -25,8 +25,13 @@ final class HotkeyManager {
     private let holdThreshold: TimeInterval = 0.3
     private let doubleTapWindow: TimeInterval = 0.5
 
+    /// Posted when the event tap fails to create, indicating Input Monitoring permission is needed.
+    static let inputMonitoringRequiredNotification = Notification.Name("HotkeyManagerInputMonitoringRequired")
+
     func start() {
         let eventMask: CGEventMask = (1 << CGEventType.flagsChanged.rawValue)
+            | (1 << CGEventType.keyDown.rawValue)
+            | (1 << CGEventType.keyUp.rawValue)
 
         guard let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
@@ -43,7 +48,8 @@ final class HotkeyManager {
             },
             userInfo: Unmanaged.passUnretained(self).toOpaque()
         ) else {
-            print("[HotkeyManager] Failed to create event tap. Accessibility permission required.")
+            print("[HotkeyManager] Failed to create event tap. Input Monitoring permission is required (System Settings > Privacy & Security > Input Monitoring).")
+            NotificationCenter.default.post(name: HotkeyManager.inputMonitoringRequiredNotification, object: nil)
             return
         }
 

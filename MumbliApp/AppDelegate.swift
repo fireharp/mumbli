@@ -108,6 +108,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - First Launch
 
     private func shouldShowFirstLaunch() -> Bool {
+        if isUITesting && !CommandLine.arguments.contains("--reset-first-launch") {
+            return false
+        }
         if CommandLine.arguments.contains("--reset-first-launch") {
             return true
         }

@@ -3,13 +3,14 @@ import SwiftUI
 
 /// Manages the NSStatusItem in the macOS menu bar and its dropdown menu.
 @MainActor
-final class MenuBarController {
+final class MenuBarController: NSObject {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
     private let historyManager: HistoryManager
 
     init(historyManager: HistoryManager) {
         self.historyManager = historyManager
+        super.init()
     }
 
     /// Set up the menu bar status item.
@@ -69,23 +70,6 @@ final class MenuBarController {
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-}
-
-// Make MenuBarController work as an NSObject target for button actions
-extension MenuBarController: NSObjectProtocol {
-    nonisolated func isEqual(_ object: Any?) -> Bool { self === object as AnyObject }
-    nonisolated var hash: Int { ObjectIdentifier(self).hashValue }
-    nonisolated var superclass: AnyClass? { nil }
-    nonisolated func `self`() -> Self { self }
-    nonisolated func perform(_ aSelector: Selector!) -> Unmanaged<AnyObject>! { nil }
-    nonisolated func perform(_ aSelector: Selector!, with object: Any!) -> Unmanaged<AnyObject>! { nil }
-    nonisolated func perform(_ aSelector: Selector!, with object1: Any!, with object2: Any!) -> Unmanaged<AnyObject>! { nil }
-    nonisolated func isProxy() -> Bool { false }
-    nonisolated func isKind(of aClass: AnyClass) -> Bool { false }
-    nonisolated func isMember(of aClass: AnyClass) -> Bool { false }
-    nonisolated func conforms(to aProtocol: Protocol) -> Bool { false }
-    nonisolated func responds(to aSelector: Selector!) -> Bool { false }
-    nonisolated var description: String { "MenuBarController" }
 }
 
 // MARK: - Menu Bar Dropdown SwiftUI View

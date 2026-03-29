@@ -7,6 +7,7 @@ struct FirstLaunchView: View {
     @State private var micGranted = false
     @State private var accessibilityGranted = false
     @State private var appearAnimation = false
+    @State private var isCheckingAccessibility = false
 
     var onComplete: () -> Void
 
@@ -230,13 +231,16 @@ struct FirstLaunchView: View {
                     .controlSize(.large)
                     .tint(Color(nsColor: .systemBlue))
 
-                    Button("Check Again") {
+                    Button(action: {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                             checkAccessibilityPermission()
                         }
+                    }) {
+                        Text(isCheckingAccessibility ? "Checking..." : "Check Again")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.regular)
+                    .disabled(isCheckingAccessibility)
                 }
 
                 Button(action: {
@@ -329,14 +333,27 @@ struct FirstLaunchView: View {
 
     private func requestMicrophoneAccess() {
         AVCaptureDevice.requestAccess(for: .audio) { granted in
-            DispatchQueue.main.async {
-                micGranted = granted
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.micGranted = granted
+                NSApp.activate(ignoringOtherApps: true)
             }
         }
     }
 
     private func checkAccessibilityPermission() {
-        accessibilityGranted = AXIsProcessTrusted()
+        isCheckingAccessibility = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.accessibilityGranted = AXIsProcessTrusted()
+            if !self.accessibilityGranted {
+                // Retry once more after another delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.accessibilityGranted = AXIsProcessTrusted()
+                    self.isCheckingAccessibility = false
+                }
+            } else {
+                self.isCheckingAccessibility = false
+            }
+        }
     }
 
     private func openAccessibilitySettings() {

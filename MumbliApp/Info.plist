@@ -24,5 +24,9 @@
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Mumbli needs microphone access to capture your voice for dictation.</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Mumbli needs accessibility access to detect the Fn key and insert text at your cursor.</string>
+	<key>NSInputMonitoringUsageDescription</key>
+	<string>Mumbli needs input monitoring to detect the Fn key for hands-free dictation.</string>
 </dict>
 </plist>
