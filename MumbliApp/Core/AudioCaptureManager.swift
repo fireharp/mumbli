@@ -15,6 +15,9 @@ final class AudioCaptureManager {
     private var smoothedLevel: Float = 0.0
     private let smoothingAlpha: Float = 0.3
     private var previousDefaultInputDevice: AudioDeviceID?
+    private var hasLoggedFormat = false
+    private var chunkCount = 0
+    private var totalBytesDelivered = 0
 
     /// The desired output format: PCM 16-bit integer, 16kHz, mono.
     private let outputFormat = AVAudioFormat(
@@ -177,6 +180,10 @@ final class AudioCaptureManager {
         isCapturing = false
         audioLevel = 0.0
         smoothedLevel = 0.0
+        hasLoggedFormat = false
+        NSLog("[AudioCaptureManager] Stopped: delivered %d chunks, %d bytes total", chunkCount, totalBytesDelivered)
+        chunkCount = 0
+        totalBytesDelivered = 0
         restorePreviousInputDevice()
     }
 
@@ -230,6 +237,14 @@ final class AudioCaptureManager {
     }
 
     private func convertAndDeliver(buffer: AVAudioPCMBuffer, converter: AVAudioConverter) {
+        if !hasLoggedFormat {
+            hasLoggedFormat = true
+            NSLog("[AudioCaptureManager] Converting: input=%@ -> output=%@", buffer.format.description, outputFormat.description)
+            NSLog("[AudioCaptureManager] Input: %.0fHz %d-ch, Output: %.0fHz %d-ch",
+                  buffer.format.sampleRate, buffer.format.channelCount,
+                  outputFormat.sampleRate, outputFormat.channelCount)
+        }
+
         let frameCapacity = AVAudioFrameCount(
             Double(buffer.frameLength) * (outputFormat.sampleRate / buffer.format.sampleRate)
         )
@@ -261,6 +276,22 @@ final class AudioCaptureManager {
         let byteCount = Int(outputBuffer.frameLength) * Int(outputFormat.streamDescription.pointee.mBytesPerFrame)
         guard let int16Data = outputBuffer.int16ChannelData else { return }
         let data = Data(bytes: int16Data[0], count: byteCount)
+
+        chunkCount += 1
+        totalBytesDelivered += byteCount
+
+        // Log first few chunks and then every 50th to diagnose audio content
+        if chunkCount <= 3 || chunkCount % 50 == 0 {
+            var maxAmp: Int16 = 0
+            let samples = int16Data[0]
+            for i in 0..<Int(outputBuffer.frameLength) {
+                let abs = samples[i] < 0 ? -samples[i] : samples[i]
+                if abs > maxAmp { maxAmp = abs }
+            }
+            NSLog("[AudioCaptureManager] Chunk #%d: %d bytes, %d frames, maxAmplitude=%d, totalDelivered=%d",
+                  chunkCount, byteCount, outputBuffer.frameLength, maxAmp, totalBytesDelivered)
+        }
+
         onAudioChunk?(data)
     }
 

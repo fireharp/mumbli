@@ -101,6 +101,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        if args.contains("--test-inject") {
+            NSLog("[AppDelegate] --test-inject: will inject test text in 3s (no mic, no API)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                guard let self = self else { return }
+                let target = TextInjector.captureFocusedTarget()
+                NSLog("[AppDelegate] --test-inject: captured target = %@", target?.description ?? "nil")
+                let result = self.textInjector.inject(text: "Hello from Mumbli!", target: target)
+                NSLog("[AppDelegate] --test-inject: result = %@", "\(result)")
+            }
+        }
+
+        if args.contains("--test-full") {
+            NSLog("[AppDelegate] --test-full: simulating full flow in 3s (no mic, no API)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                guard let self = self else { return }
+                let target = TextInjector.captureFocusedTarget()
+                NSLog("[AppDelegate] --test-full: captured target = %@", target?.description ?? "nil")
+                self.overlayController.show()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self = self else { return }
+                    let testText = "Test dictation text"
+                    let result = self.textInjector.inject(text: testText, target: target)
+                    NSLog("[AppDelegate] --test-full: inject result = %@", "\(result)")
+                    self.historyManager.addEntry(text: testText)
+                    NSLog("[AppDelegate] --test-full: saved to history")
+                    self.overlayController.dismiss(afterDelay: 0.3)
+                }
+            }
+        }
+
         if args.contains("--preview-overlay") {
             showPreviewWindow(
                 title: "Overlay Preview",
@@ -346,6 +376,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        // Capture the focused element and frontmost app BEFORE async processing,
+        // since focus will likely shift during transcription + polishing (~1s).
+        let capturedTarget = TextInjector.captureFocusedTarget()
+        NSLog("[Dictation] Captured target before async: %@", capturedTarget?.description ?? "nil")
+
         Task {
             do {
                 // Step 1: Transcribe audio via ElevenLabs
@@ -366,8 +401,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 let finalText = polished.isEmpty ? transcription : polished
 
-                // Step 3: Inject and save
-                let result = textInjector.inject(text: finalText)
+                // Step 3: Inject into the pre-captured target and save
+                let result = textInjector.inject(text: finalText, target: capturedTarget)
                 NSLog("[Dictation] TextInjector result: %@", "\(result)")
                 historyManager.addEntry(text: finalText)
 

@@ -177,9 +177,11 @@ struct SettingsView: View {
             position: .unspecified
         )
 
-        audioDevices = discoverySession.devices.map { device in
-            AudioDevice(id: device.uniqueID, name: device.localizedName)
-        }
+        audioDevices = discoverySession.devices
+            .filter { !$0.localizedName.hasPrefix("CADefaultDevice") }
+            .map { device in
+                AudioDevice(id: device.uniqueID, name: device.localizedName)
+            }
 
         if selectedDeviceID.isEmpty, let defaultDevice = AVCaptureDevice.default(for: .audio) {
             selectedDeviceID = defaultDevice.uniqueID

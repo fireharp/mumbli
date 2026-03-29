@@ -1,60 +1,28 @@
 import Foundation
-import Security
 
-/// Simple wrapper around the macOS Keychain for storing API keys.
+/// Stores API keys in UserDefaults for zero-prompt access.
+/// Not as secure as Keychain but avoids constant permission dialogs.
+/// Acceptable for a personal-use tool where the user is the sole operator.
 final class KeychainManager {
     static let shared = KeychainManager()
 
     static let elevenLabsAPIKeyKey = "com.mumbli.elevenlabs-api-key"
     static let openAIAPIKeyKey = "com.mumbli.openai-api-key"
 
+    private let defaults = UserDefaults.standard
+
     private init() {}
 
     func save(key: String, value: String) throws {
-        guard let data = value.data(using: .utf8) else {
-            throw KeychainError.encodingFailed
-        }
-
-        // Delete existing item first
-        delete(key: key)
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
-        ]
-
-        let status = SecItemAdd(query as CFDictionary, nil)
-        guard status == errSecSuccess else {
-            throw KeychainError.saveFailed(status)
-        }
+        defaults.set(value, forKey: key)
     }
 
     func get(key: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-        ]
-
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-
-        guard status == errSecSuccess, let data = result as? Data else {
-            return nil
-        }
-
-        return String(data: data, encoding: .utf8)
+        return defaults.string(forKey: key)
     }
 
     func delete(key: String) {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-        ]
-        SecItemDelete(query as CFDictionary)
+        defaults.removeObject(forKey: key)
     }
 }
 
@@ -65,9 +33,9 @@ enum KeychainError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return "Failed to encode value for Keychain"
+            return "Failed to encode value"
         case .saveFailed(let status):
-            return "Keychain save failed with status \(status)"
+            return "Save failed with status \(status)"
         }
     }
 }

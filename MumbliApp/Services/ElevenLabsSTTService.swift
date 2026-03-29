@@ -13,7 +13,38 @@ final class ElevenLabsSTTService {
             throw ElevenLabsError.missingAPIKey
         }
 
+        NSLog("[ElevenLabsSTT] PCM data: %d bytes (%.1fs at 16kHz/16-bit/mono)", audioData.count, Double(audioData.count) / (16000.0 * 2.0))
+
+        // Analyze PCM content: check for silence / all zeros
+        let sampleCount = audioData.count / 2  // 16-bit = 2 bytes per sample
+        var zeroSamples = 0
+        var maxAmplitude: Int16 = 0
+        var sumSquares: Float = 0
+        audioData.withUnsafeBytes { rawBuffer in
+            let samples = rawBuffer.bindMemory(to: Int16.self)
+            for i in 0..<min(sampleCount, samples.count) {
+                let sample = samples[i]
+                if sample == 0 { zeroSamples += 1 }
+                let abs = sample < 0 ? -sample : sample
+                if abs > maxAmplitude { maxAmplitude = abs }
+                sumSquares += Float(sample) * Float(sample)
+            }
+        }
+        let rms = sampleCount > 0 ? sqrtf(sumSquares / Float(sampleCount)) : 0
+        let zeroPercent = sampleCount > 0 ? (Double(zeroSamples) / Double(sampleCount)) * 100.0 : 100.0
+        NSLog("[ElevenLabsSTT] PCM analysis: %d samples, %d zero (%.1f%%), maxAmplitude=%d, RMS=%.1f",
+              sampleCount, zeroSamples, zeroPercent, maxAmplitude, rms)
+
+        if zeroPercent > 99.0 {
+            NSLog("[ElevenLabsSTT] WARNING: Audio is effectively silence (%.1f%% zero samples)", zeroPercent)
+        }
+
         let wavData = addWAVHeader(pcmData: audioData, sampleRate: 16000, channels: 1, bitsPerSample: 16)
+        NSLog("[ElevenLabsSTT] WAV data: %d bytes (44-byte header + %d PCM)", wavData.count, audioData.count)
+
+        // Validate WAV header bytes
+        let headerHex = wavData.prefix(44).map { String(format: "%02X", $0) }.joined(separator: " ")
+        NSLog("[ElevenLabsSTT] WAV header (44 bytes): %@", headerHex)
 
         let boundary = UUID().uuidString
         var request = URLRequest(url: URL(string: endpoint)!)
@@ -40,22 +71,27 @@ final class ElevenLabsSTTService {
 
         request.httpBody = body
 
+        NSLog("[ElevenLabsSTT] Sending request (%d bytes body)", body.count)
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ElevenLabsError.invalidResponse
         }
 
+        let responseBody = String(data: data, encoding: .utf8) ?? "<non-UTF8 data, \(data.count) bytes>"
+        NSLog("[ElevenLabsSTT] Response status: %d, body: %@", httpResponse.statusCode, responseBody)
+
         guard httpResponse.statusCode == 200 else {
-            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown error"
-            throw ElevenLabsError.apiError(statusCode: httpResponse.statusCode, message: errorBody)
+            throw ElevenLabsError.apiError(statusCode: httpResponse.statusCode, message: responseBody)
         }
 
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let text = json["text"] as? String else {
+            NSLog("[ElevenLabsSTT] Failed to parse JSON or missing 'text' field")
             throw ElevenLabsError.invalidResponse
         }
 
+        NSLog("[ElevenLabsSTT] Transcription result: '%@' (%d chars)", text, text.count)
         return text
     }
 

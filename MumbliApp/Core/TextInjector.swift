@@ -12,6 +12,79 @@ final class TextInjector {
         case failed(String)
     }
 
+    /// Snapshot of the target text field and app captured at dictation start,
+    /// before async transcription/polishing shifts focus.
+    struct CapturedTarget {
+        let element: AXUIElement
+        let appBundleID: String?
+        let appPID: pid_t?
+
+        var description: String {
+            "CapturedTarget(app=\(appBundleID ?? "nil"), pid=\(appPID.map(String.init) ?? "nil"))"
+        }
+    }
+
+    /// Capture the currently focused AXUIElement and the frontmost app.
+    /// Call this BEFORE starting any async work so the target is preserved.
+    static func captureFocusedTarget() -> CapturedTarget? {
+        let systemWide = AXUIElementCreateSystemWide()
+
+        var focusedElement: AnyObject?
+        let focusResult = AXUIElementCopyAttributeValue(
+            systemWide,
+            kAXFocusedUIElementAttribute as CFString,
+            &focusedElement
+        )
+
+        guard focusResult == .success, let element = focusedElement else {
+            NSLog("[TextInjector] captureFocusedTarget: No focused element (error: %d)", focusResult.rawValue)
+            return nil
+        }
+
+        let axElement = element as! AXUIElement
+
+        // Log element role for diagnostics
+        var role: AnyObject?
+        AXUIElementCopyAttributeValue(axElement, kAXRoleAttribute as CFString, &role)
+        NSLog("[TextInjector] captureFocusedTarget: element role = %@", (role as? String) ?? "unknown")
+
+        // Check if the element is settable
+        var isSettable: DarwinBoolean = false
+        AXUIElementIsAttributeSettable(axElement, kAXSelectedTextAttribute as CFString, &isSettable)
+        NSLog("[TextInjector] captureFocusedTarget: selectedText settable = %d", isSettable.boolValue)
+
+        // Capture the frontmost app
+        let frontApp = NSWorkspace.shared.frontmostApplication
+        let bundleID = frontApp?.bundleIdentifier
+        let pid = frontApp?.processIdentifier
+        NSLog("[TextInjector] captureFocusedTarget: frontApp = %@ (pid %d)", bundleID ?? "nil", pid ?? -1)
+
+        return CapturedTarget(element: axElement, appBundleID: bundleID, appPID: pid)
+    }
+
+    /// Inject text into a previously captured target element. Returns which method was used.
+    @discardableResult
+    func inject(text: String, target: CapturedTarget?) -> InjectionResult {
+        NSLog("[TextInjector] inject() called with text: %@, target: %@", text, target?.description ?? "nil")
+
+        // Try the captured element first
+        if let target = target {
+            if injectViaAccessibility(text: text, element: target.element) {
+                NSLog("[TextInjector] SUCCESS via Accessibility API (captured target)")
+                return .accessibilityAPI
+            }
+            NSLog("[TextInjector] Captured target AX injection failed, trying clipboard with app reactivation")
+            if injectViaClipboard(text: text, target: target) {
+                NSLog("[TextInjector] SUCCESS via clipboard fallback (captured target)")
+                return .clipboardFallback
+            }
+        }
+
+        // Fall through: try current focused element (legacy path)
+        NSLog("[TextInjector] Captured target failed or nil, falling back to current focus")
+        return inject(text: text)
+    }
+
     /// Inject text into the focused element. Returns which method was used.
     @discardableResult
     func inject(text: String) -> InjectionResult {
@@ -30,23 +103,31 @@ final class TextInjector {
     }
 
     /// Try inserting text via AXUIElement at the focused element's cursor position.
-    private func injectViaAccessibility(text: String) -> Bool {
-        let systemWide = AXUIElementCreateSystemWide()
+    /// If `element` is provided, use it directly instead of querying the current focus.
+    private func injectViaAccessibility(text: String, element providedElement: AXUIElement? = nil) -> Bool {
+        let axElement: AXUIElement
 
-        var focusedElement: AnyObject?
-        let focusResult = AXUIElementCopyAttributeValue(
-            systemWide,
-            kAXFocusedUIElementAttribute as CFString,
-            &focusedElement
-        )
+        if let provided = providedElement {
+            NSLog("[TextInjector] AX: Using pre-captured element")
+            axElement = provided
+        } else {
+            let systemWide = AXUIElementCreateSystemWide()
 
-        guard focusResult == .success, let element = focusedElement else {
-            NSLog("[TextInjector] AX: No focused element found (error: %d)", focusResult.rawValue)
-            return false
+            var focusedElement: AnyObject?
+            let focusResult = AXUIElementCopyAttributeValue(
+                systemWide,
+                kAXFocusedUIElementAttribute as CFString,
+                &focusedElement
+            )
+
+            guard focusResult == .success, let element = focusedElement else {
+                NSLog("[TextInjector] AX: No focused element found (error: %d)", focusResult.rawValue)
+                return false
+            }
+
+            axElement = element as! AXUIElement
+            NSLog("[TextInjector] AX: Found focused element")
         }
-
-        let axElement = element as! AXUIElement
-        NSLog("[TextInjector] AX: Found focused element")
 
         // Try inserting at the selected text range (replaces selection or inserts at cursor)
         var selectedRange: AnyObject?
@@ -101,8 +182,22 @@ final class TextInjector {
     }
 
     /// Fallback: copy text to pasteboard and simulate Cmd+V.
-    private func injectViaClipboard(text: String) -> Bool {
+    /// If a captured target is provided, re-activate the original app before pasting.
+    private func injectViaClipboard(text: String, target: CapturedTarget? = nil) -> Bool {
         NSLog("[TextInjector] Clipboard: Starting clipboard fallback")
+
+        // Re-activate the original app if we have a captured target
+        if let target = target, let pid = target.appPID {
+            if let app = NSRunningApplication(processIdentifier: pid) {
+                NSLog("[TextInjector] Clipboard: Re-activating app %@ (pid %d)", target.appBundleID ?? "nil", pid)
+                app.activate(options: [.activateIgnoringOtherApps])
+                // Brief pause to let the app come to front
+                Thread.sleep(forTimeInterval: 0.1)
+            } else {
+                NSLog("[TextInjector] Clipboard: Could not find running app for pid %d", pid)
+            }
+        }
+
         // Save current pasteboard contents
         let pasteboard = NSPasteboard.general
         let previousContents = pasteboard.string(forType: .string)
