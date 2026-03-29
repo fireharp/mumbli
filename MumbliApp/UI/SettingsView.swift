@@ -9,101 +9,103 @@ struct SettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Settings")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+            Text("Settings")
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 28)
+                .padding(.top, 24)
+                .padding(.bottom, 16)
 
-                    Text("Configure your Mumbli experience")
-                        .font(.system(size: 12, weight: .regular))
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-
-                // Subtle app icon
-                Image(systemName: "waveform")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [
-                                Color(nsColor: .systemPurple).opacity(0.4),
-                                Color(nsColor: .systemBlue).opacity(0.3),
-                            ],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-            }
-            .padding(.horizontal, 28)
-            .padding(.top, 28)
-            .padding(.bottom, 20)
+            Divider()
+                .opacity(0.15)
+                .padding(.horizontal, 28)
 
             // Content
-            VStack(spacing: 20) {
-                // Audio Input section
-                SettingsSection(title: "Audio Input", icon: "mic.fill") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Picker("Microphone", selection: $selectedDeviceID) {
-                            ForEach(audioDevices) { device in
-                                Text(device.name).tag(device.id)
-                            }
-                        }
-                        .accessibilityIdentifier("mumbli-mic-picker")
-                        .labelsHidden()
-                        .onChange(of: selectedDeviceID) { newValue in
-                            UserDefaults.standard.set(newValue, forKey: "selectedMicrophoneID")
-                        }
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 16) {
+                    // Audio Input section
+                    SettingsSection(title: "Audio Input", icon: "mic.fill") {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(spacing: 8) {
+                                // Status indicator
+                                Circle()
+                                    .fill(audioDevices.isEmpty
+                                        ? Color(nsColor: .systemYellow)
+                                        : Color(nsColor: .systemGreen))
+                                    .frame(width: 6, height: 6)
 
-                        if audioDevices.isEmpty {
-                            HStack(spacing: 6) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(Color(nsColor: .systemYellow))
-                                Text("No audio input devices found")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
+                                Picker("Microphone", selection: $selectedDeviceID) {
+                                    ForEach(audioDevices) { device in
+                                        Text(device.name).tag(device.id)
+                                    }
+                                }
+                                .accessibilityIdentifier("mumbli-mic-picker")
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity)
+                                .onChange(of: selectedDeviceID) { newValue in
+                                    UserDefaults.standard.set(newValue, forKey: "selectedMicrophoneID")
+                                }
+                            }
+
+                            if audioDevices.isEmpty {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(Color(nsColor: .systemYellow))
+                                    Text("No audio input devices found")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }
-                }
 
-                // Shortcuts section
-                SettingsSection(title: "Shortcuts", icon: "keyboard") {
-                    VStack(spacing: 10) {
-                        ShortcutRow(
-                            label: "Hold to dictate",
-                            keys: "Fn"
-                        )
-                        ShortcutRow(
-                            label: "Hands-free mode",
-                            keys: "Fn Fn"
-                        )
-                    }
-                }
-
-                // About section
-                SettingsSection(title: "About", icon: "info.circle") {
-                    HStack {
-                        Text("Version")
-                            .font(.system(size: 12))
-                        Spacer()
-                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.primary.opacity(0.04))
+                    // Shortcuts section
+                    SettingsSection(title: "Shortcuts", icon: "keyboard") {
+                        VStack(spacing: 10) {
+                            ShortcutRow(
+                                label: "Hold to dictate",
+                                keys: ["Fn"]
                             )
+                            ShortcutRow(
+                                label: "Hands-free mode",
+                                keys: ["Fn", "Fn"],
+                                isDoubleTap: true
+                            )
+                        }
+                    }
+
+                    // About section
+                    SettingsSection(title: "About", icon: "info.circle") {
+                        HStack {
+                            Text("Version")
+                                .font(.system(size: 13))
+                            Spacer()
+                            Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
+                                .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(nsColor: .controlBackgroundColor))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+                                )
+                        }
                     }
                 }
+                .padding(.horizontal, 28)
+                .padding(.top, 16)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 28)
 
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .frame(width: 420, height: 320)
+        .frame(minWidth: 460, minHeight: 400, maxHeight: 520)
         .onAppear {
             loadAudioDevices()
             selectedDeviceID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
@@ -135,61 +137,88 @@ struct SettingsSection<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(Color(nsColor: .tertiaryLabelColor))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(Color(nsColor: .secondaryLabelColor))
 
-                Text(title.uppercased())
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color(nsColor: .tertiaryLabelColor))
-                    .tracking(0.5)
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold).smallCaps())
+                    .foregroundColor(.secondary)
             }
 
             content
-                .padding(14)
+                .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.primary.opacity(0.03))
+                        .fill(Color(nsColor: .controlBackgroundColor))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
+                        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
                 )
+                .shadow(color: .black.opacity(0.04), radius: 2, x: 0, y: 1)
         }
     }
 }
 
-/// A row displaying a keyboard shortcut.
+/// A row displaying a keyboard shortcut with realistic key caps.
 struct ShortcutRow: View {
     let label: String
-    let keys: String
+    let keys: [String]
+    var isDoubleTap: Bool = false
 
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: 13))
             Spacer()
-            HStack(spacing: 4) {
-                ForEach(keys.split(separator: " ").map(String.init), id: \.self) { key in
-                    Text(key)
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 4)
-                        .background(
-                            RoundedRectangle(cornerRadius: 5)
-                                .fill(Color.primary.opacity(0.06))
-                                .shadow(color: Color.primary.opacity(0.04), radius: 0, x: 0, y: 1)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+            HStack(spacing: isDoubleTap ? 2 : 4) {
+                ForEach(Array(keys.enumerated()), id: \.offset) { index, key in
+                    if isDoubleTap && index > 0 {
+                        Text("\u{00B7}")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.secondary.opacity(0.5))
+                    }
+                    KeyCap(label: key)
                 }
             }
         }
+    }
+}
+
+/// A keyboard key cap styled to look like a physical key.
+struct KeyCap: View {
+    let label: String
+
+    var body: some View {
+        Text(label)
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(nsColor: .controlColor))
+
+                    // Top highlight simulating light on a physical key
+                    VStack(spacing: 0) {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.white.opacity(0.6))
+                            .frame(height: 1)
+                        Spacer()
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(Color.primary.opacity(0.15), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.12), radius: 0, x: 0, y: 1)
+            .shadow(color: .black.opacity(0.06), radius: 1, x: 0, y: 1)
     }
 }
 

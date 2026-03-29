@@ -7,12 +7,19 @@ final class OverlayController {
     private var window: NSWindow?
     private var dismissTimer: Timer?
 
-    /// Show the overlay near the current cursor position.
+    /// Show the overlay at center-bottom of main screen.
     func show() {
-        dismiss()
+        NSLog("[Overlay] show() called")
+        // Clean up any existing overlay immediately
+        dismissTimer?.invalidate()
+        dismissTimer = nil
+        window?.orderOut(nil)
+        window = nil
 
         let contentView = NSHostingView(rootView: ListeningIndicatorView())
-        contentView.frame = NSRect(x: 0, y: 0, width: 80, height: 48)
+        contentView.frame = NSRect(x: 0, y: 0, width: 140, height: 52)
+        contentView.wantsLayer = true
+        contentView.layer?.backgroundColor = .clear
 
         let window = NSWindow(
             contentRect: contentView.frame,
@@ -25,25 +32,39 @@ final class OverlayController {
         window.backgroundColor = .clear
         window.level = .floating
         window.hasShadow = false
-        window.ignoresMouseEvents = false
+        window.ignoresMouseEvents = true
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
         window.setAccessibilityIdentifier("mumbli-overlay-window")
         window.alphaValue = 0
 
-        // Position near the active text cursor or fall back to mouse location
-        let position = cursorScreenPosition() ?? NSEvent.mouseLocation
-        window.setFrameOrigin(NSPoint(
-            x: position.x + 8,
-            y: position.y - window.frame.height - 8
-        ))
+        // Position at center-bottom of main screen, 40px above bottom
+        if let screen = NSScreen.main {
+            let screenFrame = screen.visibleFrame
+            let x = screenFrame.midX - window.frame.width / 2
+            let y = screenFrame.origin.y + 40
+            // Start 8px lower for slide-up animation
+            window.setFrameOrigin(NSPoint(x: x, y: y - 8))
+            NSLog("[Overlay] Positioned at (%.0f, %.0f) on screen %@", x, y, NSStringFromRect(screenFrame))
 
-        window.orderFront(nil)
+            window.orderFrontRegardless()
 
-        // Fade + scale in with spring-like ease
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.35
-            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            window.animator().alphaValue = 1.0
+            // Slide up + fade in
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.3
+                context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                window.animator().alphaValue = 1.0
+                window.animator().setFrameOrigin(NSPoint(x: x, y: y))
+            }
+        } else {
+            let position = NSEvent.mouseLocation
+            window.setFrameOrigin(NSPoint(x: position.x + 8, y: position.y - window.frame.height - 8))
+            NSLog("[Overlay] No main screen — fallback to mouse position")
+            window.orderFrontRegardless()
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.3
+                context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                window.animator().alphaValue = 1.0
+            }
         }
 
         self.window = window
@@ -51,6 +72,7 @@ final class OverlayController {
 
     /// Dismiss the overlay, optionally after a brief delay.
     func dismiss(afterDelay delay: TimeInterval = 0) {
+        NSLog("[Overlay] dismiss(afterDelay: %.2f) called", delay)
         dismissTimer?.invalidate()
         if delay > 0 {
             dismissTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
@@ -66,164 +88,91 @@ final class OverlayController {
 
     private func performDismiss() {
         guard let window = window else { return }
+        let currentOrigin = window.frame.origin
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.2
             context.timingFunction = CAMediaTimingFunction(name: .easeIn)
             window.animator().alphaValue = 0
+            // Slide down 4px during fade out (back toward bottom edge)
+            window.animator().setFrameOrigin(NSPoint(x: currentOrigin.x, y: currentOrigin.y - 4))
         }, completionHandler: { [weak self] in
             self?.window?.orderOut(nil)
             self?.window = nil
         })
     }
-
-    /// Attempt to get the screen position of the focused text cursor via Accessibility API.
-    private func cursorScreenPosition() -> NSPoint? {
-        guard let systemWide = AXUIElementCreateSystemWide() as AXUIElement? else { return nil }
-
-        var focusedElement: AnyObject?
-        let result = AXUIElementCopyAttributeValue(systemWide, kAXFocusedUIElementAttribute as CFString, &focusedElement)
-        guard result == .success, let element = focusedElement else { return nil }
-
-        var rangeValue: AnyObject?
-        let rangeResult = AXUIElementCopyAttributeValue(element as! AXUIElement, kAXSelectedTextRangeAttribute as CFString, &rangeValue)
-        guard rangeResult == .success, let range = rangeValue else { return nil }
-
-        var boundsValue: AnyObject?
-        let boundsResult = AXUIElementCopyParameterizedAttributeValue(
-            element as! AXUIElement,
-            kAXBoundsForRangeParameterizedAttribute as CFString,
-            range,
-            &boundsValue
-        )
-        guard boundsResult == .success, let bounds = boundsValue else { return nil }
-
-        var rect = CGRect.zero
-        guard AXValueGetValue(bounds as! AXValue, .cgRect, &rect) else { return nil }
-
-        // AX coordinates have origin at top-left; convert to screen coordinates (bottom-left origin)
-        guard let screen = NSScreen.main else { return nil }
-        let screenHeight = screen.frame.height
-        return NSPoint(x: rect.origin.x, y: screenHeight - rect.origin.y - rect.height)
-    }
 }
 
 // MARK: - Listening Indicator SwiftUI View
 
-/// An animated waveform indicator shown during active dictation with glassmorphism styling.
+/// A compact listening indicator with 3 pulsing dots and a "Listening" label.
 struct ListeningIndicatorView: View {
     @State private var isAnimating = false
-    @State private var glowPulse = false
 
-    private let barCount = 5
-    private let barColors: [Color] = [
-        Color(nsColor: .systemIndigo),
-        Color(nsColor: .systemPurple),
-        Color(nsColor: .systemBlue),
-        Color(nsColor: .systemCyan),
-        Color(nsColor: .systemTeal),
-    ]
+    private let dotCount = 3
 
     var body: some View {
-        HStack(spacing: 3) {
-            // Audio waveform bars
-            HStack(spacing: 2) {
-                ForEach(0..<barCount, id: \.self) { index in
-                    WaveformBar(
+        HStack(spacing: 6) {
+            // Pulsing dots
+            HStack(spacing: 6) {
+                ForEach(0..<dotCount, id: \.self) { index in
+                    PulsingDot(
                         isAnimating: isAnimating,
-                        delay: Double(index) * 0.1,
-                        color: barColors[index % barColors.count]
+                        delay: Double(index) * 0.15
                     )
                 }
             }
-            .frame(width: 24, height: 18)
 
             Text("Listening")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(.primary.opacity(0.85))
                 .accessibilityIdentifier("mumbli-listening-label")
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .background {
             ZStack {
-                // Vibrancy blur background
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
 
-                // Subtle inner gradient for depth
+                // Hairline stroke for edge definition
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.1),
-                                Color.white.opacity(0.02),
-                                Color.clear,
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-
-                // Animated glow ring
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                Color(nsColor: .systemPurple).opacity(glowPulse ? 0.4 : 0.15),
-                                Color(nsColor: .systemBlue).opacity(glowPulse ? 0.3 : 0.1),
-                                Color(nsColor: .systemCyan).opacity(glowPulse ? 0.2 : 0.05),
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-        .shadow(color: Color(nsColor: .systemPurple).opacity(0.15), radius: 16, x: 0, y: 4)
-        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 2)
-        .shadow(color: .black.opacity(0.08), radius: 1, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
         .accessibilityIdentifier("mumbli-listening-indicator")
         .onAppear {
             isAnimating = true
-            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-                glowPulse = true
-            }
         }
     }
 }
 
-/// A single animated waveform bar that oscillates with a given delay.
-struct WaveformBar: View {
+/// A single dot that pulses in scale and opacity with a staggered delay.
+struct PulsingDot: View {
     let isAnimating: Bool
     let delay: Double
-    let color: Color
 
-    @State private var phase: CGFloat = 0.2
+    @State private var phase: Bool = false
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 1.5)
-            .fill(
-                LinearGradient(
-                    colors: [color.opacity(0.95), color.opacity(0.5)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .frame(width: 3, height: isAnimating ? 16 * phase : 3)
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: 5, height: 5)
+            .scaleEffect(phase ? 1.4 : 1.0)
+            .opacity(phase ? 1.0 : 0.4)
             .animation(
-                .easeInOut(duration: 0.4 + delay * 0.3)
+                .easeInOut(duration: 0.5)
                     .repeatForever(autoreverses: true)
                     .delay(delay),
-                value: isAnimating
+                value: phase
             )
             .onAppear {
                 if isAnimating {
-                    phase = 1.0
+                    phase = true
                 }
             }
             .onChange(of: isAnimating) { newValue in
-                phase = newValue ? 1.0 : 0.2
+                phase = newValue
             }
     }
 }
