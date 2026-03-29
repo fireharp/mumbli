@@ -64,7 +64,7 @@ final class MenuBarController: NSObject {
         let window = NSWindow(contentViewController: controller)
         window.title = "Mumbli Settings"
         window.styleMask = [.titled, .closable]
-        window.setContentSize(NSSize(width: 460, height: 480))
+        window.setContentSize(NSSize(width: 460, height: 580))
         window.setAccessibilityIdentifier("mumbli-settings-window")
         window.center()
         window.makeKeyAndOrderFront(nil)

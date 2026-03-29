@@ -50,12 +50,14 @@ final class HotkeyManager {
             return event
         }
 
-        // Approach 2: CGEvent tap as backup (catches events NSEvent might miss)
+        // Approach 2: CGEvent tap as PRIMARY — .defaultTap allows consuming the event
+        // to prevent macOS from processing the Fn/Globe key (which triggers language switch).
+        // Return nil from the callback to swallow the Fn flagsChanged event.
         let eventMask: CGEventMask = (1 << CGEventType.flagsChanged.rawValue)
         if let tap = CGEvent.tapCreate(
             tap: .cgSessionEventTap,
             place: .headInsertEventTap,
-            options: .listenOnly,
+            options: .defaultTap,
             eventsOfInterest: eventMask,
             callback: { _, type, cgEvent, refcon -> Unmanaged<CGEvent>? in
                 guard let refcon = refcon, type == .flagsChanged else {
@@ -63,9 +65,20 @@ final class HotkeyManager {
                 }
                 let manager = Unmanaged<HotkeyManager>.fromOpaque(refcon).takeUnretainedValue()
                 let fnDown = cgEvent.flags.contains(.maskSecondaryFn)
+
+                // Always dispatch Fn state to the manager
                 DispatchQueue.main.async {
                     manager.handleFnState(fnDown: fnDown, source: "CGEvent")
                 }
+
+                // Consume any flagsChanged that includes the Fn flag to prevent
+                // macOS from processing it (which triggers the language input switch).
+                // On Fn release, the flag is absent — but we still consume that event
+                // if we were tracking an Fn press, using the fnWasDown flag.
+                if fnDown || manager.fnWasDown {
+                    return nil
+                }
+
                 return Unmanaged.passUnretained(cgEvent)
             },
             userInfo: Unmanaged.passUnretained(self).toOpaque()
@@ -74,9 +87,9 @@ final class HotkeyManager {
             runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
             CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
-            NSLog("[HotkeyManager] CGEvent tap created successfully")
+            NSLog("[HotkeyManager] CGEvent tap created successfully (defaultTap — will consume Fn events)")
         } else {
-            NSLog("[HotkeyManager] CGEvent tap failed — using NSEvent monitors only")
+            NSLog("[HotkeyManager] CGEvent tap failed — using NSEvent monitors only (Fn key may trigger language switch)")
         }
 
         NSLog("[HotkeyManager] Started — listening for Fn key")

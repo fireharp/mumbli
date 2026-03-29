@@ -141,20 +141,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupOverlayPreviewHotkeys() {
         hotkeyManager.onHoldStart = { [weak self] in
-            NSLog("[Preview] Hold start — showing overlay")
-            self?.overlayController.show()
+            guard let self = self else { return }
+            NSLog("[Preview] Hold start — showing overlay with audio")
+            try? self.audioCaptureManager.startCapture()
+            self.overlayController.show(audioCaptureManager: self.audioCaptureManager)
         }
         hotkeyManager.onHoldStop = { [weak self] in
+            guard let self = self else { return }
             NSLog("[Preview] Hold stop — dismissing overlay")
-            self?.overlayController.dismiss(afterDelay: 0.3)
+            self.audioCaptureManager.stopCapture()
+            self.overlayController.dismiss(afterDelay: 0.3)
         }
         hotkeyManager.onHandsFreeToggle = { [weak self] in
-            NSLog("[Preview] Hands-free toggle — showing overlay")
-            self?.overlayController.show()
+            guard let self = self else { return }
+            NSLog("[Preview] Hands-free toggle — showing overlay with audio")
+            try? self.audioCaptureManager.startCapture()
+            self.overlayController.show(audioCaptureManager: self.audioCaptureManager)
         }
         hotkeyManager.onHandsFreeStop = { [weak self] in
+            guard let self = self else { return }
             NSLog("[Preview] Hands-free stop — dismissing overlay")
-            self?.overlayController.dismiss(afterDelay: 0.3)
+            self.audioCaptureManager.stopCapture()
+            self.overlayController.dismiss(afterDelay: 0.3)
         }
     }
 
@@ -359,7 +367,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let finalText = polished.isEmpty ? transcription : polished
 
                 // Step 3: Inject and save
-                textInjector.inject(text: finalText)
+                let result = textInjector.inject(text: finalText)
+                NSLog("[Dictation] TextInjector result: %@", "\(result)")
                 historyManager.addEntry(text: finalText)
 
                 NotificationCenter.default.post(

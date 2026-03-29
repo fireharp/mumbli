@@ -162,61 +162,37 @@ struct MicReactiveDot: View {
     let audioLevel: Float
     let index: Int
 
-    @State private var breathPhase: Bool = false
-
-    private var isSilent: Bool { audioLevel < 0.05 }
+    private var isSilent: Bool { audioLevel < 0.02 }
 
     private var dotScale: CGFloat {
         if isSilent {
-            // Breathing pulse: 1.0 to 1.15
-            return breathPhase ? 1.15 : 1.0
+            // Silence: constant 1.0 (micro-jitter applied per audio tick via provider)
+            return 1.0 + CGFloat(Float.random(in: 0...0.02))
         }
-        // Speech: map 0.05-1.0 to scale 1.0-1.8
-        let normalized = CGFloat(min(max((audioLevel - 0.05) / 0.95, 0), 1))
-        return 1.0 + normalized * 0.8
+        // Speech: map 0.0-1.0 to scale 1.0-1.6
+        let normalized = CGFloat(min(max(CGFloat(audioLevel), 0), 1))
+        return 1.0 + normalized * 0.6
     }
 
     private var dotOpacity: Double {
         if isSilent {
-            return breathPhase ? 0.65 : 0.5
+            return 0.55
         }
         // Speech: opacity 0.6 to 1.0
-        let normalized = Double(min(max((audioLevel - 0.05) / 0.95, 0), 1))
+        let normalized = Double(min(max(Double(audioLevel), 0), 1))
         return 0.6 + normalized * 0.4
-    }
-
-    private var whiteBrightness: Double {
-        if audioLevel > 0.7 {
-            return Double(min((audioLevel - 0.7) / 0.3, 1.0)) * 0.3
-        }
-        return 0
     }
 
     var body: some View {
         Circle()
             .fill(Color.accentColor)
-            .brightness(whiteBrightness)
             .frame(width: 5, height: 5)
             .scaleEffect(dotScale)
             .opacity(dotOpacity)
             .animation(
-                isSilent
-                    ? .easeInOut(duration: 2.0).repeatForever(autoreverses: true)
-                    : .spring(response: 0.15, dampingFraction: 0.7),
-                value: isSilent ? (breathPhase ? 1.0 : 0.0) : CGFloat(audioLevel)
+                .spring(response: 0.10, dampingFraction: 0.75),
+                value: CGFloat(audioLevel)
             )
-            .onAppear {
-                // Start breathing animation immediately
-                breathPhase = true
-            }
-            .onChange(of: isSilent) { silent in
-                if silent {
-                    breathPhase = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        breathPhase = true
-                    }
-                }
-            }
     }
 }
 

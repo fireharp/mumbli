@@ -15,12 +15,17 @@ final class TextInjector {
     /// Inject text into the focused element. Returns which method was used.
     @discardableResult
     func inject(text: String) -> InjectionResult {
+        NSLog("[TextInjector] inject() called with text: %@", text)
         if injectViaAccessibility(text: text) {
+            NSLog("[TextInjector] SUCCESS via Accessibility API")
             return .accessibilityAPI
         }
+        NSLog("[TextInjector] Accessibility API failed, trying clipboard fallback")
         if injectViaClipboard(text: text) {
+            NSLog("[TextInjector] SUCCESS via clipboard fallback")
             return .clipboardFallback
         }
+        NSLog("[TextInjector] FAILED — no method worked")
         return .failed("No focused text field found")
     }
 
@@ -36,10 +41,12 @@ final class TextInjector {
         )
 
         guard focusResult == .success, let element = focusedElement else {
+            NSLog("[TextInjector] AX: No focused element found (error: %d)", focusResult.rawValue)
             return false
         }
 
         let axElement = element as! AXUIElement
+        NSLog("[TextInjector] AX: Found focused element")
 
         // Try inserting at the selected text range (replaces selection or inserts at cursor)
         var selectedRange: AnyObject?
@@ -50,14 +57,19 @@ final class TextInjector {
         )
 
         if rangeResult == .success {
+            NSLog("[TextInjector] AX: Has selected text range, setting selected text")
             let setResult = AXUIElementSetAttributeValue(
                 axElement,
                 kAXSelectedTextAttribute as CFString,
                 text as CFTypeRef
             )
             if setResult == .success {
+                NSLog("[TextInjector] AX: Set selected text succeeded")
                 return true
             }
+            NSLog("[TextInjector] AX: Set selected text failed (error: %d)", setResult.rawValue)
+        } else {
+            NSLog("[TextInjector] AX: No selected text range (error: %d)", rangeResult.rawValue)
         }
 
         // Fallback: try setting the entire value (appending)
@@ -70,33 +82,43 @@ final class TextInjector {
 
         if valueResult == .success, let current = currentValue as? String {
             let newValue = current + text
+            NSLog("[TextInjector] AX: Appending to existing value (len %d -> %d)", current.count, newValue.count)
             let setResult = AXUIElementSetAttributeValue(
                 axElement,
                 kAXValueAttribute as CFString,
                 newValue as CFTypeRef
             )
+            if setResult == .success {
+                NSLog("[TextInjector] AX: Set full value succeeded")
+            } else {
+                NSLog("[TextInjector] AX: Set full value failed (error: %d)", setResult.rawValue)
+            }
             return setResult == .success
         }
 
+        NSLog("[TextInjector] AX: Could not get current value (error: %d)", valueResult.rawValue)
         return false
     }
 
     /// Fallback: copy text to pasteboard and simulate Cmd+V.
     private func injectViaClipboard(text: String) -> Bool {
+        NSLog("[TextInjector] Clipboard: Starting clipboard fallback")
         // Save current pasteboard contents
         let pasteboard = NSPasteboard.general
         let previousContents = pasteboard.string(forType: .string)
 
         // Set our text
         pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
+        let setOk = pasteboard.setString(text, forType: .string)
+        NSLog("[TextInjector] Clipboard: Set pasteboard string = %d", setOk)
 
         // Simulate Cmd+V
         let success = simulateCmdV()
+        NSLog("[TextInjector] Clipboard: simulateCmdV = %d", success)
 
         // Restore previous pasteboard contents after a short delay
         if let previous = previousContents {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 pasteboard.clearContents()
                 pasteboard.setString(previous, forType: .string)
             }
@@ -112,6 +134,7 @@ final class TextInjector {
         // Key code for 'V' is 9
         guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: true),
               let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 9, keyDown: false) else {
+            NSLog("[TextInjector] Clipboard: Failed to create CGEvent for Cmd+V")
             return false
         }
 
@@ -120,6 +143,7 @@ final class TextInjector {
 
         keyDown.post(tap: .cghidEventTap)
         keyUp.post(tap: .cghidEventTap)
+        NSLog("[TextInjector] Clipboard: Posted Cmd+V key events")
 
         return true
     }

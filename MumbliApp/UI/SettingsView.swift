@@ -162,7 +162,7 @@ struct SettingsView: View {
 
             Spacer(minLength: 0)
         }
-        .frame(minWidth: 460, minHeight: 480, maxHeight: 600)
+        .frame(minWidth: 460, minHeight: 580, maxHeight: 700)
         .onAppear {
             loadAudioDevices()
             selectedDeviceID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
