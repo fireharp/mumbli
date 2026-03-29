@@ -9,11 +9,14 @@ final class OverlayController {
     private var dismissTimer: Timer?
     private var audioLevelProvider: AudioLevelProvider?
     private var audioLevelCancellable: AnyCancellable?
+    private var overlayState: OverlayStateProvider?
 
     /// Show the overlay at center-bottom of main screen.
-    /// - Parameter audioCaptureManager: Optional audio capture manager to drive mic-reactive dots.
-    func show(audioCaptureManager: AudioCaptureManager? = nil) {
-        NSLog("[Overlay] show() called")
+    /// - Parameters:
+    ///   - audioCaptureManager: Optional audio capture manager to drive mic-reactive dots.
+    ///   - mode: The activation mode, used to visually distinguish hold vs hands-free.
+    func show(audioCaptureManager: AudioCaptureManager? = nil, mode: ActivationMode = .hold) {
+        NSLog("[Overlay] show() called, mode=\(mode)")
         // Clean up any existing overlay immediately
         dismissTimer?.invalidate()
         dismissTimer = nil
@@ -21,27 +24,46 @@ final class OverlayController {
         window?.orderOut(nil)
         window = nil
 
-        let provider = AudioLevelProvider()
-        self.audioLevelProvider = provider
+        let audioProvider = AudioLevelProvider()
+        self.audioLevelProvider = audioProvider
+
+        let stateProvider = OverlayStateProvider()
+        self.overlayState = stateProvider
 
         if let acm = audioCaptureManager {
             audioLevelCancellable = acm.$audioLevel
                 .receive(on: RunLoop.main)
-                .assign(to: \.audioLevel, on: provider)
+                .assign(to: \.audioLevel, on: audioProvider)
         }
 
-        let contentView = NSHostingView(rootView: ListeningIndicatorView(audioLevelProvider: provider))
-        contentView.frame = NSRect(x: 0, y: 0, width: 52, height: 52)
-        contentView.wantsLayer = true
-        contentView.layer?.backgroundColor = .clear
+        let hostingView = NSHostingView(rootView: OverlayRootView(audioLevelProvider: audioProvider, stateProvider: stateProvider, mode: mode))
+        let frame = NSRect(x: 0, y: 0, width: 56, height: 56)
+        hostingView.frame = frame
+
+        // NSHostingView draws an opaque background by default, which shows as a
+        // visible rectangle behind the rounded pill shape. To fix this:
+        // 1. Wrap in a plain NSView with a transparent layer
+        // 2. Force the hosting view's layer to be transparent
+        // 3. Disable drawsBackground on the hosting view
+        let wrapper = NSView(frame: frame)
+        wrapper.wantsLayer = true
+        wrapper.layer?.backgroundColor = .clear
+        wrapper.layer?.cornerRadius = 14
+        wrapper.layer?.masksToBounds = true
+        wrapper.addSubview(hostingView)
+
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = .clear
+        hostingView.layer?.cornerRadius = 14
+        hostingView.layer?.masksToBounds = true
 
         let window = NSWindow(
-            contentRect: contentView.frame,
+            contentRect: frame,
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
         )
-        window.contentView = contentView
+        window.contentView = wrapper
         window.isOpaque = false
         window.backgroundColor = .clear
         window.level = .floating
@@ -84,6 +106,15 @@ final class OverlayController {
         self.window = window
     }
 
+    /// Switch the overlay to processing state (spinning indicator).
+    /// The overlay stays visible until explicitly dismissed.
+    func showProcessing() {
+        NSLog("[Overlay] showProcessing() called")
+        audioLevelCancellable?.cancel()
+        audioLevelCancellable = nil
+        overlayState?.isProcessing = true
+    }
+
     /// Dismiss the overlay, optionally after a brief delay.
     func dismiss(afterDelay delay: TimeInterval = 0) {
         NSLog("[Overlay] dismiss(afterDelay: %.2f) called", delay)
@@ -115,41 +146,81 @@ final class OverlayController {
             self?.window?.orderOut(nil)
             self?.window = nil
             self?.audioLevelProvider = nil
+            self?.overlayState = nil
         })
     }
 }
 
 // MARK: - Listening Indicator SwiftUI View
 
-/// A compact listening indicator with 3 mic-reactive dots.
+/// A compact listening indicator with 5 waveform bars (Siri-style).
+/// In hands-free mode, uses orange bars, a static orange border, and a red REC dot.
 struct ListeningIndicatorView: View {
     @ObservedObject var audioLevelProvider: AudioLevelProvider
+    let mode: ActivationMode
 
-    private let dotCount = 3
+    private let barCount = 5
+    /// Per-bar multipliers — center bar leads, edges lag.
+    private let barMultipliers: [CGFloat] = [0.6, 0.8, 1.0, 0.8, 0.6]
+    /// Stagger delay from center outward: center=0, adjacent=15ms, outer=30ms.
+    private let staggerDelays: [Double] = [0.030, 0.015, 0.0, 0.015, 0.030]
+
+    private var isHandsFree: Bool { mode == .handsFree }
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<dotCount, id: \.self) { index in
-                MicReactiveDot(
-                    audioLevel: audioLevelProvider.audioLevel,
-                    index: index
-                )
+        HStack(spacing: 0) {
+            // Red REC dot for hands-free mode
+            if isHandsFree {
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 4, height: 4)
+                    .opacity(0.8)
+                    .padding(.trailing, 6)
+            }
+
+            HStack(spacing: 3) {
+                ForEach(0..<barCount, id: \.self) { index in
+                    WaveformBar(
+                        audioLevel: audioLevelProvider.audioLevel,
+                        multiplier: barMultipliers[index],
+                        staggerDelay: staggerDelays[index],
+                        restHeight: index == 2 ? 8 : 6,
+                        isHandsFree: isHandsFree
+                    )
+                }
             }
         }
-        .padding(12)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
 
-                // Hairline stroke for edge definition
                 RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                    .strokeBorder(
+                        isHandsFree
+                            ? Color.orange.opacity(0.35)
+                            : Color.primary.opacity(0.08),
+                        lineWidth: isHandsFree ? 1.5 : 1
+                    )
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
+        // Glow when audio level > 0.3
+        .shadow(
+            color: audioLevelProvider.audioLevel > 0.3
+                ? Color.accentColor.opacity(Double(audioLevelProvider.audioLevel) * 0.25)
+                : .black.opacity(0.12),
+            radius: audioLevelProvider.audioLevel > 0.3 ? 8 : 12,
+            x: 0, y: audioLevelProvider.audioLevel > 0.3 ? 0 : 4
+        )
         .accessibilityIdentifier("mumbli-listening-indicator")
     }
+}
+
+/// Observable object that tracks whether the overlay is in listening or processing state.
+class OverlayStateProvider: ObservableObject {
+    @Published var isProcessing = false
 }
 
 /// Observable object that bridges audio level data to SwiftUI.
@@ -157,40 +228,81 @@ class AudioLevelProvider: ObservableObject {
     @Published var audioLevel: Float = 0.0
 }
 
-/// A single dot that reacts to microphone audio levels.
-struct MicReactiveDot: View {
-    let audioLevel: Float
-    let index: Int
+/// Root view that switches between listening and processing indicators.
+struct OverlayRootView: View {
+    @ObservedObject var audioLevelProvider: AudioLevelProvider
+    @ObservedObject var stateProvider: OverlayStateProvider
+    let mode: ActivationMode
 
-    private var isSilent: Bool { audioLevel < 0.02 }
-
-    private var dotScale: CGFloat {
-        if isSilent {
-            // Silence: constant 1.0 (micro-jitter applied per audio tick via provider)
-            return 1.0 + CGFloat(Float.random(in: 0...0.02))
+    var body: some View {
+        if stateProvider.isProcessing {
+            ProcessingIndicatorView(wasHandsFree: mode == .handsFree)
+                .transition(.opacity)
+        } else {
+            ListeningIndicatorView(audioLevelProvider: audioLevelProvider, mode: mode)
+                .transition(.opacity)
         }
-        // Speech: map 0.0-1.0 to scale 1.0-1.6
-        let normalized = CGFloat(min(max(CGFloat(audioLevel), 0), 1))
-        return 1.0 + normalized * 0.6
+    }
+}
+
+/// A compact processing indicator with a native macOS spinner.
+/// Shown after Fn release while transcription + polishing API calls happen.
+struct ProcessingIndicatorView: View {
+    let wasHandsFree: Bool
+
+    var body: some View {
+        ProgressView()
+            .scaleEffect(0.6)
+            .frame(width: 16, height: 16)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 12)
+            .background {
+                ZStack {
+                    VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
+
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
+            .accessibilityIdentifier("mumbli-processing-indicator")
+    }
+}
+
+/// A single waveform bar that reacts to microphone audio levels.
+/// Uses orange color in hands-free mode, accent color in hold mode.
+struct WaveformBar: View {
+    let audioLevel: Float
+    let multiplier: CGFloat
+    let staggerDelay: Double
+    let restHeight: CGFloat
+    var isHandsFree: Bool = false
+
+    private let barWidth: CGFloat = 3
+    private let maxHeight: CGFloat = 24
+
+    private var barHeight: CGFloat {
+        let level = CGFloat(min(max(CGFloat(audioLevel), 0), 1))
+        return restHeight + level * (maxHeight - restHeight) * multiplier
     }
 
-    private var dotOpacity: Double {
-        if isSilent {
-            return 0.55
-        }
-        // Speech: opacity 0.6 to 1.0
-        let normalized = Double(min(max(Double(audioLevel), 0), 1))
-        return 0.6 + normalized * 0.4
+    private var barOpacity: Double {
+        let level = Double(min(max(Double(audioLevel), 0), 1))
+        return 0.7 + level * 0.3
+    }
+
+    private var barColor: Color {
+        isHandsFree ? .orange : .accentColor
     }
 
     var body: some View {
-        Circle()
-            .fill(Color.accentColor)
-            .frame(width: 5, height: 5)
-            .scaleEffect(dotScale)
-            .opacity(dotOpacity)
+        Capsule()
+            .fill(barColor)
+            .frame(width: barWidth, height: barHeight)
+            .opacity(barOpacity)
             .animation(
-                .spring(response: 0.10, dampingFraction: 0.75),
+                .spring(response: 0.10, dampingFraction: 0.75).delay(staggerDelay),
                 value: CGFloat(audioLevel)
             )
     }
@@ -209,6 +321,8 @@ struct VisualEffectBlur: NSViewRepresentable {
         view.blendingMode = blendingMode
         view.state = .active
         view.wantsLayer = true
+        view.layer?.cornerRadius = 14
+        view.layer?.masksToBounds = true
         return view
     }
 

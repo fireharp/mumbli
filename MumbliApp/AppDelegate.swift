@@ -134,7 +134,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if args.contains("--preview-overlay") {
             showPreviewWindow(
                 title: "Overlay Preview",
-                view: ListeningIndicatorView(audioLevelProvider: AudioLevelProvider()),
+                view: ListeningIndicatorView(audioLevelProvider: AudioLevelProvider(), mode: .hold),
                 size: NSSize(width: 200, height: 80),
                 darkBackground: true
             )
@@ -407,7 +407,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         log.log("[Dictation] startDictation mode=\(mode)")
 
-        overlayController.show(audioCaptureManager: audioCaptureManager)
+        overlayController.show(audioCaptureManager: audioCaptureManager, mode: mode)
         NotificationCenter.default.post(name: .mumbliDictationStarted, object: nil)
 
         do {
@@ -446,6 +446,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Log current frontmost app at capture time
         let frontApp = NSWorkspace.shared.frontmostApplication
         log.log("[Dictation] Frontmost app at capture: \(frontApp?.bundleIdentifier ?? "nil") pid=\(frontApp?.processIdentifier ?? -1)")
+
+        // Switch overlay to processing state (keeps it visible during transcription + polishing)
+        overlayController.showProcessing()
 
         Task {
             do {
@@ -495,6 +498,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 )
             }
 
+            // Dismiss overlay after processing completes (success or error)
             overlayController.dismiss(afterDelay: 0.3)
         }
     }
