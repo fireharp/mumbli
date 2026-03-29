@@ -44,7 +44,7 @@ final class OverlayController {
         // visible rectangle behind the rounded pill shape. To fix this:
         // 1. Wrap in a plain NSView with a transparent layer
         // 2. Force the hosting view's layer to be transparent
-        // 3. Disable drawsBackground on the hosting view
+        // 3. Apply cornerRadius + masksToBounds on all layers
         let wrapper = NSView(frame: frame)
         wrapper.wantsLayer = true
         wrapper.layer?.backgroundColor = .clear
