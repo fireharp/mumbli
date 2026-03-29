@@ -3,7 +3,7 @@ import SwiftUI
 import AVFoundation
 
 /// App delegate that wires together all core and UI components.
-/// Connects: HotkeyManager -> AudioCapture + OverlayController -> TranscriptionClient -> TextInjector + HistoryManager
+/// Connects: HotkeyManager -> AudioCapture -> ElevenLabs STT -> OpenAI Polish -> TextInjector + HistoryManager
 /// Handles first-launch flow, menu bar setup, and UI test launch arguments.
 @MainActor
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -11,8 +11,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let hotkeyManager = HotkeyManager()
     private let audioCaptureManager = AudioCaptureManager()
     private let textInjector = TextInjector()
-    private var transcriptionClient: TranscriptionClient?
     private var currentMode: ActivationMode?
+
+    // Services (direct API)
+    private let sttService = ElevenLabsSTTService()
+    private let polishingService = OpenAIPolishingService()
+
+    // Audio accumulation buffer
+    private var audioBuffer = Data()
 
     // UI
     private let historyManager = HistoryManager()
@@ -23,20 +29,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Test mode flags
     private var isUITesting: Bool {
         CommandLine.arguments.contains("--ui-testing")
-    }
-
-    // Backend URL — configurable via UserDefaults or environment
-    private var backendURL: URL {
-        if let urlString = UserDefaults.standard.string(forKey: "backendURL"),
-           let url = URL(string: urlString) {
-            return url
-        }
-        return URL(string: "ws://localhost:8000")!
-    }
-
-    // Auth token — will be provided by auth flow
-    private var authToken: String {
-        return UserDefaults.standard.string(forKey: "authToken") ?? ""
     }
 
     // MARK: - App Lifecycle
@@ -65,7 +57,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         hotkeyManager.stop()
         audioCaptureManager.stopCapture()
-        transcriptionClient?.disconnect()
     }
 
     // MARK: - Launch Arguments (UI Testing Support)
@@ -86,12 +77,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let args = CommandLine.arguments
 
         if args.contains("--simulate-dictation") {
-            // Show overlay as if dictation is active
             overlayController.show()
         }
 
         if args.contains("--simulate-dictation-complete") {
-            // Show overlay briefly, then dismiss (simulates completed dictation)
             overlayController.show()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
                 self?.overlayController.dismiss()
@@ -113,15 +102,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         if args.contains("--preview-overlay") {
-            // Show static preview of the component
             showPreviewWindow(
                 title: "Overlay Preview",
-                view: ListeningIndicatorView(),
+                view: ListeningIndicatorView(audioLevelProvider: AudioLevelProvider()),
                 size: NSSize(width: 200, height: 80),
                 darkBackground: true
             )
-            // Wire hotkey manager to overlay-only flow (no audio/transcription)
-            // so real Fn presses trigger show/dismiss on the floating overlay
             setupOverlayPreviewHotkeys()
             NSLog("[AppDelegate] --preview-overlay: Fn key wired to overlay show/dismiss")
         }
@@ -153,9 +139,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    /// Wire the hotkey manager to only show/dismiss the overlay — no audio, no transcription.
-    /// Used by --preview-overlay for interactive e2e testing of the overlay animation.
-    /// Note: startApp() already called hotkeyManager.start(), so we just override the callbacks.
     private func setupOverlayPreviewHotkeys() {
         hotkeyManager.onHoldStart = { [weak self] in
             NSLog("[Preview] Hold start — showing overlay")
@@ -177,20 +160,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Synthetic Fn Key Simulation
 
-    /// Simulate Fn hold: DOWN → wait 500ms → UP. Uses HotkeyManager's internal path directly.
     private func simulateFnHold() {
         hotkeyManager.resetState()
         NSLog("[AppDelegate] simulateFnHold: sending Fn DOWN")
         hotkeyManager.simulateFnState(fnDown: true)
 
-        // Hold for 500ms (well past the 300ms hold threshold), then release
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             NSLog("[AppDelegate] simulateFnHold: sending Fn UP")
             self?.hotkeyManager.simulateFnState(fnDown: false)
         }
     }
 
-    /// Simulate Fn double-tap: tap, wait 200ms, tap. Each tap is DOWN then UP with a short press.
     private func simulateFnDoubleTap() {
         hotkeyManager.resetState()
         NSLog("[AppDelegate] simulateFnDoubleTap: sending first tap DOWN")
@@ -200,7 +180,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSLog("[AppDelegate] simulateFnDoubleTap: sending first tap UP")
             self?.hotkeyManager.simulateFnState(fnDown: false)
 
-            // Wait 200ms between taps (within the 500ms double-tap window)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 NSLog("[AppDelegate] simulateFnDoubleTap: sending second tap DOWN")
                 self?.hotkeyManager.simulateFnState(fnDown: true)
@@ -318,10 +297,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupAudioCallbacks() {
         audioCaptureManager.onAudioChunk = { [weak self] data in
-            guard let client = self?.transcriptionClient else { return }
-            Task {
-                try? await client.sendAudio(data: data)
-            }
+            self?.audioBuffer.append(data)
         }
     }
 
@@ -329,48 +305,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func startDictation(mode: ActivationMode) {
         currentMode = mode
+        audioBuffer = Data()
 
-        // Show overlay
-        overlayController.show()
-
-        // Notify UI
+        overlayController.show(audioCaptureManager: audioCaptureManager)
         NotificationCenter.default.post(name: .mumbliDictationStarted, object: nil)
 
-        let client = TranscriptionClient(baseURL: backendURL)
-        transcriptionClient = client
-
-        client.onListening = {
-            print("[Dictation] Server is listening")
-        }
-
-        client.onFinal = { [weak self] text in
-            self?.handleFinalText(text)
-        }
-
-        client.onError = { [weak self] error in
-            NSLog("[Dictation] Error: %@", "\(error)")
+        do {
+            try audioCaptureManager.startCapture()
+            NSLog("[Dictation] Started capturing audio")
+        } catch {
+            NSLog("[Dictation] Failed to start capture: %@", "\(error)")
             NotificationCenter.default.post(
                 name: .mumbliDictationError,
                 object: nil,
-                userInfo: ["error": error]
+                userInfo: ["error": error.localizedDescription]
             )
-            // Don't dismiss overlay on error — let the Fn key release handle it
-            self?.transcriptionClient?.disconnect()
-            self?.transcriptionClient = nil
-        }
-
-        Task {
-            do {
-                try await client.connect(authToken: authToken)
-                try await client.sendStart()
-                try audioCaptureManager.startCapture()
-                NSLog("[Dictation] Started successfully")
-            } catch {
-                NSLog("[Dictation] Failed to start: %@", "\(error)")
-                // Don't dismiss overlay — it stays until Fn is released
-                transcriptionClient?.disconnect()
-                transcriptionClient = nil
-            }
         }
     }
 
@@ -379,47 +328,56 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         audioCaptureManager.stopCapture()
         NotificationCenter.default.post(name: .mumbliDictationStopped, object: nil)
 
-        // Dismiss overlay immediately on stop
-        overlayController.dismiss(afterDelay: 0.3)
+        let capturedAudio = audioBuffer
+        audioBuffer = Data()
+        currentMode = nil
 
-        Task {
-            try? await transcriptionClient?.sendStop()
-            // cleanup after stop completes
-            transcriptionClient?.disconnect()
-            transcriptionClient = nil
-            currentMode = nil
-        }
-    }
-
-    private func handleFinalText(_ text: String) {
-        guard !text.isEmpty else {
-            cleanupDictation()
+        guard !capturedAudio.isEmpty else {
+            NSLog("[Dictation] No audio captured")
+            overlayController.dismiss(afterDelay: 0.3)
             return
         }
 
-        // Inject text into focused field
-        textInjector.inject(text: text)
+        Task {
+            do {
+                // Step 1: Transcribe audio via ElevenLabs
+                NSLog("[Dictation] Sending %d bytes to ElevenLabs STT", capturedAudio.count)
+                let transcription = try await sttService.transcribe(audioData: capturedAudio)
 
-        // Save to history
-        historyManager.addEntry(text: text)
+                guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    NSLog("[Dictation] Empty transcription received")
+                    overlayController.dismiss(afterDelay: 0.3)
+                    return
+                }
 
-        // Post notification
-        NotificationCenter.default.post(
-            name: .mumbliDictationCompleted,
-            object: nil,
-            userInfo: ["text": text, "timestamp": Date()]
-        )
+                NSLog("[Dictation] Transcription: %@", transcription)
 
-        cleanupDictation()
-    }
+                // Step 2: Polish via OpenAI
+                let polished = try await polishingService.polish(text: transcription)
+                NSLog("[Dictation] Polished: %@", polished)
 
-    private func cleanupDictation() {
-        transcriptionClient?.disconnect()
-        transcriptionClient = nil
-        currentMode = nil
+                let finalText = polished.isEmpty ? transcription : polished
 
-        // Dismiss overlay with brief delay for visual feedback
-        overlayController.dismiss(afterDelay: 0.3)
+                // Step 3: Inject and save
+                textInjector.inject(text: finalText)
+                historyManager.addEntry(text: finalText)
+
+                NotificationCenter.default.post(
+                    name: .mumbliDictationCompleted,
+                    object: nil,
+                    userInfo: ["text": finalText, "timestamp": Date()]
+                )
+            } catch {
+                NSLog("[Dictation] Error: %@", "\(error)")
+                NotificationCenter.default.post(
+                    name: .mumbliDictationError,
+                    object: nil,
+                    userInfo: ["error": error.localizedDescription]
+                )
+            }
+
+            overlayController.dismiss(afterDelay: 0.3)
+        }
     }
 }
 

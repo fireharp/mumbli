@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 /// Controls the floating overlay window that shows a listening indicator during dictation.
@@ -6,18 +7,31 @@ import SwiftUI
 final class OverlayController {
     private var window: NSWindow?
     private var dismissTimer: Timer?
+    private var audioLevelProvider: AudioLevelProvider?
+    private var audioLevelCancellable: AnyCancellable?
 
     /// Show the overlay at center-bottom of main screen.
-    func show() {
+    /// - Parameter audioCaptureManager: Optional audio capture manager to drive mic-reactive dots.
+    func show(audioCaptureManager: AudioCaptureManager? = nil) {
         NSLog("[Overlay] show() called")
         // Clean up any existing overlay immediately
         dismissTimer?.invalidate()
         dismissTimer = nil
+        audioLevelCancellable?.cancel()
         window?.orderOut(nil)
         window = nil
 
-        let contentView = NSHostingView(rootView: ListeningIndicatorView())
-        contentView.frame = NSRect(x: 0, y: 0, width: 140, height: 52)
+        let provider = AudioLevelProvider()
+        self.audioLevelProvider = provider
+
+        if let acm = audioCaptureManager {
+            audioLevelCancellable = acm.$audioLevel
+                .receive(on: RunLoop.main)
+                .assign(to: \.audioLevel, on: provider)
+        }
+
+        let contentView = NSHostingView(rootView: ListeningIndicatorView(audioLevelProvider: provider))
+        contentView.frame = NSRect(x: 0, y: 0, width: 52, height: 52)
         contentView.wantsLayer = true
         contentView.layer?.backgroundColor = .clear
 
@@ -88,6 +102,8 @@ final class OverlayController {
 
     private func performDismiss() {
         guard let window = window else { return }
+        audioLevelCancellable?.cancel()
+        audioLevelCancellable = nil
         let currentOrigin = window.frame.origin
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = 0.2
@@ -98,37 +114,29 @@ final class OverlayController {
         }, completionHandler: { [weak self] in
             self?.window?.orderOut(nil)
             self?.window = nil
+            self?.audioLevelProvider = nil
         })
     }
 }
 
 // MARK: - Listening Indicator SwiftUI View
 
-/// A compact listening indicator with 3 pulsing dots and a "Listening" label.
+/// A compact listening indicator with 3 mic-reactive dots.
 struct ListeningIndicatorView: View {
-    @State private var isAnimating = false
+    @ObservedObject var audioLevelProvider: AudioLevelProvider
 
     private let dotCount = 3
 
     var body: some View {
         HStack(spacing: 6) {
-            // Pulsing dots
-            HStack(spacing: 6) {
-                ForEach(0..<dotCount, id: \.self) { index in
-                    PulsingDot(
-                        isAnimating: isAnimating,
-                        delay: Double(index) * 0.15
-                    )
-                }
+            ForEach(0..<dotCount, id: \.self) { index in
+                MicReactiveDot(
+                    audioLevel: audioLevelProvider.audioLevel,
+                    index: index
+                )
             }
-
-            Text("Listening")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(.primary.opacity(0.85))
-                .accessibilityIdentifier("mumbli-listening-label")
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(12)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
@@ -141,38 +149,73 @@ struct ListeningIndicatorView: View {
         }
         .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
         .accessibilityIdentifier("mumbli-listening-indicator")
-        .onAppear {
-            isAnimating = true
-        }
     }
 }
 
-/// A single dot that pulses in scale and opacity with a staggered delay.
-struct PulsingDot: View {
-    let isAnimating: Bool
-    let delay: Double
+/// Observable object that bridges audio level data to SwiftUI.
+class AudioLevelProvider: ObservableObject {
+    @Published var audioLevel: Float = 0.0
+}
 
-    @State private var phase: Bool = false
+/// A single dot that reacts to microphone audio levels.
+struct MicReactiveDot: View {
+    let audioLevel: Float
+    let index: Int
+
+    @State private var breathPhase: Bool = false
+
+    private var isSilent: Bool { audioLevel < 0.05 }
+
+    private var dotScale: CGFloat {
+        if isSilent {
+            // Breathing pulse: 1.0 to 1.15
+            return breathPhase ? 1.15 : 1.0
+        }
+        // Speech: map 0.05-1.0 to scale 1.0-1.8
+        let normalized = CGFloat(min(max((audioLevel - 0.05) / 0.95, 0), 1))
+        return 1.0 + normalized * 0.8
+    }
+
+    private var dotOpacity: Double {
+        if isSilent {
+            return breathPhase ? 0.65 : 0.5
+        }
+        // Speech: opacity 0.6 to 1.0
+        let normalized = Double(min(max((audioLevel - 0.05) / 0.95, 0), 1))
+        return 0.6 + normalized * 0.4
+    }
+
+    private var whiteBrightness: Double {
+        if audioLevel > 0.7 {
+            return Double(min((audioLevel - 0.7) / 0.3, 1.0)) * 0.3
+        }
+        return 0
+    }
 
     var body: some View {
         Circle()
             .fill(Color.accentColor)
+            .brightness(whiteBrightness)
             .frame(width: 5, height: 5)
-            .scaleEffect(phase ? 1.4 : 1.0)
-            .opacity(phase ? 1.0 : 0.4)
+            .scaleEffect(dotScale)
+            .opacity(dotOpacity)
             .animation(
-                .easeInOut(duration: 0.5)
-                    .repeatForever(autoreverses: true)
-                    .delay(delay),
-                value: phase
+                isSilent
+                    ? .easeInOut(duration: 2.0).repeatForever(autoreverses: true)
+                    : .spring(response: 0.15, dampingFraction: 0.7),
+                value: isSilent ? (breathPhase ? 1.0 : 0.0) : CGFloat(audioLevel)
             )
             .onAppear {
-                if isAnimating {
-                    phase = true
-                }
+                // Start breathing animation immediately
+                breathPhase = true
             }
-            .onChange(of: isAnimating) { newValue in
-                phase = newValue
+            .onChange(of: isSilent) { silent in
+                if silent {
+                    breathPhase = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        breathPhase = true
+                    }
+                }
             }
     }
 }

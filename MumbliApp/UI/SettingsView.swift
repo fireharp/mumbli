@@ -1,10 +1,20 @@
 import SwiftUI
 import AVFoundation
 
-/// SwiftUI view for app settings, primarily microphone selection.
+/// SwiftUI view for app settings: microphone selection and API key configuration.
 struct SettingsView: View {
     @State private var audioDevices: [AudioDevice] = []
     @State private var selectedDeviceID: String = ""
+    @State private var elevenLabsKey: String = ""
+    @State private var openAIKey: String = ""
+    @State private var hasElevenLabsKey: Bool = false
+    @State private var hasOpenAIKey: Bool = false
+    @State private var elevenLabsMasked: String = ""
+    @State private var openAIMasked: String = ""
+    @State private var elevenLabsSavedConfirm: Bool = false
+    @State private var openAISavedConfirm: Bool = false
+    @State private var elevenLabsIsEditing: Bool = false
+    @State private var openAIIsEditing: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,7 +38,6 @@ struct SettingsView: View {
                     SettingsSection(title: "Audio Input", icon: "mic.fill") {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 8) {
-                                // Status indicator
                                 Circle()
                                     .fill(audioDevices.isEmpty
                                         ? Color(nsColor: .systemYellow)
@@ -55,6 +64,54 @@ struct SettingsView: View {
                                         .foregroundColor(Color(nsColor: .systemYellow))
                                     Text("No audio input devices found")
                                         .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    }
+
+                    // API Keys section
+                    SettingsSection(title: "API Keys", icon: "key.fill") {
+                        VStack(spacing: 12) {
+                            // ElevenLabs row
+                            APIKeyRow(
+                                serviceName: "ElevenLabs",
+                                iconName: "waveform",
+                                placeholder: "xi-...paste key",
+                                keyText: $elevenLabsKey,
+                                isSet: hasElevenLabsKey,
+                                maskedValue: elevenLabsMasked,
+                                isEditing: $elevenLabsIsEditing,
+                                savedConfirm: elevenLabsSavedConfirm,
+                                accessibilityID: "mumbli-elevenlabs-key",
+                                onCommit: { commitElevenLabsKey() }
+                            )
+                            .accessibilityLabel("ElevenLabs API Key, \(hasElevenLabsKey ? "configured" : "not set")")
+
+                            Divider().opacity(0.1)
+
+                            // OpenAI row
+                            APIKeyRow(
+                                serviceName: "OpenAI",
+                                iconName: "brain",
+                                placeholder: "sk-...paste key",
+                                keyText: $openAIKey,
+                                isSet: hasOpenAIKey,
+                                maskedValue: openAIMasked,
+                                isEditing: $openAIIsEditing,
+                                savedConfirm: openAISavedConfirm,
+                                accessibilityID: "mumbli-openai-key",
+                                onCommit: { commitOpenAIKey() }
+                            )
+                            .accessibilityLabel("OpenAI API Key, \(hasOpenAIKey ? "configured" : "not set")")
+
+                            if !hasElevenLabsKey || !hasOpenAIKey {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(Color(nsColor: .systemOrange))
+                                    Text("Required for dictation")
+                                        .font(.system(size: 11))
                                         .foregroundColor(.secondary)
                                 }
                             }
@@ -105,10 +162,11 @@ struct SettingsView: View {
 
             Spacer(minLength: 0)
         }
-        .frame(minWidth: 460, minHeight: 400, maxHeight: 520)
+        .frame(minWidth: 460, minHeight: 480, maxHeight: 600)
         .onAppear {
             loadAudioDevices()
             selectedDeviceID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
+            loadKeyStates()
         }
     }
 
@@ -123,9 +181,133 @@ struct SettingsView: View {
             AudioDevice(id: device.uniqueID, name: device.localizedName)
         }
 
-        // If no saved selection, default to system default
         if selectedDeviceID.isEmpty, let defaultDevice = AVCaptureDevice.default(for: .audio) {
             selectedDeviceID = defaultDevice.uniqueID
+        }
+    }
+
+    private func loadKeyStates() {
+        if let key = KeychainManager.shared.get(key: KeychainManager.elevenLabsAPIKeyKey) {
+            hasElevenLabsKey = true
+            elevenLabsMasked = Self.maskKey(key)
+        }
+        if let key = KeychainManager.shared.get(key: KeychainManager.openAIAPIKeyKey) {
+            hasOpenAIKey = true
+            openAIMasked = Self.maskKey(key)
+        }
+    }
+
+    private func commitElevenLabsKey() {
+        let trimmed = elevenLabsKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            if hasElevenLabsKey {
+                KeychainManager.shared.delete(key: KeychainManager.elevenLabsAPIKeyKey)
+                hasElevenLabsKey = false
+                elevenLabsMasked = ""
+            }
+        } else {
+            try? KeychainManager.shared.save(key: KeychainManager.elevenLabsAPIKeyKey, value: trimmed)
+            hasElevenLabsKey = true
+            elevenLabsMasked = Self.maskKey(trimmed)
+            elevenLabsKey = ""
+            elevenLabsIsEditing = false
+            elevenLabsSavedConfirm = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { elevenLabsSavedConfirm = false }
+        }
+    }
+
+    private func commitOpenAIKey() {
+        let trimmed = openAIKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            if hasOpenAIKey {
+                KeychainManager.shared.delete(key: KeychainManager.openAIAPIKeyKey)
+                hasOpenAIKey = false
+                openAIMasked = ""
+            }
+        } else {
+            try? KeychainManager.shared.save(key: KeychainManager.openAIAPIKeyKey, value: trimmed)
+            hasOpenAIKey = true
+            openAIMasked = Self.maskKey(trimmed)
+            openAIKey = ""
+            openAIIsEditing = false
+            openAISavedConfirm = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { openAISavedConfirm = false }
+        }
+    }
+
+    static func maskKey(_ key: String) -> String {
+        guard key.count > 7 else { return "****" }
+        let prefix = String(key.prefix(3))
+        let suffix = String(key.suffix(4))
+        return "\(prefix)****...\(suffix)"
+    }
+}
+
+/// A single API key row with service icon, name, status dot, and secure field.
+struct APIKeyRow: View {
+    let serviceName: String
+    let iconName: String
+    let placeholder: String
+    @Binding var keyText: String
+    let isSet: Bool
+    let maskedValue: String
+    @Binding var isEditing: Bool
+    let savedConfirm: Bool
+    let accessibilityID: String
+    let onCommit: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 10) {
+                Image(systemName: iconName)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+
+                Text(serviceName)
+                    .font(.system(size: 13))
+
+                Spacer()
+
+                Circle()
+                    .fill(isSet
+                        ? Color(nsColor: .systemGreen)
+                        : Color(nsColor: .systemOrange))
+                    .frame(width: 6, height: 6)
+                    .accessibilityHidden(true)
+
+                if isSet && !isEditing {
+                    Text(maskedValue)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .frame(width: 180, alignment: .leading)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color(nsColor: .controlBackgroundColor))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                        )
+                        .onTapGesture {
+                            isEditing = true
+                        }
+                } else {
+                    SecureField(placeholder, text: $keyText, onCommit: onCommit)
+                        .font(.system(size: 12, design: .monospaced))
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 180)
+                        .accessibilityIdentifier(accessibilityID)
+                }
+            }
+
+            if savedConfirm {
+                Text("Key saved")
+                    .font(.system(size: 11))
+                    .foregroundColor(Color(nsColor: .systemGreen))
+                    .transition(.opacity)
+            }
         }
     }
 }
@@ -203,7 +385,6 @@ struct KeyCap: View {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(Color(nsColor: .controlColor))
 
-                    // Top highlight simulating light on a physical key
                     VStack(spacing: 0) {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(Color.white.opacity(0.6))

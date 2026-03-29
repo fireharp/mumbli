@@ -14,13 +14,14 @@
 		7233BC2EAFADAE3FB527F4DC /* DictationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */; };
 		86B47EC991F3F963C464F3A2 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0321570D69C58E74FE5660C /* HistoryManager.swift */; };
 		88C694EC4EC4E7E38BFAE210 /* OverlayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */; };
-		8D5A8851C25080ED6C961D80 /* TranscriptionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F000A41A3A4439CBC76DE828 /* TranscriptionClient.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */; };
+		A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */; };
+		A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */; };
 		912315065A740F9ADAD6E3D9 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */; };
 		916AD1D2D93D72F3F2D4BEB3 /* MumbliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3800F7704BAEA44000E8C14D /* MumbliApp.swift */; };
 		9A1DF4B2E24DDE76DEEF96A3 /* MenuBarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6763F3B0C74642088E7ABAA7 /* MenuBarUITests.swift */; };
 		AE70B4298FFA673B4DBD7343 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */; };
 		B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A71BD33E19529E403D5933 /* SettingsView.swift */; };
-		BF95FB541445870BBE4BDAE9 /* TranscriptionClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3483E661FB117D0DCDF3073C /* TranscriptionClientProtocol.swift */; };
 		C062D335C5BE7B44240B39AA /* FirstLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */; };
 		CE04E35C3499838C53063884 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */; };
 		D13137787ABA5B09FFEC937A /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */; };
@@ -43,7 +44,6 @@
 		030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureManager.swift; sourceTree = "<group>"; };
 		25A71BD33E19529E403D5933 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A7807B0E85666A499BC1620 /* HistoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryUITests.swift; sourceTree = "<group>"; };
-		3483E661FB117D0DCDF3073C /* TranscriptionClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionClientProtocol.swift; sourceTree = "<group>"; };
 		3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MumbliAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3800F7704BAEA44000E8C14D /* MumbliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MumbliApp.swift; sourceTree = "<group>"; };
 		49D5D4882A5CE31FBB97A63F /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
@@ -59,7 +59,9 @@
 		E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationServiceProtocol.swift; sourceTree = "<group>"; };
 		E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchUITests.swift; sourceTree = "<group>"; };
-		F000A41A3A4439CBC76DE828 /* TranscriptionClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionClient.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsSTTService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
 		FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,7 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */,
-				3483E661FB117D0DCDF3073C /* TranscriptionClientProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -94,6 +95,9 @@
 		39071F15E27F20677C657AF9 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */,
+				A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */,
+				A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -104,7 +108,6 @@
 				030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */,
 				E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */,
 				703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */,
-				F000A41A3A4439CBC76DE828 /* TranscriptionClient.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -246,8 +249,9 @@
 				327FDCCE939515139E397501 /* OverlayController.swift in Sources */,
 				B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */,
 				DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */,
-				8D5A8851C25080ED6C961D80 /* TranscriptionClient.swift in Sources */,
-				BF95FB541445870BBE4BDAE9 /* TranscriptionClientProtocol.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */,
+				A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */,
+				A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
