@@ -151,7 +151,25 @@ final class AudioCaptureManager {
         let inputNode = engine.inputNode
         let nativeFormat = inputNode.outputFormat(forBus: 0)
 
-        NSLog("[AudioCaptureManager] Input node native format: %@", nativeFormat.description)
+        NSLog("[AudioCaptureManager] Input node native format: %@ (channels=%d, sampleRate=%.0f)", nativeFormat.description, nativeFormat.channelCount, nativeFormat.sampleRate)
+
+        // Guard against invalid format (0 channels or 0 sample rate)
+        guard nativeFormat.channelCount > 0, nativeFormat.sampleRate > 0 else {
+            NSLog("[AudioCaptureManager] ERROR: Invalid native format — falling back to nil format tap")
+            // Use nil format — AVAudioEngine will use the hardware's preferred format
+            inputNode.installTap(onBus: 0, bufferSize: 4096, format: nil) { [weak self] buffer, _ in
+                guard let self = self else { return }
+                self.updateAudioLevel(buffer: buffer)
+                // Skip conversion — deliver raw buffer data
+                let data = Data(bytes: buffer.floatChannelData![0], count: Int(buffer.frameLength) * MemoryLayout<Float>.size)
+                self.onAudioChunk?(data)
+            }
+            engine.prepare()
+            try engine.start()
+            audioEngine = engine
+            isCapturing = true
+            return
+        }
 
         guard let converter = AVAudioConverter(from: nativeFormat, to: outputFormat) else {
             throw AudioCaptureError.converterCreationFailed
