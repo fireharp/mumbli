@@ -25,7 +25,7 @@ final class ElevenLabsSTTService {
             for i in 0..<min(sampleCount, samples.count) {
                 let sample = samples[i]
                 if sample == 0 { zeroSamples += 1 }
-                let abs = sample < 0 ? -sample : sample
+                let abs = sample == Int16.min ? Int16.max : (sample < 0 ? -sample : sample)
                 if abs > maxAmplitude { maxAmplitude = abs }
                 sumSquares += Float(sample) * Float(sample)
             }
