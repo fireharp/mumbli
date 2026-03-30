@@ -18,15 +18,15 @@ final class ElevenLabsSTTService {
         // Analyze PCM content: check for silence / all zeros
         let sampleCount = audioData.count / 2  // 16-bit = 2 bytes per sample
         var zeroSamples = 0
-        var maxAmplitude: Int16 = 0
+        var maxAmplitude: Int = 0
         var sumSquares: Float = 0
         audioData.withUnsafeBytes { rawBuffer in
             let samples = rawBuffer.bindMemory(to: Int16.self)
             for i in 0..<min(sampleCount, samples.count) {
-                let sample = samples[i]
+                let sample = Int(samples[i])
                 if sample == 0 { zeroSamples += 1 }
-                let abs = sample == Int16.min ? Int16.max : (sample < 0 ? -sample : sample)
-                if abs > maxAmplitude { maxAmplitude = abs }
+                let magnitude = Swift.abs(sample)
+                if magnitude > maxAmplitude { maxAmplitude = magnitude }
                 sumSquares += Float(sample) * Float(sample)
             }
         }
