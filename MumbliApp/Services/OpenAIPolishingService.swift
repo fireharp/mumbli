@@ -60,7 +60,7 @@ enum PolishingModel: String, CaseIterable, Identifiable {
     }
 }
 
-/// Direct OpenAI API client for text polishing via GPT-4o-mini.
+/// Direct OpenAI API client for text polishing.
 final class OpenAIPolishingService {
     private let endpoint = "https://api.openai.com/v1/chat/completions"
     private let temperature = 0.3

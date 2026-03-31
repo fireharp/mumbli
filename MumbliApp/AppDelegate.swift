@@ -87,6 +87,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        if args.contains("--simulate-dictation-handsfree") {
+            overlayController.show(mode: .handsFree)
+        }
+
+        if args.contains("--simulate-dictation-processing") {
+            overlayController.show()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.overlayController.showProcessing()
+            }
+        }
+
         if args.contains("--test-fn-hold") {
             NSLog("[AppDelegate] --test-fn-hold: will simulate Fn hold in 3s")
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
