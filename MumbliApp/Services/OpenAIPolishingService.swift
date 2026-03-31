@@ -118,7 +118,7 @@ final class OpenAIPolishingService {
                 ],
             ],
             "temperature": temperature,
-            "max_tokens": maxTokens,
+            "max_completion_tokens": maxTokens,
         ]
 
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
