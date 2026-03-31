@@ -464,12 +464,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 log.log("[Dictation] Transcription result: \(transcription)")
 
-                // Step 2: Polish via OpenAI
-                log.log("[Dictation] Sending transcription to OpenAI for polishing")
-                let polished = try await polishingService.polish(text: transcription)
-                log.log("[Dictation] Polished result: \(polished)")
-
-                let finalText = polished.isEmpty ? transcription : polished
+                // Step 2: Polish via OpenAI (if enabled)
+                let polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
+                let finalText: String
+                if polishingEnabled {
+                    let model = OpenAIPolishingService.resolvedModel()
+                    let prompt = OpenAIPolishingService.resolvedPrompt()
+                    log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
+                    let polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                    log.log("[Dictation] Polished result: \(polished)")
+                    finalText = polished.isEmpty ? transcription : polished
+                } else {
+                    log.log("[Dictation] Polishing disabled, using raw transcription")
+                    finalText = transcription
+                }
                 log.log("[Dictation] Final text to inject: \(finalText)")
 
                 // Log state just before injection

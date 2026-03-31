@@ -16,6 +16,13 @@ struct SettingsView: View {
     @State private var elevenLabsIsEditing: Bool = false
     @State private var openAIIsEditing: Bool = false
 
+    // Polishing settings
+    @State private var polishingEnabled: Bool = true
+    @State private var polishingPreset: String = PolishingPreset.light.rawValue
+    @State private var customPolishingPrompt: String = ""
+    @State private var polishingModel: String = PolishingModel.gpt5_4_nano.rawValue
+    @State private var customPolishingModel: String = ""
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -118,6 +125,106 @@ struct SettingsView: View {
                         }
                     }
 
+                    // Text Polishing section
+                    SettingsSection(title: "Text Polishing", icon: "wand.and.stars") {
+                        VStack(alignment: .leading, spacing: 12) {
+                            // Enable/disable toggle
+                            Toggle("Enable text polishing", isOn: $polishingEnabled)
+                                .font(.system(size: 13))
+                                .onChange(of: polishingEnabled) { newValue in
+                                    UserDefaults.standard.set(newValue, forKey: "polishingEnabled")
+                                }
+
+                            if polishingEnabled {
+                                Divider().opacity(0.1)
+
+                                // Prompt preset picker
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Prompt preset")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Picker("Preset", selection: $polishingPreset) {
+                                        ForEach(PolishingPreset.allCases) { preset in
+                                            Text(preset.displayName).tag(preset.rawValue)
+                                        }
+                                    }
+                                    .labelsHidden()
+                                    .frame(maxWidth: .infinity)
+                                    .onChange(of: polishingPreset) { newValue in
+                                        UserDefaults.standard.set(newValue, forKey: "polishingPreset")
+                                    }
+                                }
+
+                                // Custom prompt editor
+                                if polishingPreset == PolishingPreset.custom.rawValue {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Custom prompt")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.secondary)
+                                        ZStack(alignment: .topLeading) {
+                                            if customPolishingPrompt.isEmpty {
+                                                Text("Enter your custom polishing prompt...")
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(.secondary.opacity(0.5))
+                                                    .padding(.horizontal, 5)
+                                                    .padding(.vertical, 8)
+                                            }
+                                            TextEditor(text: $customPolishingPrompt)
+                                                .font(.system(size: 12))
+                                                .frame(height: 80)
+                                                .scrollContentBackground(.hidden)
+                                                .onChange(of: customPolishingPrompt) { newValue in
+                                                    UserDefaults.standard.set(newValue, forKey: "customPolishingPrompt")
+                                                }
+                                        }
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .fill(Color(nsColor: .textBackgroundColor))
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+                                        )
+                                    }
+                                }
+
+                                Divider().opacity(0.1)
+
+                                // Model selector
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Model")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Picker("Model", selection: $polishingModel) {
+                                        ForEach(PolishingModel.allCases) { model in
+                                            Text(model.displayName).tag(model.rawValue)
+                                        }
+                                    }
+                                    .labelsHidden()
+                                    .frame(maxWidth: .infinity)
+                                    .onChange(of: polishingModel) { newValue in
+                                        UserDefaults.standard.set(newValue, forKey: "polishingModel")
+                                    }
+                                }
+
+                                // Custom model field
+                                if polishingModel == PolishingModel.other.rawValue {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Custom model ID")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.secondary)
+                                        TextField("e.g. gpt-4-turbo", text: $customPolishingModel)
+                                            .font(.system(size: 12, design: .monospaced))
+                                            .textFieldStyle(.roundedBorder)
+                                            .onChange(of: customPolishingModel) { newValue in
+                                                UserDefaults.standard.set(newValue, forKey: "customPolishingModel")
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     // Shortcuts section
                     SettingsSection(title: "Shortcuts", icon: "keyboard") {
                         VStack(spacing: 10) {
@@ -167,6 +274,7 @@ struct SettingsView: View {
             loadAudioDevices()
             selectedDeviceID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
             loadKeyStates()
+            loadPolishingSettings()
         }
     }
 
@@ -186,6 +294,14 @@ struct SettingsView: View {
         if selectedDeviceID.isEmpty, let defaultDevice = AVCaptureDevice.default(for: .audio) {
             selectedDeviceID = defaultDevice.uniqueID
         }
+    }
+
+    private func loadPolishingSettings() {
+        polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
+        polishingPreset = UserDefaults.standard.string(forKey: "polishingPreset") ?? PolishingPreset.light.rawValue
+        customPolishingPrompt = UserDefaults.standard.string(forKey: "customPolishingPrompt") ?? ""
+        polishingModel = UserDefaults.standard.string(forKey: "polishingModel") ?? PolishingModel.gpt5_4_nano.rawValue
+        customPolishingModel = UserDefaults.standard.string(forKey: "customPolishingModel") ?? ""
     }
 
     private func loadKeyStates() {

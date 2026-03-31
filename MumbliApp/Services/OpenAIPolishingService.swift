@@ -1,23 +1,94 @@
 import Foundation
 
+/// Polishing preset identifiers, stored in UserDefaults as raw values.
+enum PolishingPreset: String, CaseIterable, Identifiable {
+    case light = "light"
+    case formal = "formal"
+    case casual = "casual"
+    case verbatim = "verbatim"
+    case custom = "custom"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .light: return "Light cleanup"
+        case .formal: return "Formal"
+        case .casual: return "Casual"
+        case .verbatim: return "Verbatim"
+        case .custom: return "Custom"
+        }
+    }
+
+    var prompt: String {
+        switch self {
+        case .light:
+            return """
+                You are a text polishing assistant. Clean up this dictated text:
+                - Remove filler words (um, uh, like, you know)
+                - Fix grammar and punctuation
+                - If the speaker corrected themselves (e.g., "at 4, actually 3"), keep only the correction
+                - Keep the speaker's voice and intent — do NOT rewrite heavily
+                - Output only the cleaned text, nothing else
+                """
+        case .formal:
+            return "Rewrite this dictated text in a formal, professional tone. Fix grammar, remove filler words, use proper punctuation."
+        case .casual:
+            return "Clean up this dictated text. Keep it casual and conversational. Just fix obvious errors and filler words."
+        case .verbatim:
+            return "Only fix obvious typos and add punctuation. Keep everything else exactly as spoken."
+        case .custom:
+            return "" // Provided by UserDefaults
+        }
+    }
+}
+
+/// Model options for polishing, stored in UserDefaults as raw values.
+enum PolishingModel: String, CaseIterable, Identifiable {
+    case gpt5_4_nano = "gpt-5.4-nano"
+    case gpt5_4_mini = "gpt-5.4-mini"
+    case other = "other"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .gpt5_4_nano: return "GPT-5.4 Nano"
+        case .gpt5_4_mini: return "GPT-5.4 Mini"
+        case .other: return "Other"
+        }
+    }
+}
+
 /// Direct OpenAI API client for text polishing via GPT-4o-mini.
 final class OpenAIPolishingService {
     private let endpoint = "https://api.openai.com/v1/chat/completions"
-    private let model = "gpt-4o-mini"
     private let temperature = 0.3
     private let maxTokens = 2048
 
-    private let polishingPrompt = """
-        You are a text polishing assistant. Clean up this dictated text:
-        - Remove filler words (um, uh, like, you know)
-        - Fix grammar and punctuation
-        - If the speaker corrected themselves (e.g., "at 4, actually 3"), keep only the correction
-        - Keep the speaker's voice and intent — do NOT rewrite heavily
-        - Output only the cleaned text, nothing else
-        """
+    /// Resolve the model string from UserDefaults.
+    static func resolvedModel() -> String {
+        let raw = UserDefaults.standard.string(forKey: "polishingModel") ?? PolishingModel.gpt5_4_nano.rawValue
+        if raw == PolishingModel.other.rawValue {
+            let custom = UserDefaults.standard.string(forKey: "customPolishingModel") ?? ""
+            return custom.isEmpty ? PolishingModel.gpt5_4_nano.rawValue : custom
+        }
+        return raw
+    }
 
-    /// Polish raw transcription text using GPT-4o-mini.
-    func polish(text: String) async throws -> String {
+    /// Resolve the prompt string from UserDefaults.
+    static func resolvedPrompt() -> String {
+        let raw = UserDefaults.standard.string(forKey: "polishingPreset") ?? PolishingPreset.light.rawValue
+        let preset = PolishingPreset(rawValue: raw) ?? .light
+        if preset == .custom {
+            let custom = UserDefaults.standard.string(forKey: "customPolishingPrompt") ?? ""
+            return custom.isEmpty ? PolishingPreset.light.prompt : custom
+        }
+        return preset.prompt
+    }
+
+    /// Polish raw transcription text using the configured model and prompt.
+    func polish(text: String, model: String? = nil, prompt: String? = nil) async throws -> String {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return ""
         }
@@ -31,12 +102,15 @@ final class OpenAIPolishingService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
+        let effectiveModel = model ?? Self.resolvedModel()
+        let effectivePrompt = prompt ?? Self.resolvedPrompt()
+
         let body: [String: Any] = [
-            "model": model,
+            "model": effectiveModel,
             "messages": [
                 [
                     "role": "system",
-                    "content": polishingPrompt,
+                    "content": effectivePrompt,
                 ],
                 [
                     "role": "user",
