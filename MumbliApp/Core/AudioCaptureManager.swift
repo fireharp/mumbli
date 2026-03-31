@@ -41,10 +41,41 @@ final class AudioCaptureManager {
         }
     }
 
-    /// Force the system default input to the built-in microphone so that
-    /// Bluetooth headphones stay on A2DP (high-quality music profile)
-    /// instead of switching to HFP (hands-free) when we open the mic.
-    private func selectBuiltInMicrophone() {
+    /// Select the specific microphone chosen in Settings (by UID) to prevent
+    /// Bluetooth headphones from switching from A2DP to HFP profile.
+    /// Falls back to the first built-in microphone if no selection or device not found.
+    private func selectPreferredMicrophone() {
+        let allDeviceIDs = Self.getAllAudioInputDeviceIDs()
+        guard !allDeviceIDs.isEmpty else {
+            NSLog("[AudioCaptureManager] No audio input devices found")
+            return
+        }
+
+        // Save the current default input so we can restore it on stop
+        savePreviousDefaultInput()
+
+        // Try the user-selected device from Settings first
+        let selectedUID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
+        if !selectedUID.isEmpty, let deviceID = Self.findDeviceByUID(selectedUID, among: allDeviceIDs) {
+            if setDefaultInputDevice(deviceID) {
+                NSLog("[AudioCaptureManager] Set input to user-selected device UID=%@ (device %d)", selectedUID, deviceID)
+                return
+            }
+        }
+
+        // Fallback: find the first built-in microphone
+        if let builtInID = Self.findBuiltInMicrophone(among: allDeviceIDs) {
+            if setDefaultInputDevice(builtInID) {
+                NSLog("[AudioCaptureManager] Fallback: set input to built-in microphone (device %d)", builtInID)
+                return
+            }
+        }
+
+        NSLog("[AudioCaptureManager] No suitable microphone found — using system default")
+    }
+
+    /// Get all audio device IDs that have input streams.
+    private static func getAllAudioInputDeviceIDs() -> [AudioDeviceID] {
         var propertyAddress = AudioObjectPropertyAddress(
             mSelector: kAudioHardwarePropertyDevices,
             mScope: kAudioObjectPropertyScopeGlobal,
@@ -58,7 +89,7 @@ final class AudioCaptureManager {
             0, nil,
             &dataSize
         )
-        guard status == noErr else { return }
+        guard status == noErr else { return [] }
 
         let deviceCount = Int(dataSize) / MemoryLayout<AudioDeviceID>.size
         var deviceIDs = [AudioDeviceID](repeating: 0, count: deviceCount)
@@ -69,10 +100,10 @@ final class AudioCaptureManager {
             &dataSize,
             &deviceIDs
         )
-        guard status == noErr else { return }
+        guard status == noErr else { return [] }
 
-        for deviceID in deviceIDs {
-            // Check if this device has input streams
+        // Filter to only devices with input streams
+        return deviceIDs.filter { deviceID in
             var inputStreamAddress = AudioObjectPropertyAddress(
                 mSelector: kAudioDevicePropertyStreams,
                 mScope: kAudioDevicePropertyScopeInput,
@@ -80,9 +111,31 @@ final class AudioCaptureManager {
             )
             var streamSize: UInt32 = 0
             let streamStatus = AudioObjectGetPropertyDataSize(deviceID, &inputStreamAddress, 0, nil, &streamSize)
-            guard streamStatus == noErr, streamSize > 0 else { continue }
+            return streamStatus == noErr && streamSize > 0
+        }
+    }
 
-            // Get the transport type to identify built-in devices
+    /// Find a CoreAudio device ID by matching its UID string (from AVCaptureDevice.uniqueID).
+    private static func findDeviceByUID(_ uid: String, among deviceIDs: [AudioDeviceID]) -> AudioDeviceID? {
+        for deviceID in deviceIDs {
+            var address = AudioObjectPropertyAddress(
+                mSelector: kAudioDevicePropertyDeviceUID,
+                mScope: kAudioObjectPropertyScopeGlobal,
+                mElement: kAudioObjectPropertyElementMain
+            )
+            var uidCF: CFString? = nil
+            var size = UInt32(MemoryLayout<CFString?>.size)
+            let status = AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &uidCF)
+            if status == noErr, let deviceUID = uidCF as String?, deviceUID == uid {
+                return deviceID
+            }
+        }
+        return nil
+    }
+
+    /// Find the first built-in microphone by transport type.
+    private static func findBuiltInMicrophone(among deviceIDs: [AudioDeviceID]) -> AudioDeviceID? {
+        for deviceID in deviceIDs {
             var transportType: UInt32 = 0
             var transportSize = UInt32(MemoryLayout<UInt32>.size)
             var transportAddress = AudioObjectPropertyAddress(
@@ -90,45 +143,44 @@ final class AudioCaptureManager {
                 mScope: kAudioObjectPropertyScopeGlobal,
                 mElement: kAudioObjectPropertyElementMain
             )
-            let transportStatus = AudioObjectGetPropertyData(deviceID, &transportAddress, 0, nil, &transportSize, &transportType)
-            guard transportStatus == noErr else { continue }
-
-            if transportType == kAudioDeviceTransportTypeBuiltIn {
-                // Save current default input so we can restore it on stop
-                var currentDefault: AudioDeviceID = 0
-                var currentDefaultSize = UInt32(MemoryLayout<AudioDeviceID>.size)
-                var defaultReadAddress = AudioObjectPropertyAddress(
-                    mSelector: kAudioHardwarePropertyDefaultInputDevice,
-                    mScope: kAudioObjectPropertyScopeGlobal,
-                    mElement: kAudioObjectPropertyElementMain
-                )
-                if AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &defaultReadAddress, 0, nil, &currentDefaultSize, &currentDefault) == noErr {
-                    previousDefaultInputDevice = currentDefault
-                }
-
-                // Set this device as the default input
-                var mutableDeviceID = deviceID
-                var defaultInputAddress = AudioObjectPropertyAddress(
-                    mSelector: kAudioHardwarePropertyDefaultInputDevice,
-                    mScope: kAudioObjectPropertyScopeGlobal,
-                    mElement: kAudioObjectPropertyElementMain
-                )
-                let setStatus = AudioObjectSetPropertyData(
-                    AudioObjectID(kAudioObjectSystemObject),
-                    &defaultInputAddress,
-                    0, nil,
-                    UInt32(MemoryLayout<AudioDeviceID>.size),
-                    &mutableDeviceID
-                )
-                if setStatus == noErr {
-                    NSLog("[AudioCaptureManager] Forced input to built-in microphone (device %d)", deviceID)
-                } else {
-                    NSLog("[AudioCaptureManager] Failed to set built-in mic as default input: %d", setStatus)
-                }
-                return
+            let status = AudioObjectGetPropertyData(deviceID, &transportAddress, 0, nil, &transportSize, &transportType)
+            if status == noErr && transportType == kAudioDeviceTransportTypeBuiltIn {
+                return deviceID
             }
         }
-        NSLog("[AudioCaptureManager] No built-in microphone found")
+        return nil
+    }
+
+    /// Save the current system default input device for later restoration.
+    private func savePreviousDefaultInput() {
+        var currentDefault: AudioDeviceID = 0
+        var currentDefaultSize = UInt32(MemoryLayout<AudioDeviceID>.size)
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDefaultInputDevice,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        if AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, 0, nil, &currentDefaultSize, &currentDefault) == noErr {
+            previousDefaultInputDevice = currentDefault
+        }
+    }
+
+    /// Set a specific device as the system default input.
+    private func setDefaultInputDevice(_ deviceID: AudioDeviceID) -> Bool {
+        var mutableDeviceID = deviceID
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDefaultInputDevice,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        let status = AudioObjectSetPropertyData(
+            AudioObjectID(kAudioObjectSystemObject),
+            &address,
+            0, nil,
+            UInt32(MemoryLayout<AudioDeviceID>.size),
+            &mutableDeviceID
+        )
+        return status == noErr
     }
 
     func startCapture() throws {
@@ -141,8 +193,8 @@ final class AudioCaptureManager {
             audioEngine = nil
         }
 
-        // Force built-in mic to prevent Bluetooth A2DP → HFP switch
-        selectBuiltInMicrophone()
+        // Select the user's preferred mic to prevent Bluetooth A2DP → HFP switch
+        selectPreferredMicrophone()
 
         // Create engine after device switch so inputNode picks up the new device
         let engine = AVAudioEngine()

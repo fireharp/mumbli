@@ -33,7 +33,9 @@ final class OverlayController {
         if let acm = audioCaptureManager {
             audioLevelCancellable = acm.$audioLevel
                 .receive(on: RunLoop.main)
-                .assign(to: \.audioLevel, on: audioProvider)
+                .sink { [weak audioProvider] level in
+                    audioProvider?.pushLevel(level)
+                }
         }
 
         let hostingView = NSHostingView(rootView: OverlayRootView(audioLevelProvider: audioProvider, stateProvider: stateProvider, mode: mode))
@@ -153,19 +155,55 @@ final class OverlayController {
 
 // MARK: - Listening Indicator SwiftUI View
 
-/// A compact listening indicator with 5 waveform bars (Siri-style).
-/// In hands-free mode, uses orange bars, a static orange border, and a red REC dot.
+/// A compact listening indicator with 3 dots that act as a VU meter.
+/// Dots scale proportionally to audio level with left-to-right ripple stagger.
+/// In hands-free mode, uses orange dots, a static orange border, and a red REC dot.
 struct ListeningIndicatorView: View {
     @ObservedObject var audioLevelProvider: AudioLevelProvider
     let mode: ActivationMode
 
-    private let barCount = 5
-    /// Per-bar multipliers — center bar leads, edges lag.
-    private let barMultipliers: [CGFloat] = [0.6, 0.8, 1.0, 0.8, 0.6]
-    /// Stagger delay from center outward: center=0, adjacent=15ms, outer=30ms.
-    private let staggerDelays: [Double] = [0.030, 0.015, 0.0, 0.015, 0.030]
+    private let dotCount = 3
+    private let dotDiameter: CGFloat = 5
+    private let dotSpacing: CGFloat = 6
 
     private var isHandsFree: Bool { mode == .handsFree }
+
+    private var dotColor: Color {
+        isHandsFree ? .orange : .accentColor
+    }
+
+    /// Returns the scale for a dot at the given index.
+    /// During silence (level < 0.02): micro-jitter up to 1.02.
+    /// During speech: 1.0 + (level * 0.6), max 1.6.
+    /// Uses stagger buffer: dot 0 = current, dot 1 = 1 tick ago, dot 2 = 2 ticks ago.
+    private func dotScale(for index: Int) -> CGFloat {
+        let levels = audioLevelProvider.recentLevels
+        let level = CGFloat(levels[min(index, levels.count - 1)])
+
+        if level < 0.02 {
+            // In silence, all dots use the same micro-jitter (no stagger)
+            let currentLevel = CGFloat(levels[0])
+            if currentLevel < 0.02 {
+                return 1.0 + CGFloat.random(in: 0...0.02)
+            }
+        }
+        return 1.0 + (level * 0.6)
+    }
+
+    /// Returns the opacity for a dot at the given index.
+    /// Silence: 0.55 constant. Speech: 0.6 + (level * 0.4).
+    private func dotOpacity(for index: Int) -> Double {
+        let levels = audioLevelProvider.recentLevels
+        let level = Double(levels[min(index, levels.count - 1)])
+
+        if level < 0.02 {
+            let currentLevel = Double(levels[0])
+            if currentLevel < 0.02 {
+                return 0.55
+            }
+        }
+        return 0.6 + (level * 0.4)
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -178,20 +216,21 @@ struct ListeningIndicatorView: View {
                     .padding(.trailing, 6)
             }
 
-            HStack(spacing: 3) {
-                ForEach(0..<barCount, id: \.self) { index in
-                    WaveformBar(
-                        audioLevel: audioLevelProvider.audioLevel,
-                        multiplier: barMultipliers[index],
-                        staggerDelay: staggerDelays[index],
-                        restHeight: index == 2 ? 8 : 6,
-                        isHandsFree: isHandsFree
-                    )
+            HStack(spacing: dotSpacing) {
+                ForEach(0..<dotCount, id: \.self) { index in
+                    Circle()
+                        .fill(dotColor)
+                        .frame(width: dotDiameter, height: dotDiameter)
+                        .scaleEffect(dotScale(for: index))
+                        .opacity(dotOpacity(for: index))
+                        .animation(
+                            .spring(response: 0.10, dampingFraction: 0.75, blendDuration: 0.0),
+                            value: audioLevelProvider.recentLevels[min(index, audioLevelProvider.recentLevels.count - 1)]
+                        )
                 }
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(12)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
@@ -206,14 +245,7 @@ struct ListeningIndicatorView: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-        // Glow when audio level > 0.3
-        .shadow(
-            color: audioLevelProvider.audioLevel > 0.3
-                ? (isHandsFree ? Color.orange : Color.accentColor).opacity(Double(audioLevelProvider.audioLevel) * 0.25)
-                : .black.opacity(0.12),
-            radius: audioLevelProvider.audioLevel > 0.3 ? 8 : 12,
-            x: 0, y: audioLevelProvider.audioLevel > 0.3 ? 0 : 4
-        )
+        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
         .accessibilityIdentifier("mumbli-listening-indicator")
     }
 }
@@ -224,8 +256,20 @@ class OverlayStateProvider: ObservableObject {
 }
 
 /// Observable object that bridges audio level data to SwiftUI.
+/// Maintains a 3-entry circular buffer of recent audio levels for dot stagger.
 class AudioLevelProvider: ObservableObject {
     @Published var audioLevel: Float = 0.0
+
+    /// Circular buffer of the 3 most recent audio levels (newest at index 0).
+    @Published var recentLevels: [Float] = [0.0, 0.0, 0.0]
+
+    /// Call this on each audio tick to update the buffer.
+    func pushLevel(_ level: Float) {
+        audioLevel = level
+        recentLevels[2] = recentLevels[1]
+        recentLevels[1] = recentLevels[0]
+        recentLevels[0] = level
+    }
 }
 
 /// Root view that switches between listening and processing indicators.
@@ -245,31 +289,30 @@ struct OverlayRootView: View {
     }
 }
 
-/// A compact processing indicator that reuses the 5 waveform bars at rest height,
+/// A compact processing indicator that reuses the 3 dots at rest,
 /// cycling opacity left-to-right as a loading animation.
 /// Shown after Fn release while transcription + polishing API calls happen.
 struct ProcessingIndicatorView: View {
     let wasHandsFree: Bool
 
-    private let barCount = 5
-    private let barWidth: CGFloat = 3
-    private let restHeights: [CGFloat] = [6, 6, 8, 6, 6]
+    private let dotCount = 3
+    private let dotDiameter: CGFloat = 5
+    private let dotSpacing: CGFloat = 6
 
     @State private var highlightedIndex: Int = 0
     @State private var cycleTimer: Timer?
 
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<barCount, id: \.self) { index in
-                Capsule()
+        HStack(spacing: dotSpacing) {
+            ForEach(0..<dotCount, id: \.self) { index in
+                Circle()
                     .fill(index == highlightedIndex ? Color.accentColor : Color.secondary)
-                    .frame(width: barWidth, height: restHeights[index])
+                    .frame(width: dotDiameter, height: dotDiameter)
                     .opacity(index == highlightedIndex ? 1.0 : 0.35)
                     .animation(.easeInOut(duration: 0.15), value: highlightedIndex)
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .padding(12)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
@@ -285,7 +328,7 @@ struct ProcessingIndicatorView: View {
             highlightedIndex = 0
             cycleTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
                 DispatchQueue.main.async {
-                    highlightedIndex = (highlightedIndex + 1) % barCount
+                    highlightedIndex = (highlightedIndex + 1) % dotCount
                 }
             }
         }
@@ -293,44 +336,6 @@ struct ProcessingIndicatorView: View {
             cycleTimer?.invalidate()
             cycleTimer = nil
         }
-    }
-}
-
-/// A single waveform bar that reacts to microphone audio levels.
-/// Uses orange color in hands-free mode, accent color in hold mode.
-struct WaveformBar: View {
-    let audioLevel: Float
-    let multiplier: CGFloat
-    let staggerDelay: Double
-    let restHeight: CGFloat
-    var isHandsFree: Bool = false
-
-    private let barWidth: CGFloat = 3
-    private let maxHeight: CGFloat = 24
-
-    private var barHeight: CGFloat {
-        let level = CGFloat(min(max(CGFloat(audioLevel), 0), 1))
-        return restHeight + level * (maxHeight - restHeight) * multiplier
-    }
-
-    private var barOpacity: Double {
-        let level = Double(min(max(Double(audioLevel), 0), 1))
-        return 0.7 + level * 0.3
-    }
-
-    private var barColor: Color {
-        isHandsFree ? .orange : .accentColor
-    }
-
-    var body: some View {
-        Capsule()
-            .fill(barColor)
-            .frame(width: barWidth, height: barHeight)
-            .opacity(barOpacity)
-            .animation(
-                .spring(response: 0.10, dampingFraction: 0.75).delay(staggerDelay),
-                value: CGFloat(audioLevel)
-            )
     }
 }
 
