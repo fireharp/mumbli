@@ -155,54 +155,50 @@ final class OverlayController {
 
 // MARK: - Listening Indicator SwiftUI View
 
-/// A compact listening indicator with 3 dots that act as a VU meter.
-/// Dots scale proportionally to audio level with left-to-right ripple stagger.
-/// In hands-free mode, uses orange dots, a static orange border, and a red REC dot.
+/// A compact listening indicator with 5 waveform bars that act as a VU meter.
+/// Bar heights respond proportionally to audio level with center-outward stagger.
+/// In hands-free mode, uses orange bars, a static orange border, and a red REC dot.
 struct ListeningIndicatorView: View {
     @ObservedObject var audioLevelProvider: AudioLevelProvider
     let mode: ActivationMode
 
-    private let dotCount = 3
-    private let dotDiameter: CGFloat = 5
-    private let dotSpacing: CGFloat = 6
+    private let barCount = 5
+    private let barWidth: CGFloat = 3
+    private let barGap: CGFloat = 3
+    private let restHeightOuter: CGFloat = 6
+    private let restHeightCenter: CGFloat = 8
+    private let maxHeight: CGFloat = 24
+    /// Per-bar multipliers: center bar is tallest.
+    private let multipliers: [CGFloat] = [0.6, 0.8, 1.0, 0.8, 0.6]
+    /// Stagger delay order from center outward: center=0, inner=1, outer=2.
+    private let staggerOrder: [Int] = [2, 1, 0, 1, 2]
 
     private var isHandsFree: Bool { mode == .handsFree }
 
-    private var dotColor: Color {
+    private var barColor: Color {
         isHandsFree ? .orange : .accentColor
     }
 
-    /// Returns the scale for a dot at the given index.
-    /// During silence (level < 0.02): micro-jitter up to 1.02.
-    /// During speech: 1.0 + (level * 0.6), max 1.6.
-    /// Uses stagger buffer: dot 0 = current, dot 1 = 1 tick ago, dot 2 = 2 ticks ago.
-    private func dotScale(for index: Int) -> CGFloat {
-        let levels = audioLevelProvider.recentLevels
-        let level = CGFloat(levels[min(index, levels.count - 1)])
-
-        if level < 0.02 {
-            // In silence, all dots use the same micro-jitter (no stagger)
-            let currentLevel = CGFloat(levels[0])
-            if currentLevel < 0.02 {
-                return 1.0 + CGFloat.random(in: 0...0.02)
-            }
-        }
-        return 1.0 + (level * 0.6)
+    private func restHeight(for index: Int) -> CGFloat {
+        index == 2 ? restHeightCenter : restHeightOuter
     }
 
-    /// Returns the opacity for a dot at the given index.
-    /// Silence: 0.55 constant. Speech: 0.6 + (level * 0.4).
-    private func dotOpacity(for index: Int) -> Double {
-        let levels = audioLevelProvider.recentLevels
-        let level = Double(levels[min(index, levels.count - 1)])
+    /// Returns the animated height for a bar at the given index.
+    private func barHeight(for index: Int) -> CGFloat {
+        let level = CGFloat(audioLevelProvider.audioLevel)
+        let rest = restHeight(for: index)
+        return rest + (level * multipliers[index] * (maxHeight - rest))
+    }
 
-        if level < 0.02 {
-            let currentLevel = Double(levels[0])
-            if currentLevel < 0.02 {
-                return 0.55
-            }
-        }
-        return 0.6 + (level * 0.4)
+    /// Returns the opacity for a bar: 0.7 at rest, 1.0 at full level.
+    private func barOpacity(for index: Int) -> Double {
+        let level = Double(audioLevelProvider.audioLevel)
+        return 0.7 + (level * multipliers[index] * 0.3)
+    }
+
+    /// Stagger delay: 15ms per step from center outward.
+    private func staggerDelay(for index: Int) -> Double {
+        Double(staggerOrder[index]) * 0.015
     }
 
     var body: some View {
@@ -214,23 +210,26 @@ struct ListeningIndicatorView: View {
                     .frame(width: 4, height: 4)
                     .opacity(0.8)
                     .padding(.trailing, 6)
+                    .accessibilityIdentifier("mumbli-rec-dot")
             }
 
-            HStack(spacing: dotSpacing) {
-                ForEach(0..<dotCount, id: \.self) { index in
-                    Circle()
-                        .fill(dotColor)
-                        .frame(width: dotDiameter, height: dotDiameter)
-                        .scaleEffect(dotScale(for: index))
-                        .opacity(dotOpacity(for: index))
+            HStack(spacing: barGap) {
+                ForEach(0..<barCount, id: \.self) { index in
+                    Capsule()
+                        .fill(barColor)
+                        .frame(width: barWidth, height: barHeight(for: index))
+                        .opacity(barOpacity(for: index))
                         .animation(
-                            .spring(response: 0.10, dampingFraction: 0.75, blendDuration: 0.0),
-                            value: audioLevelProvider.recentLevels[min(index, audioLevelProvider.recentLevels.count - 1)]
+                            .spring(response: 0.10, dampingFraction: 0.75, blendDuration: 0.0)
+                                .delay(staggerDelay(for: index)),
+                            value: audioLevelProvider.audioLevel
                         )
+                        .accessibilityIdentifier("mumbli-vu-bar-\(index)")
                 }
             }
         }
-        .padding(12)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
@@ -245,7 +244,14 @@ struct ListeningIndicatorView: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
+        .shadow(
+            color: audioLevelProvider.audioLevel > 0.3
+                ? barColor.opacity(Double(audioLevelProvider.audioLevel) * 0.25)
+                : .black.opacity(0.12),
+            radius: audioLevelProvider.audioLevel > 0.3 ? 8 : 12,
+            x: 0,
+            y: audioLevelProvider.audioLevel > 0.3 ? 0 : 4
+        )
         .accessibilityIdentifier("mumbli-listening-indicator")
     }
 }
@@ -256,7 +262,7 @@ class OverlayStateProvider: ObservableObject {
 }
 
 /// Observable object that bridges audio level data to SwiftUI.
-/// Maintains a 3-entry circular buffer of recent audio levels for dot stagger.
+/// Maintains a circular buffer of recent audio levels for animation stagger.
 class AudioLevelProvider: ObservableObject {
     @Published var audioLevel: Float = 0.0
 
@@ -289,30 +295,32 @@ struct OverlayRootView: View {
     }
 }
 
-/// A compact processing indicator that reuses the 3 dots at rest,
-/// cycling opacity left-to-right as a loading animation.
+/// A compact processing indicator that reuses the 5 waveform bars at rest height,
+/// sweeping a highlight left-to-right as a loading animation.
 /// Shown after Fn release while transcription + polishing API calls happen.
 struct ProcessingIndicatorView: View {
     let wasHandsFree: Bool
 
-    private let dotCount = 3
-    private let dotDiameter: CGFloat = 5
-    private let dotSpacing: CGFloat = 6
+    private let barCount = 5
+    private let barWidth: CGFloat = 3
+    private let barGap: CGFloat = 3
+    private let restHeights: [CGFloat] = [6, 6, 8, 6, 6]
 
     @State private var highlightedIndex: Int = 0
     @State private var cycleTimer: Timer?
 
     var body: some View {
-        HStack(spacing: dotSpacing) {
-            ForEach(0..<dotCount, id: \.self) { index in
-                Circle()
+        HStack(spacing: barGap) {
+            ForEach(0..<barCount, id: \.self) { index in
+                Capsule()
                     .fill(index == highlightedIndex ? Color.accentColor : Color.secondary)
-                    .frame(width: dotDiameter, height: dotDiameter)
+                    .frame(width: barWidth, height: restHeights[index])
                     .opacity(index == highlightedIndex ? 1.0 : 0.35)
                     .animation(.easeInOut(duration: 0.15), value: highlightedIndex)
             }
         }
-        .padding(12)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
         .background {
             ZStack {
                 VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
@@ -328,7 +336,7 @@ struct ProcessingIndicatorView: View {
             highlightedIndex = 0
             cycleTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { _ in
                 DispatchQueue.main.async {
-                    highlightedIndex = (highlightedIndex + 1) % dotCount
+                    highlightedIndex = (highlightedIndex + 1) % barCount
                 }
             }
         }

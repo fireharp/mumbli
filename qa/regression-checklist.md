@@ -24,22 +24,30 @@ Run through this checklist before every release to catch regressions across all 
 
 ## 3. Overlay
 
-- [ ] **Overlay at center-bottom**: Overlay window appears at the horizontal center, near the bottom of the main screen.
-- [ ] **Overlay is always-on-top**: Overlay stays visible above other windows during dictation.
+- [ ] **Overlay at center-bottom**: Overlay window appears at the horizontal center, near the bottom of the main screen (UI Test: `testOverlayPositionedAtBottomOfScreen`).
+- [ ] **Overlay is always-on-top**: Overlay stays visible above other windows during dictation (UI Test: `testOverlayIsFloatingAboveOtherWindows`).
 - [ ] **Overlay is click-through**: Mouse clicks pass through the overlay to windows behind it.
-- [ ] **Overlay dismisses after finalization**: Overlay disappears once text injection (or clipboard copy) completes.
+- [ ] **Overlay dismisses after finalization**: Overlay disappears once text injection (or clipboard copy) completes (UI Test: `testOverlayDismissesAfterDictationEnds`).
 
-## 4. Dot Animation (Listening Indicator) — per `reports/dot-animation-spec.md`
+## 4. VU Waveform Bars (Listening Indicator) — per `reports/vu-prominent-spec.md`
 
-- [ ] **Dots react to actual mic input**: Speak while dictating; dots visibly respond to voice volume (scale 1.0-1.6x proportional to audioLevel).
-- [ ] **Dots are nearly still when silent**: audioLevel < 0.02: scale 1.0 with random micro-jitter up to 1.02 max. Opacity constant 0.55. **No breathing pulse, no easeInOut cycle, no opacity pulsing.**
-- [ ] **Spring animation**: response=0.10, dampingFraction=0.75, blendDuration=0. Single spring for ALL transitions (no animation system switching).
-- [ ] **No brightness/white shift**: Dots remain solid Color.accentColor at all volume levels. No `.brightness()` modifier.
-- [ ] **Speech opacity**: 0.6 + (audioLevel * 0.4), range 0.6-1.0.
-- [ ] **Dot stagger (ripple)**: Left-to-right ripple via circular buffer (dot 0 = current level, dot 1 = 1 tick ago, dot 2 = 2 ticks ago). No stagger during silence. *[FOLLOW-UP: not yet implemented, designer approved as non-blocking polish item]*
-- [ ] **Max scale 1.6x (not 1.8x)**: Dots must not visually merge at loud volumes.
+- [ ] **5 VU bars present**: Overlay contains exactly 5 waveform bars with accessibility IDs `mumbli-vu-bar-0` through `mumbli-vu-bar-4` (UI Test: `testOverlayHasFiveVUBars`).
+- [ ] **Bars react to audio level (center bar tallest)**: Speak while dictating; bars visibly respond to voice volume with per-bar multipliers [0.6, 0.8, 1.0, 0.8, 0.6].
+- [ ] **Bars are short when silent**: Resting height 6pt (outer bars) / 8pt (center bar). Opacity 0.7.
+- [ ] **Spring animation**: response=0.10, dampingFraction=0.75. 15ms stagger from center outward.
+- [ ] **Max height 24pt**: Bars reach max height at loud speech, center bar is tallest.
+- [ ] **Glow effect**: When audioLevel > 0.3, accent-colored shadow appears (radius 8pt).
+- [ ] **Hold mode: accent-colored bars**: In hold mode, all 5 bars use the system accent color. No REC dot visible (UI Test: `testHoldModeShowsListeningIndicator`).
+- [ ] **Hands-free mode: orange bars + red REC dot**: Bars turn orange, REC dot (`mumbli-rec-dot`) visible, orange border on pill (UI Test: `testHandsFreeModeShowsRecDot`).
+- [ ] **Hands-free mode: 5 bars still present**: All 5 VU bars exist in hands-free mode (UI Test: `testHandsFreeModeHasFiveVUBars`).
 
-## 5. Text Injection
+## 5. Processing State (UI Test: `testProcessingStateShowsIndicator`)
+
+- [ ] **Processing indicator appears**: After Fn release, overlay transitions to a 3-dot processing indicator (`mumbli-processing-indicator`).
+- [ ] **Processing dots cycle**: The 3 dots animate left-to-right at 0.3s interval.
+- [ ] **Processing dismisses after completion**: Overlay dismisses once transcription + polishing completes.
+
+## 6. Text Injection
 
 - [ ] **Text appears in TextEdit**: Dictate with cursor in TextEdit; polished text is inserted at cursor.
 - [ ] **Text appears in Notes**: Dictate with cursor in Notes; polished text is inserted at cursor.
@@ -50,38 +58,66 @@ Run through this checklist before every release to catch regressions across all 
 - [ ] **Filler words removed**: Spoken "um", "uh" are not present in the injected text.
 - [ ] **Punctuation and capitalization correct**: Polished text has proper grammar.
 
-## 6. Menu Bar
+## 7. Menu Bar
 
 - [ ] **Menu bar icon visible**: Mumbli icon appears in the macOS menu bar after launch.
 - [ ] **Click -> popover opens**: Clicking the menu bar icon shows the popover with History, Settings, Quit.
 - [ ] **No Dock icon**: App does not appear in the macOS Dock (LSUIElement behavior).
 
-## 7. History
+## 8. History
 
-- [ ] **Dictation entries saved**: After a dictation, a new entry appears in the history list.
+- [ ] **Dictation entries saved**: After a dictation, a new entry appears in the history list (UI Test: `testFullFlowShowsOverlayAndSavesToHistory`).
 - [ ] **Most recent first**: History entries are ordered newest at top.
 - [ ] **Click to copy**: Clicking a history entry copies its text to the clipboard.
 - [ ] **Copy feedback shown**: Visual feedback (checkmark or highlight) appears after clicking to copy.
 - [ ] **History persists across restart**: Quit and relaunch the app; history entries are still present.
 
-## 8. Settings / API Keys
+## 9. Settings (UI Tests: `SettingsUITests`)
 
 - [ ] **Settings view accessible**: Settings can be opened from the menu bar popover.
-- [ ] **API keys can be entered**: ElevenLabs and OpenAI API key fields accept input.
+- [ ] **All sections present**: Audio Input, API Keys, Text Polishing, Shortcuts, About (UI Test: `testSettingsHasAllSections`).
+- [ ] **Microphone picker works**: Audio Input section shows available microphones.
+
+### 9a. API Keys
+
+- [ ] **ElevenLabs field present**: ElevenLabs API key label and field visible (UI Test: `testAPIKeysHasElevenLabsAndOpenAIFields`).
+- [ ] **OpenAI field present**: OpenAI API key label and field visible.
+- [ ] **API keys can be entered**: ElevenLabs and OpenAI API key fields accept input (UI Test: `testAPIKeyFieldsExist`).
 - [ ] **API keys persist across restart**: Enter keys, quit, relaunch; keys are still saved (stored in Keychain).
 - [ ] **Invalid key shows error**: Enter a bad API key; an appropriate error is shown on next dictation attempt.
 
-## 9. First Launch / Permissions
+### 9b. Text Polishing
+
+- [ ] **Enable/disable toggle**: Toggle exists and controls polishing behavior (UI Test: `testTextPolishingHasToggle`).
+- [ ] **5 prompt presets**: Light cleanup, Formal, Casual, Verbatim, Custom (UI Test: `testTextPolishingHasFivePresets`).
+- [ ] **3 model options**: GPT-5.4 Nano, GPT-5.4 Mini, Other (UI Test: `testTextPolishingHasThreeModels`).
+- [ ] **Custom preset shows editor**: Selecting "Custom" reveals a text editor for custom prompt (UI Test: `testCustomPresetShowsTextEditor`).
+- [ ] **Other model shows field**: Selecting "Other" reveals a text field for custom model ID (UI Test: `testOtherModelShowsTextField`).
+
+### 9c. Shortcuts
+
+- [ ] **Hold shortcut displayed**: "Hold to dictate" row shows Fn key cap.
+- [ ] **Hands-free shortcut displayed**: "Hands-free mode" row shows Fn double-tap key caps.
+
+## 10. First Launch / Permissions
 
 - [ ] **Microphone permission requested**: On first launch (or after revoking), microphone permission dialog appears.
 - [ ] **Accessibility permission guidance**: User is guided to grant Accessibility access in System Settings.
 - [ ] **Works immediately after granting**: No app restart required after granting permissions.
 
-## 10. Error Handling
+## 11. Error Handling
 
 - [ ] **No crash on mic disconnect**: Unplug external mic mid-dictation; app shows error, does not crash.
 - [ ] **No crash on network loss**: Drop network mid-dictation; app handles gracefully with error message.
 - [ ] **No crash on no text field**: Dictate with no focused text field; falls back to clipboard.
+
+## 12. Dictation Flow Simulation (UI Tests: `DictationUITests`)
+
+- [ ] **--test-inject does not crash**: App remains stable when injecting text with no focused field (UI Test: `testInjectDoesNotCrash`).
+- [ ] **--test-full shows overlay**: Full flow simulation displays the overlay (UI Test: `testFullFlowShowsOverlayAndSavesToHistory`).
+- [ ] **--test-full saves to history**: Full flow simulation creates a history entry.
+- [ ] **--test-full overlay dismisses**: Overlay dismisses after injection completes (UI Test: `testFullFlowOverlayDismisses`).
+- [ ] **--test-fn-hold activates overlay**: Fn hold simulation shows and dismisses overlay (UI Test: `testFnHoldShowsAndDismissesOverlay`).
 
 ---
 

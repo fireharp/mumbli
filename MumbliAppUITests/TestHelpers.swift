@@ -31,9 +31,36 @@ enum AccessibilityID {
     static let startUsingButton = "mumbli-start-using"
     static let stepIndicator = "mumbli-step-indicator"
 
+    // Overlay — VU bars and mode indicators
+    static let vuBar0 = "mumbli-vu-bar-0"
+    static let vuBar1 = "mumbli-vu-bar-1"
+    static let vuBar2 = "mumbli-vu-bar-2"
+    static let vuBar3 = "mumbli-vu-bar-3"
+    static let vuBar4 = "mumbli-vu-bar-4"
+    static let recDot = "mumbli-rec-dot"
+    static let processingIndicator = "mumbli-processing-indicator"
+
     // Settings
     static let settingsWindow = "mumbli-settings-window"
     static let microphonePicker = "mumbli-mic-picker"
+
+    // Settings — sections (matched by section title text)
+    static let sectionAudioInput = "Audio Input"
+    static let sectionAPIKeys = "API Keys"
+    static let sectionTextPolishing = "Text Polishing"
+    static let sectionShortcuts = "Shortcuts"
+    static let sectionAbout = "About"
+
+    // Settings — API key fields
+    static let elevenLabsKeyField = "mumbli-elevenlabs-key"
+    static let openAIKeyField = "mumbli-openai-key"
+
+    // Settings — polishing controls
+    static let polishingToggle = "Enable text polishing"
+    static let polishingPresetPicker = "Preset"
+    static let polishingModelPicker = "Model"
+    static let customPromptEditor = "Enter your custom polishing prompt..."
+    static let customModelField = "e.g. gpt-4-turbo"
 }
 
 // MARK: - XCUIApplication Helpers
@@ -55,6 +82,33 @@ extension XCUIApplication {
         launchArguments.append("--reset-first-launch")
         launch()
         _ = windows.firstMatch.waitForExistence(timeout: 5)
+    }
+
+    /// Launch with simulated dictation in hold mode.
+    func launchWithDictation() {
+        launchArguments.append("--ui-testing")
+        launchArguments.append("--simulate-dictation")
+        launch()
+        _ = windows.firstMatch.waitForExistence(timeout: 5)
+        dismissFirstLaunchIfPresent()
+    }
+
+    /// Launch with simulated dictation in hands-free mode.
+    func launchWithHandsFreeDictation() {
+        launchArguments.append("--ui-testing")
+        launchArguments.append("--simulate-dictation-handsfree")
+        launch()
+        _ = windows.firstMatch.waitForExistence(timeout: 5)
+        dismissFirstLaunchIfPresent()
+    }
+
+    /// Launch with simulated dictation that transitions to processing state.
+    func launchWithProcessing() {
+        launchArguments.append("--ui-testing")
+        launchArguments.append("--simulate-dictation-processing")
+        launch()
+        _ = windows.firstMatch.waitForExistence(timeout: 5)
+        dismissFirstLaunchIfPresent()
     }
 
     /// Launch with pre-populated history entries for testing.
