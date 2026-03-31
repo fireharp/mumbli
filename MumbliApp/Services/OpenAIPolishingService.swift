@@ -36,7 +36,7 @@ enum PolishingPreset: String, CaseIterable, Identifiable {
         case .casual:
             return "Clean up this dictated text. Keep it casual and conversational. Just fix obvious errors and filler words."
         case .verbatim:
-            return "Only fix obvious typos and add punctuation. Keep everything else exactly as spoken. Output only the cleaned text, nothing else."
+            return "Clean up this dictated text minimally: remove filler words (um, uh, like, you know), fix typos, and add punctuation. Keep the content and wording exactly as spoken otherwise. Output only the cleaned text, nothing else."
         case .custom:
             return "" // Provided by UserDefaults
         }
