@@ -20,6 +20,7 @@ struct SettingsView: View {
     @State private var polishingEnabled: Bool = true
     @State private var polishingPreset: String = PolishingPreset.light.rawValue
     @State private var customPolishingPrompt: String = ""
+    @State private var activePromptText: String = ""
     @State private var polishingModel: String = PolishingModel.gpt5_4_nano.rawValue
     @State private var customPolishingModel: String = ""
 
@@ -155,36 +156,42 @@ struct SettingsView: View {
                                     }
                                 }
 
-                                // Custom prompt editor
-                                if polishingPreset == PolishingPreset.custom.rawValue {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Custom prompt")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.secondary)
-                                        ZStack(alignment: .topLeading) {
-                                            if customPolishingPrompt.isEmpty {
-                                                Text("Enter your custom polishing prompt...")
-                                                    .font(.system(size: 12))
-                                                    .foregroundColor(.secondary.opacity(0.5))
-                                                    .padding(.horizontal, 5)
-                                                    .padding(.vertical, 8)
-                                            }
-                                            TextEditor(text: $customPolishingPrompt)
+                                // Prompt editor — always visible, shows preset prompt or custom
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Prompt")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    ZStack(alignment: .topLeading) {
+                                        if activePromptText.isEmpty {
+                                            Text("Enter your polishing prompt...")
                                                 .font(.system(size: 12))
-                                                .frame(height: 80)
-                                                .scrollContentBackground(.hidden)
-                                                .onChange(of: customPolishingPrompt) { newValue in
-                                                    UserDefaults.standard.set(newValue, forKey: "customPolishingPrompt")
-                                                }
+                                                .foregroundColor(.secondary.opacity(0.5))
+                                                .padding(.horizontal, 5)
+                                                .padding(.vertical, 8)
                                         }
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .fill(Color(nsColor: .textBackgroundColor))
-                                        )
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
-                                        )
+                                        TextEditor(text: $activePromptText)
+                                            .font(.system(size: 12))
+                                            .frame(height: 80)
+                                            .scrollContentBackground(.hidden)
+                                            .onChange(of: activePromptText) { newValue in
+                                                // Save edits — if user modifies a preset, switch to custom
+                                                UserDefaults.standard.set(newValue, forKey: "customPolishingPrompt")
+                                            }
+                                    }
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color(nsColor: .textBackgroundColor))
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+                                    )
+                                }
+                                .onChange(of: polishingPreset) { newValue in
+                                    // When preset changes, load its prompt into the editor
+                                    if let preset = PolishingPreset(rawValue: newValue), preset != .custom {
+                                        activePromptText = preset.prompt
+                                        UserDefaults.standard.set(activePromptText, forKey: "customPolishingPrompt")
                                     }
                                 }
 
@@ -300,6 +307,12 @@ struct SettingsView: View {
         polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
         polishingPreset = UserDefaults.standard.string(forKey: "polishingPreset") ?? PolishingPreset.light.rawValue
         customPolishingPrompt = UserDefaults.standard.string(forKey: "customPolishingPrompt") ?? ""
+        // Load active prompt text — if custom prompt exists use it, otherwise load preset's prompt
+        if let preset = PolishingPreset(rawValue: polishingPreset), preset != .custom {
+            activePromptText = customPolishingPrompt.isEmpty ? preset.prompt : customPolishingPrompt
+        } else {
+            activePromptText = customPolishingPrompt
+        }
         polishingModel = UserDefaults.standard.string(forKey: "polishingModel") ?? PolishingModel.gpt5_4_nano.rawValue
         customPolishingModel = UserDefaults.standard.string(forKey: "customPolishingModel") ?? ""
     }
