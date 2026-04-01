@@ -15,6 +15,11 @@ struct SettingsView: View {
     @State private var openAISavedConfirm: Bool = false
     @State private var elevenLabsIsEditing: Bool = false
     @State private var openAIIsEditing: Bool = false
+    @State private var groqKey: String = ""
+    @State private var hasGroqKey: Bool = false
+    @State private var groqMasked: String = ""
+    @State private var groqSavedConfirm: Bool = false
+    @State private var groqIsEditing: Bool = false
 
     // Polishing settings
     @State private var polishingEnabled: Bool = true
@@ -23,6 +28,15 @@ struct SettingsView: View {
     @State private var activePromptText: String = ""
     @State private var polishingModel: String = PolishingModel.gpt5_4_nano.rawValue
     @State private var customPolishingModel: String = ""
+
+    // Debug settings
+    @State private var saveRecordings: Bool = false
+    @State private var dictationEngine: String = DictationEngine.standard.rawValue
+
+    // Quota display
+    @State private var elevenLabsQuota: String?
+    @State private var elevenLabsQuotaWarning: Bool = false
+    @State private var isCheckingQuota: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -96,6 +110,49 @@ struct SettingsView: View {
                             )
                             .accessibilityLabel("ElevenLabs API Key, \(hasElevenLabsKey ? "configured" : "not set")")
 
+                            // ElevenLabs quota display
+                            if hasElevenLabsKey {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    if isCheckingQuota {
+                                        HStack(spacing: 6) {
+                                            ProgressView()
+                                                .scaleEffect(0.5)
+                                                .frame(width: 12, height: 12)
+                                            Text("Checking...")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.secondary)
+                                            Spacer()
+                                        }
+                                    } else if let quota = elevenLabsQuota {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: elevenLabsQuotaWarning ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundColor(elevenLabsQuotaWarning ? Color(nsColor: .systemOrange) : Color(nsColor: .systemGreen))
+                                            Text(quota)
+                                                .font(.system(size: 11))
+                                                .foregroundColor(elevenLabsQuotaWarning ? Color(nsColor: .systemOrange) : .secondary)
+                                            Spacer()
+                                            Button(action: checkElevenLabsQuota) {
+                                                Text("Refresh")
+                                                    .font(.system(size: 11))
+                                            }
+                                            .buttonStyle(.plain)
+                                            .foregroundColor(.accentColor)
+                                        }
+                                    } else {
+                                        HStack {
+                                            Spacer()
+                                            Button(action: checkElevenLabsQuota) {
+                                                Text("Check quota")
+                                                    .font(.system(size: 11))
+                                            }
+                                            .buttonStyle(.plain)
+                                            .foregroundColor(.accentColor)
+                                        }
+                                    }
+                                }
+                            }
+
                             Divider().opacity(0.1)
 
                             // OpenAI row
@@ -112,6 +169,23 @@ struct SettingsView: View {
                                 onCommit: { commitOpenAIKey() }
                             )
                             .accessibilityLabel("OpenAI API Key, \(hasOpenAIKey ? "configured" : "not set")")
+
+                            Divider().opacity(0.1)
+
+                            // Groq row
+                            APIKeyRow(
+                                serviceName: "Groq",
+                                iconName: "bolt.fill",
+                                placeholder: "gsk_...paste key",
+                                keyText: $groqKey,
+                                isSet: hasGroqKey,
+                                maskedValue: groqMasked,
+                                isEditing: $groqIsEditing,
+                                savedConfirm: groqSavedConfirm,
+                                accessibilityID: "mumbli-groq-key",
+                                onCommit: { commitGroqKey() }
+                            )
+                            .accessibilityLabel("Groq API Key, \(hasGroqKey ? "configured" : "not set")")
 
                             if !hasElevenLabsKey || !hasOpenAIKey {
                                 HStack(spacing: 4) {
@@ -247,6 +321,50 @@ struct SettingsView: View {
                         }
                     }
 
+                    // Debug section
+                    SettingsSection(title: "Debug", icon: "ant.fill") {
+                        VStack(alignment: .leading, spacing: 12) {
+                            // Engine picker
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Engine")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                                Picker("Engine", selection: $dictationEngine) {
+                                    ForEach(DictationEngine.allCases) { engine in
+                                        Text(engine.displayName).tag(engine.rawValue)
+                                    }
+                                }
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity)
+                                .onChange(of: dictationEngine) { newValue in
+                                    UserDefaults.standard.set(newValue, forKey: "dictationEngine")
+                                    if let engine = DictationEngine(rawValue: newValue) {
+                                        polishingModel = engine.defaultPolishModel
+                                        UserDefaults.standard.set(engine.defaultPolishModel, forKey: "polishingModel")
+                                    }
+                                }
+                                Text(DictationEngine(rawValue: dictationEngine)?.engineDescription ?? "")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Divider().opacity(0.1)
+
+                            // Save recordings toggle
+                            VStack(alignment: .leading, spacing: 4) {
+                                Toggle("Save recordings", isOn: $saveRecordings)
+                                    .font(.system(size: 13))
+                                    .onChange(of: saveRecordings) { newValue in
+                                        UserDefaults.standard.set(newValue, forKey: "debugSaveRecordings")
+                                    }
+
+                                Text("Saves each dictation as a WAV file for benchmarking")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+
                     // About section
                     SettingsSection(title: "About", icon: "info.circle") {
                         HStack {
@@ -282,6 +400,9 @@ struct SettingsView: View {
             selectedDeviceID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") ?? ""
             loadKeyStates()
             loadPolishingSettings()
+            saveRecordings = UserDefaults.standard.bool(forKey: "debugSaveRecordings")
+            dictationEngine = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
+            if hasElevenLabsKey { checkElevenLabsQuota() }
         }
     }
 
@@ -326,6 +447,10 @@ struct SettingsView: View {
             hasOpenAIKey = true
             openAIMasked = Self.maskKey(key)
         }
+        if let key = KeychainManager.shared.get(key: KeychainManager.groqAPIKeyKey) {
+            hasGroqKey = true
+            groqMasked = Self.maskKey(key)
+        }
     }
 
     private func commitElevenLabsKey() {
@@ -363,6 +488,81 @@ struct SettingsView: View {
             openAIIsEditing = false
             openAISavedConfirm = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { openAISavedConfirm = false }
+        }
+    }
+
+    private func commitGroqKey() {
+        let trimmed = groqKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            if hasGroqKey {
+                KeychainManager.shared.delete(key: KeychainManager.groqAPIKeyKey)
+                hasGroqKey = false
+                groqMasked = ""
+            }
+        } else {
+            try? KeychainManager.shared.save(key: KeychainManager.groqAPIKeyKey, value: trimmed)
+            hasGroqKey = true
+            groqMasked = Self.maskKey(trimmed)
+            groqKey = ""
+            groqIsEditing = false
+            groqSavedConfirm = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { groqSavedConfirm = false }
+        }
+    }
+
+    private func checkElevenLabsQuota() {
+        guard let apiKey = KeychainManager.shared.get(key: KeychainManager.elevenLabsAPIKeyKey) else { return }
+        isCheckingQuota = true
+        elevenLabsQuota = nil
+
+        Task {
+            do {
+                var request = URLRequest(url: URL(string: "https://api.elevenlabs.io/v1/user/subscription")!)
+                request.setValue(apiKey, forHTTPHeaderField: "xi-api-key")
+                let (data, response) = try await URLSession.shared.data(for: request)
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200,
+                      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    await MainActor.run {
+                        elevenLabsQuota = "Unable to check — verify API key"
+                        elevenLabsQuotaWarning = true
+                        isCheckingQuota = false
+                    }
+                    return
+                }
+
+                let tier = (json["tier"] as? String ?? "unknown").capitalized
+                let status = json["status"] as? String ?? "unknown"
+                let resetUnix = json["next_character_count_reset_unix"] as? TimeInterval
+                let isActive = status == "active"
+
+                // Format reset date
+                var resetLabel = ""
+                if let resetUnix = resetUnix {
+                    let resetDate = Date(timeIntervalSince1970: resetUnix)
+                    let formatter = RelativeDateTimeFormatter()
+                    formatter.unitsStyle = .abbreviated
+                    resetLabel = " \u{00B7} resets \(formatter.localizedString(for: resetDate, relativeTo: Date()))"
+                }
+
+                let finalResetLabel = resetLabel
+                await MainActor.run {
+                    if isActive {
+                        elevenLabsQuota = "\(tier) plan \u{00B7} active\(finalResetLabel)"
+                        elevenLabsQuotaWarning = false
+                    } else {
+                        elevenLabsQuota = "\(tier) plan \u{00B7} \(status)"
+                        elevenLabsQuotaWarning = true
+                    }
+                    isCheckingQuota = false
+                }
+            } catch {
+                await MainActor.run {
+                    elevenLabsQuota = "Check failed"
+                    elevenLabsQuotaWarning = true
+                    isCheckingQuota = false
+                }
+            }
         }
     }
 

@@ -95,6 +95,112 @@ final class ElevenLabsSTTService {
         return text
     }
 
+    /// Transcribe by splitting audio into overlapping 10s chunks, sending in parallel, and stitching.
+    /// Falls back to single-batch for audio <= 12s.
+    func transcribeChunked(audioData: Data) async throws -> String {
+        let bytesPerSec = 16000 * 2
+        let audioDuration = Double(audioData.count) / Double(bytesPerSec)
+
+        guard audioDuration > 12.0 else {
+            NSLog("[ElevenLabsSTT] Chunked: audio %.1fs <= 12s, falling back to single batch", audioDuration)
+            return try await transcribe(audioData: audioData)
+        }
+
+        let chunks = splitPCMChunks(pcmData: audioData, chunkSec: 10.0, overlapSec: 2.0)
+        NSLog("[ElevenLabsSTT] Chunked: %d chunks from %.1fs audio", chunks.count, audioDuration)
+
+        let results = try await withThrowingTaskGroup(of: (Int, String).self) { group in
+            for (index, chunkPCM) in chunks.enumerated() {
+                group.addTask {
+                    let text = try await self.transcribe(audioData: chunkPCM)
+                    return (index, text)
+                }
+            }
+            var ordered = [(Int, String)]()
+            for try await result in group {
+                ordered.append(result)
+            }
+            return ordered.sorted { $0.0 < $1.0 }.map { $0.1 }
+        }
+
+        let stitched = stitchTranscripts(results)
+        NSLog("[ElevenLabsSTT] Chunked stitched result: '%@' (%d chars)", stitched, stitched.count)
+        return stitched
+    }
+
+    private func splitPCMChunks(pcmData: Data, chunkSec: Double, overlapSec: Double) -> [Data] {
+        let bytesPerSec = 16000 * 2
+        let chunkBytes = Int(chunkSec * Double(bytesPerSec))
+        let overlapBytes = Int(overlapSec * Double(bytesPerSec))
+        let stride = chunkBytes - overlapBytes
+
+        var chunks = [Data]()
+        var offset = 0
+        while offset < pcmData.count {
+            let end = min(offset + chunkBytes, pcmData.count)
+            let chunk = pcmData.subdata(in: offset..<end)
+            chunks.append(chunk)
+            offset += stride
+            if end >= pcmData.count { break }
+        }
+        return chunks
+    }
+
+    private func stitchTranscripts(_ texts: [String]) -> String {
+        guard !texts.isEmpty else { return "" }
+        var result = texts[0]
+
+        for i in 1..<texts.count {
+            let prevWords = result.split(separator: " ").map(String.init)
+            let nextWords = texts[i].split(separator: " ").map(String.init)
+
+            guard !prevWords.isEmpty, !nextWords.isEmpty else {
+                result = (result + " " + texts[i]).trimmingCharacters(in: .whitespaces)
+                continue
+            }
+
+            let searchWindow = min(15, prevWords.count, nextWords.count)
+            var bestLen = 0
+            var bestPrevStart = prevWords.count
+            var bestNextStart = 0
+
+            for pStart in max(0, prevWords.count - searchWindow)..<prevWords.count {
+                for nStart in 0..<searchWindow {
+                    var run = 0
+                    let punctuation = CharacterSet(charactersIn: ".,!?;:\"'")
+                    while pStart + run < prevWords.count
+                        && nStart + run < nextWords.count
+                        && prevWords[pStart + run]
+                            .lowercased()
+                            .trimmingCharacters(in: punctuation)
+                        == nextWords[nStart + run]
+                            .lowercased()
+                            .trimmingCharacters(in: punctuation) {
+                        run += 1
+                    }
+                    if run >= 2 && run > bestLen {
+                        bestLen = run
+                        bestPrevStart = pStart
+                        bestNextStart = nStart
+                    }
+                }
+            }
+
+            if bestLen >= 2 {
+                let kept = prevWords[0..<(bestPrevStart + bestLen)].joined(separator: " ")
+                let remaining = Array(nextWords[(bestNextStart + bestLen)...])
+                result = kept
+                if !remaining.isEmpty {
+                    result += " " + remaining.joined(separator: " ")
+                }
+            } else {
+                result = result + " " + texts[i]
+            }
+        }
+
+        return result.trimmingCharacters(in: .whitespaces)
+    }
+
     /// Create a WAV file header and prepend it to raw PCM data.
     private func addWAVHeader(pcmData: Data, sampleRate: Int, channels: Int, bitsPerSample: Int) -> Data {
         let byteRate = sampleRate * channels * (bitsPerSample / 8)

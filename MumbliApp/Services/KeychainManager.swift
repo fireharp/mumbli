@@ -8,6 +8,7 @@ final class KeychainManager {
 
     static let elevenLabsAPIKeyKey = "com.mumbli.elevenlabs-api-key"
     static let openAIAPIKeyKey = "com.mumbli.openai-api-key"
+    static let groqAPIKeyKey = "com.mumbli.groq-api-key"
 
     private let defaults = UserDefaults.standard
 

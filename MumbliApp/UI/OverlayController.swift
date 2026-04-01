@@ -117,6 +117,29 @@ final class OverlayController {
         overlayState?.isProcessing = true
     }
 
+    /// Switch the overlay to error state, then auto-dismiss after 2s.
+    func showError(message: String) {
+        NSLog("[Overlay] showError() called: %@", message)
+        audioLevelCancellable?.cancel()
+        audioLevelCancellable = nil
+        overlayState?.isProcessing = false
+        overlayState?.errorMessage = message
+
+        // Resize window wider for error message
+        if let window = window, let screen = NSScreen.main {
+            let newWidth: CGFloat = 220
+            let screenFrame = screen.visibleFrame
+            let x = screenFrame.midX - newWidth / 2
+            let currentY = window.frame.origin.y
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.2
+                window.animator().setFrame(NSRect(x: x, y: currentY, width: newWidth, height: 56), display: true)
+            }
+        }
+
+        dismiss(afterDelay: 2.5)
+    }
+
     /// Dismiss the overlay, optionally after a brief delay.
     func dismiss(afterDelay delay: TimeInterval = 0) {
         NSLog("[Overlay] dismiss(afterDelay: %.2f) called", delay)
@@ -256,9 +279,10 @@ struct ListeningIndicatorView: View {
     }
 }
 
-/// Observable object that tracks whether the overlay is in listening or processing state.
+/// Observable object that tracks whether the overlay is in listening, processing, or error state.
 class OverlayStateProvider: ObservableObject {
     @Published var isProcessing = false
+    @Published var errorMessage: String?
 }
 
 /// Observable object that bridges audio level data to SwiftUI.
@@ -278,14 +302,17 @@ class AudioLevelProvider: ObservableObject {
     }
 }
 
-/// Root view that switches between listening and processing indicators.
+/// Root view that switches between listening, processing, and error indicators.
 struct OverlayRootView: View {
     @ObservedObject var audioLevelProvider: AudioLevelProvider
     @ObservedObject var stateProvider: OverlayStateProvider
     let mode: ActivationMode
 
     var body: some View {
-        if stateProvider.isProcessing {
+        if let errorMessage = stateProvider.errorMessage {
+            ErrorIndicatorView(message: errorMessage)
+                .transition(.opacity)
+        } else if stateProvider.isProcessing {
             ProcessingIndicatorView(wasHandsFree: mode == .handsFree)
                 .transition(.opacity)
         } else {
@@ -344,6 +371,56 @@ struct ProcessingIndicatorView: View {
             cycleTimer?.invalidate()
             cycleTimer = nil
         }
+    }
+}
+
+/// Error indicator shown when STT or polishing fails.
+struct ErrorIndicatorView: View {
+    let message: String
+
+    /// Extract a short user-friendly label from the full error.
+    private var shortLabel: String {
+        if message.contains("quota_exceeded") || message.contains("quota") {
+            return "Quota exceeded"
+        } else if message.contains("401") || message.contains("Unauthorized") {
+            return "Auth error"
+        } else if message.contains("API key") {
+            return "Key missing"
+        } else if message.contains("timeout") || message.contains("Timeout") {
+            return "Timeout"
+        } else {
+            return "STT failed"
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.red)
+
+            Text(shortLabel)
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundColor(.primary.opacity(0.85))
+                .lineLimit(1)
+
+            Text("(saved)")
+                .font(.system(size: 10, weight: .regular, design: .rounded))
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background {
+            ZStack {
+                VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
+
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(Color.red.opacity(0.3), lineWidth: 1.5)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .shadow(color: .red.opacity(0.15), radius: 8, x: 0, y: 0)
+        .accessibilityIdentifier("mumbli-error-indicator")
     }
 }
 

@@ -7,28 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17190E4D7CAA214DCA62BBB0 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0103E518C73A110D322A1EEE /* RecordingManager.swift */; };
 		1AF3B3968904D6D8101DCCF2 /* AudioCaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */; };
 		327FDCCE939515139E397501 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D5D4882A5CE31FBB97A63F /* OverlayController.swift */; };
 		4B95C30CA7F8B5186CE33EC2 /* MumbliAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F32245244E251BF662F7382 /* MumbliAppUITests.swift */; };
 		59541765A3E0EB4CD5BC2D42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */; };
+		5AE3E2D931C6B27F2352A198 /* GroqWhisperSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB957C6C247D633A1AE09EE2 /* GroqWhisperSTTService.swift */; };
 		7233BC2EAFADAE3FB527F4DC /* DictationServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */; };
 		86B47EC991F3F963C464F3A2 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0321570D69C58E74FE5660C /* HistoryManager.swift */; };
 		88C694EC4EC4E7E38BFAE210 /* OverlayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */; };
-		A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */; };
-		A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */; };
-		A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */; };
 		912315065A740F9ADAD6E3D9 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */; };
 		916AD1D2D93D72F3F2D4BEB3 /* MumbliApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3800F7704BAEA44000E8C14D /* MumbliApp.swift */; };
 		9A1DF4B2E24DDE76DEEF96A3 /* MenuBarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6763F3B0C74642088E7ABAA7 /* MenuBarUITests.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */; };
+		A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */; };
+		A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */; };
 		AE70B4298FFA673B4DBD7343 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */; };
 		B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A71BD33E19529E403D5933 /* SettingsView.swift */; };
 		C062D335C5BE7B44240B39AA /* FirstLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */; };
 		CE04E35C3499838C53063884 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */; };
 		D13137787ABA5B09FFEC937A /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */; };
+		D179DC76EB336B8BC8CDE093 /* GroqPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD987407B705992145BFA7C1 /* GroqPolishingService.swift */; };
 		DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */; };
 		DF6AFCB1273D1D9445327479 /* FirstLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */; };
-		F8D24EC935CEA740CDD878E4 /* HistoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7807B0E85666A499BC1620 /* HistoryUITests.swift */; };
+		DFC0EF32100851D672BBED1B /* PipelineTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE422CD13B2C0FF83EDA8BA /* PipelineTimer.swift */; };
 		F1A2B3C4D5E6F708192A3B4C /* FileLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */; };
+		F8D24EC935CEA740CDD878E4 /* HistoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7807B0E85666A499BC1620 /* HistoryUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0103E518C73A110D322A1EEE /* RecordingManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
 		030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCaptureManager.swift; sourceTree = "<group>"; };
 		25A71BD33E19529E403D5933 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A7807B0E85666A499BC1620 /* HistoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryUITests.swift; sourceTree = "<group>"; };
@@ -55,14 +60,17 @@
 		6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
 		703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
 		86A0BBC819CA64603B2F0B3F /* FirstLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsSTTService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
+		AB957C6C247D633A1AE09EE2 /* GroqWhisperSTTService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GroqWhisperSTTService.swift; sourceTree = "<group>"; };
+		AD987407B705992145BFA7C1 /* GroqPolishingService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GroqPolishingService.swift; sourceTree = "<group>"; };
+		ADE422CD13B2C0FF83EDA8BA /* PipelineTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PipelineTimer.swift; sourceTree = "<group>"; };
 		B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		C0321570D69C58E74FE5660C /* HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
 		E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationServiceProtocol.swift; sourceTree = "<group>"; };
 		E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchUITests.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsSTTService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
 		F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLogger.swift; sourceTree = "<group>"; };
 		FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -100,6 +108,8 @@
 				A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */,
 				A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */,
 				A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */,
+				AB957C6C247D633A1AE09EE2 /* GroqWhisperSTTService.swift */,
+				AD987407B705992145BFA7C1 /* GroqPolishingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -111,6 +121,8 @@
 				F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */,
 				E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */,
 				703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */,
+				ADE422CD13B2C0FF83EDA8BA /* PipelineTimer.swift */,
+				0103E518C73A110D322A1EEE /* RecordingManager.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -178,8 +190,6 @@
 				14121005CDD3B5FA27B82453 /* PBXTargetDependency */,
 			);
 			name = MumbliAppUITests;
-			packageProductDependencies = (
-			);
 			productName = MumbliAppUITests;
 			productReference = 3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -195,8 +205,6 @@
 			dependencies = (
 			);
 			name = MumbliApp;
-			packageProductDependencies = (
-			);
 			productName = MumbliApp;
 			productReference = 6395DFBDEC44CC6120B7D654 /* MumbliApp.app */;
 			productType = "com.apple.product-type.application";
@@ -256,6 +264,10 @@
 				A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */,
 				A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */,
 				F1A2B3C4D5E6F708192A3B4C /* FileLogger.swift in Sources */,
+				DFC0EF32100851D672BBED1B /* PipelineTimer.swift in Sources */,
+				17190E4D7CAA214DCA62BBB0 /* RecordingManager.swift in Sources */,
+				5AE3E2D931C6B27F2352A198 /* GroqWhisperSTTService.swift in Sources */,
+				D179DC76EB336B8BC8CDE093 /* GroqPolishingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

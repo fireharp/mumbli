@@ -1,0 +1,2517 @@
+{
+  "timestamp": "2026-04-01_135956",
+  "stt": [
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 250.3,
+      "runs": 2,
+      "text": " Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 952.9,
+      "runs": 2,
+      "text": "Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3383.2,
+      "runs": 2,
+      "text": "Okay but again I want you to do that so basically I need to check the API keys we are fine with whatever we have right now we have 11 labs and open AI we just use the same and we can take it from mumbly configuration that you already have so and just test that our benchmarking works that we have clear reporting that you can read it that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 552.8,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 324.2,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2555.8,
+      "runs": 2,
+      "text": "Okay, but again, I want you to do that, so basically I need you to check the API keys, we are fine with whatever we have. right now we have 11 labs and open AI we just use the same and we can take it from memory configuration that you can read it, that you can present it. to me and that it's all working from end to end blah blah blah blah blah blah so it's not not the work is not done yet man",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 514.3,
+      "runs": 2,
+      "text": " Yeah, I also would expect you to have a loop of like UX agent and developer slash QA people to have a few loops of rework on UX send, like is it UX good, then the agent sends to feedback to developer, developer fixes it, then UX specialist checks it again. so should be kind of a few loops in between them then there should be extra loop just to see that there is no extra things that we could be seeing and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2853.5,
+      "runs": 2,
+      "text": "Yeah, I also would expect you to have a loop of, like, UX agent and developer slash QA people to have a few loops of rework on UX end. Like, is it UX good? Then the agent sends to feedback to developer, developer fixes it, then UX specialist checks it again. So should be kind of a few loops in between them. Then there should be extra loop just to see that there is no extra things that we could be seeing and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 7493.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 384.9,
+      "runs": 2,
+      "text": "UX send, like is it UX good? Then the agent sends to feedback to developer, developer fixes it, then UX",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2037.5,
+      "runs": 2,
+      "text": "Yeah, I also would expect you to have a few loops of rework on UX and like is it UX good then? The agent sends to feedback to developer developer fixes it and then UX specialist checks it again. So it should be kind of a few loops in between them. Then there should be extra loop just to see. that there is no extra things that we could be seen and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 679.5,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2494.0,
+      "runs": 2,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance we could think about having a similar for example when you're doing a long dictation you could actually send it in chunks and and have it pre transcribed for you so that it's faster I don't know how to then you glue those chunks but potentially it has a it has a performance benefit so I would I would do a few researchers agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 532.4,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 374.6,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2617.8,
+      "runs": 2,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance, we could think about having a similar, for example, when you're doing a long dictation, you could actually send it in chunks, and and have it pre-transcribed for you so that it's faster. I don't know how to then you... than you glue those chunks but potentially it has it has a performance benefit so I would I would do a few researchers Agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 415.4,
+      "runs": 2,
+      "text": " Okay, what I thought we should be also configuring observability and monitoring, so I need us to see how we how best we find all the requests done to that service, all the potential issues, all the errors logged and if we find how we alert them.",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1642.5,
+      "runs": 2,
+      "text": "Okay what I thought we should be also configuring observability and monitoring so I need us to see how best we find all the requests done to that service, all the potential issues, all the errors locked and if we find how we alert them",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 336.7,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 146.3,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1405.2,
+      "runs": 2,
+      "text": "okay what I thought we should be also configuring observability and monitoring so I need us to see how we how best we find how we alert them",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 400.0,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3017.1,
+      "runs": 2,
+      "text": "I don't like that implementer is you, you're just managing all those and I'm not even five, I just see like basically you should be reviewing the final result and I just check whatever you pass as a final result, it's not like... I'm not even consider it here, it should be ready, so if it's not ready you're in charge and I will kill you.",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1251.9,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 201.8,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1362.8,
+      "runs": 2,
+      "text": "I don't like that implementer is you, you're just managing all those and I'm not even five. I just see like, basically you should be reviewing the final result. And I just check whatever you pass. as a final result is not like... I'm not even consider it here, it should be ready, so... if it's not ready you're in charge and i will kill you",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 682.3,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 4729.9,
+      "runs": 2,
+      "text": "okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the winner the current winner which would be I don't like regex at all so it should be 11 laps chunk and GPT 5 for me but why mini why not nano I'm not sure Nana should be good enough as an option for an engine so that I can switch it in debug mode at least I don't know how we call it engine I don't mind I mean it just should be in a separate option and it clearly clearly should be baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you may launch it you check it's working and after you checked all then that's good",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 483.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 343.0,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2594.5,
+      "runs": 2,
+      "text": "okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the winner the current winner which would be Uh... I don't like Ragex at all, so it should be Lemon Lops Chunk and GPT-54 Mini. But why Mini? Why not? nano? I'm not sure nano should be good enough As an option for an engine so that I can switch it in debug mode, at least. I don't know how we call it. engine I don't mind I mean it just should be in a separate option and it clearly should be baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you launch it, you check it's working, and after you checked all, then that's good.",
+      "audio_duration_s": 79.0
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 619.4,
+      "runs": 2,
+      "text": " Okay I also want the winner to... I remember that we pushed it to tamds on dev server so we may try to push it again and also I want to push it to our CRM modularize modules it's pipelines driven development for 3x work tree and point me to that because I will be talking to developer who is working on that work tree and I want them to to incorporate it into their work. So I need you to do those things carefully, please.",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2639.6,
+      "runs": 2,
+      "text": "Okay, I also want the winner to... I remember that we pushed it to TomDs on dev server, so we may try to push it again. And also I want to push it to our CRM modularize modules. It's a pipelines driven development for 3x work tree. And point me to that because I will be talking to developer who is working on that work tree and I want them to incorporate it into their work. So I need you to do those things carefully please.",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 481.6,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 255.2,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172403.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2193.8,
+      "runs": 2,
+      "text": "okay I also want the winner to... I remember that we pushed it to TomDS on dev server, so we may try to push it again. And also I want to push it to our CRM modularize modules. it's pipelines driven development for 3x work tree and point me to that because I will be talking to developer who is working on that work tree. and I want them to incorporate it into their work. So I need you to do those things carefully, please.",
+      "audio_duration_s": 52.9
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 553.7,
+      "runs": 2,
+      "text": " Okay, since I don't see highlights for today I think it should be one highlight that I want to emphasize that Sam development team started to knock off one task per hour and I'm as a human, Alex Y as a human tries to tame it now and it's pretty exhaustive and it should this highlight should have some emojis so it's visible, maybe some bold, some formatting, some caps lock, so it should be pretty little bit funky, you know.",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2423.3,
+      "runs": 2,
+      "text": "Okay, since I don't see highlights for today, I think it should be a one highlight that I want to emphasize that Sam development team started to keep knock off one task per hour and I'm as a human, Alex Y as a human tries to tame it now And it's pretty exhaustive and it should this highlight should have some emojis, so it's visible maybe some bold Some formatting some Caps-lock, so it should be pretty Little bit funky, you know",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1303.2,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 315.6,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_172902.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2165.5,
+      "runs": 2,
+      "text": "Okay since I don't see highlights for today I think it should be a one highlight that I want to emphasize that Sam developed my Sam development team started to knock off one task per hour and I'm, as a human, Alex why as a human tries to tame it now and it's pretty exhaustive and it should this Highlight should have some emojis so it's visible maybe some bold some for Some formatting, some caps lock, so it should be pretty little bit funky. you know.",
+      "audio_duration_s": 44.4
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 185.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 0.1
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 200.6,
+      "runs": 2,
+      "text": " Thank you.",
+      "audio_duration_s": 0.1
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '400 Bad Request' for url 'https://api.openai.com/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400]",
+      "audio_duration_s": 0.1
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 0.1
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 941.3,
+      "runs": 2,
+      "text": "please let's check whatever we have on the current branch and update and commit and push it to github yes please",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 395.2,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 102.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1144.5,
+      "runs": 2,
+      "text": "please let's check whatever we have on the current branch and update and commit and push it to github Yes, please.",
+      "audio_duration_s": 12.9
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 572.3,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2573.2,
+      "runs": 2,
+      "text": "Okay, here you can check a new ICP engine and we should be adding it to the first screen of ICP research. It should be options like first option is whatever we have now and you may reference it as I don't know how you where did we get it from. You may check the code and if you find the reference like who developed it is probably Vladimir Bayandin so you may check like the version blah blah from Vladimir and this code is Alex Y version 4 and whichever is it like experiment blah blah from Autoresearch",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 656.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 189.6,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1890.7,
+      "runs": 2,
+      "text": "okay here you can check a new ICP engine and we should be adding it to the first screen of ICP research. It should be options like first option. is whatever we have now and you may track you may reference it as I don't know how you where did we get it from, you may check the code and if you find the reference like who developed it is probably... Vladimir Bayandin so you may check like the version blah blah from Vladimir and this code is Alex Y version four and whichever is it like experiment, blah, blah from Autoresearch.",
+      "audio_duration_s": 51.1
+    },
+    {
+      "file": "2026-03-31_173344.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 11.9
+    },
+    {
+      "file": "2026-03-31_173344.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 264.6,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 11.9
+    },
+    {
+      "file": "2026-03-31_173344.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2095.4,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5, 1, 2, 3, 4, 5, my cleanup is the dictated text, minimal area, move, filter, words, um, like, UFX, typos, and add punctuation.",
+      "audio_duration_s": 11.9
+    },
+    {
+      "file": "2026-03-31_173344.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 11.9
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 500.5,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1685.3,
+      "runs": 2,
+      "text": "Okay, should we add something in PS, Postcrypton? If you see some weirdo tags, these are the markers for us to be able to debug Sam's messages. Basically we are encrypting that the start and the end of message is existing and if automation finds that something is not wrapped up or it's wrapped up in the wrong place, it will be reporting and we will be escalating and researching and fixing it.",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 524.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 237.3,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2550.8,
+      "runs": 2,
+      "text": "Okay, should we add something in PS, Postcrypton? If you see some weirdo tags, these are the markers for us. to be able to debug Sam's messages. Basically, we are encrypting that the start and the end of message is existing and if automation finds that something is not wrapped up or it's wrapped up in the wrong place it will be reporting and we will be escalating and researching and fixing it.",
+      "audio_duration_s": 37.6
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 410.9,
+      "runs": 2,
+      "text": " For some reason I don't see any new records, although I know for sure that I've done a few a bunch during the last 22 minutes. It's like 100%.",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1496.5,
+      "runs": 2,
+      "text": "for some reason I don't see any new records although I know for sure that that I've done a few a bunch during last 22 minutes it's like 100%",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 333.3,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 99.2,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1394.9,
+      "runs": 2,
+      "text": "For some reason, I don't see any new records, although I know for sure that I've done a few, a bunch, during last 22 minutes it's like 100%",
+      "audio_duration_s": 15.4
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 297.2,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1159.9,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. For some reason I don't see any new records, although I know for sure that I've done a few punches during the last 22 minutes. Is that like 100%?",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 257.3,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 97.4,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_175952.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1530.0,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. For some reason I don't see any new records, although I know for sure that I've done a few a bunch during the last 22 minutes. Is that like 100%?",
+      "audio_duration_s": 15.2
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 375.9,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1333.2,
+      "runs": 2,
+      "text": "I'm not sure I'm just checking it now so I thought I think I remember that longer record for like 40 seconds was should be processing for around 1-2 seconds right and and the previous result was like 4 seconds so I would expect us to have it 1 second right 1 2 3 1 2 seconds",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 442.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 113.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1171.9,
+      "runs": 2,
+      "text": "I'm not sure I'm just checking it now so I thought I think I remember that longer record for like 40 seconds was should be processing for around 1-2 seconds right and and the previous result was like four seconds. So I would expect us to have it one second, right? One, two, three, one, two seconds.",
+      "audio_duration_s": 24.9
+    },
+    {
+      "file": "2026-03-31_202453.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 3.5
+    },
+    {
+      "file": "2026-03-31_202453.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 220.9,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 3.5
+    },
+    {
+      "file": "2026-03-31_202453.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1650.1,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5.",
+      "audio_duration_s": 3.5
+    },
+    {
+      "file": "2026-03-31_202453.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 3.5
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 845.6,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3558.9,
+      "runs": 2,
+      "text": "How do we see what happens on the background? Can you have a logs on which method is chosen? I mean do we have, I guess the question would be, do we have observability on backend side on what was chosen? For each segment research how do we run it and what is the next step? And maybe as you run, as we run the multi-stage, if it's multi-stage, I don't know, the ICP we could actually show it on the loader because right now it's just hanging and then it just goes with the results. So if we have multi-stage approach and we may show that, we may actually show it on the frontend maybe. So when we do so, we probably want to also push it to the server, to railway to see how it goes, how it works.",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 468.4,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 350.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_202620.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2607.4,
+      "runs": 2,
+      "text": "How do we see what happens in the background? Can you have logs on which method is chosen? I mean... do we have, I guess the question would be, do we have observability on backend side on what was chosen? for each segment research, how do we run the multi-stage if it's multi-stage I don't know the ICP we could actually show it on the loader because right now it's just hanging and then it just goes with the results so if we have multi-stage approach and we may show that we may actually show it on the frontend maybe. So when we do so we probably want to also push it to the server to railway to see how it goes how it works",
+      "audio_duration_s": 63.6
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 702.6,
+      "runs": 2,
+      "text": " So we need to implement this endpoint. It goes from... it connects to our PDF generation service and then what does it do? So after it call... so from the front end from it we should be creating a set an extra PDF endpoint for our front end and calling calling to that PDF endpoint on how we shouldn't actually we just need to call it when we have all the data and that we should pass over to Braze with downloaded PDF. I'm not sure if we store it anywhere here or if we can link. If we can link would be the best so if we can produce a link that would be downloading the generated PDF.",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3804.7,
+      "runs": 2,
+      "text": "so we need to implement this endpoint it goes from it connects to our PDF generation service and then what it does what does it do so after it call so from the front end from it we should be creating a set an extra PDF endpoint for our front end and calling calling to that PDF endpoint on oh we shouldn't actually we just need to call it when we have all the data and that we should pass over to brace with downloaded PDF I'm not sure if we store it anywhere here or if we can link if we can link would be the best so if we can produce a link that would be downloading the generated PDF",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1050.4,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 370.0,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204811.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2068.9,
+      "runs": 2,
+      "text": "So we need to implement this endpoint. It goes from... it connects to our PDF generation service and And Then what it does what does it do so after it call uh, so from the front end from, uh, it, it, uh, we should be, um, uh, creating an extra PDF endpoint on Oh We shouldn't actually we just need to call it when we have all the data and that we should pass over to praise with downloaded PDF I'm not sure if we store it anywhere here or if we can link if we can link would be the best so if we can produce a link that would be downloading the generated pdf",
+      "audio_duration_s": 80.2
+    },
+    {
+      "file": "2026-03-31_204828.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 2.7
+    },
+    {
+      "file": "2026-03-31_204828.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 275.2,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 2.7
+    },
+    {
+      "file": "2026-03-31_204828.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 508.0,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5, 6, 7, 8",
+      "audio_duration_s": 2.7
+    },
+    {
+      "file": "2026-03-31_204828.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.7
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '401 Unauthorized' for url 'https://api.elevenlabs.io/v1/speech-to-text'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401]",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2327.1,
+      "runs": 2,
+      "text": "So, we have these endpoints that we need to connect to, and they... We will hit them at the moment when we have... I'm not sure, just pick the moment. I guess we should pick asynchronous endpoint, because we don't need to wait till it's downloaded. Then, at some point, we can...",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1862.4,
+      "runs": 2,
+      "text": "Um, so we have these endpo- these endpoints that we need to connect to. Um... And they... (Clicking sounds) They-- we will hit them at the moment when we have, uh... I'm not sure, just pick the moment. I guess we should pick, uh, a synchronous endpoint because we don't need to wait till it's downloaded. Uh, then at some point we can- (hammering sound)",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 266.8,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204913.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2169.8,
+      "runs": 2,
+      "text": "so we have these and these endpoints that we need to connect to two. And they... We will hit them at the moment when we have... I'm not sure. just pick the moment. I guess we should pick a synchronous endpoint because we don't need to Wait till it's downloaded then at some point we can",
+      "audio_duration_s": 40.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1985.7,
+      "runs": 2,
+      "text": "Then at some point, we can... We should be pass- uh, passing over. Uh, we should be producing some link for Braze, uh, that when it's hit, we will connect it to that, um, download. So for a customer, we store their job I.D. and, uh, pass over this download link to Braze.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 523.0,
+      "runs": 2,
+      "text": " Then at some point we can we should be passing over, we should be producing some link for brace that when it's hit we will connect it to that download. So for customer restore their job ID and pass over this download link to Grace.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1781.9,
+      "runs": 2,
+      "text": "then at some point we can we should be passing over we should be producing some link for brace that when it's hit we will connect it to that download so for a customer we store their job ID and pass over this download link to brace",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1058.4,
+      "runs": 2,
+      "text": "Then at some point, we can... We should be pass- uh, passing over. Uh, we should be producing some link for brace, uh, that when it's hit, we will connect it to that, um, download. So for a customer, we store their job ID and, uh, pass over this download link to Braze.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 239.4,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_204956.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1536.9,
+      "runs": 2,
+      "text": "And at some point we can We should be passing over we should be producing some link for brace that when it's hit we will connect it to that download so for a customer we store their job ID and pass over this download link to Brace.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_205427.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 476.2,
+      "runs": 2,
+      "text": "(whip cracking) Kick.",
+      "audio_duration_s": 1.5
+    },
+    {
+      "file": "2026-03-31_205427.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 210.6,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 1.5
+    },
+    {
+      "file": "2026-03-31_205427.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 509.8,
+      "runs": 2,
+      "text": "Okay.",
+      "audio_duration_s": 1.5
+    },
+    {
+      "file": "2026-03-31_205427.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.5
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 2043.9,
+      "runs": 2,
+      "text": "Can you verify what we have? It seems that it's completely opposite. So, first, uh, step 0 is not ICP discovery. It should be leads generation. So, we're generating leads for, uh, for companies from some segment. So, we have a segment, companies selling email marketing tools or eCommerce merchants. So, we try to find those companies and we have, I don't know, what-",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 864.9,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2256.3,
+      "runs": 2,
+      "text": "can you verify what we have it seems that it's completely opposite so first step zero is not ICP discovery it should be leads generation so we are generating leads for for companies from some segment so we have a segment companies selling email marketing tools so your commerce merchants so we try to find those companies and we have I don't know what",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1091.1,
+      "runs": 2,
+      "text": "Can you verify what we have? It seems that it's completely opposite. So, first, uh, step zero is not ICP discovery, it should be leads generation. (clicks mouse) So we have a segment. Companies selling email marketing tools or e-commerce merchants. So we try to find those companies and we have-- I don't know what. (clicking) (computer mouse clicking)",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 301.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205518.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2065.0,
+      "runs": 2,
+      "text": "Can you verify what we have? It seems that it's completely opposite. So first step 0 is not... ICP discovery it should be leads generation So, we have a segment, companies selling email marketing tools or ecommerce merchants. So we try to find those companies and we have I don't know what",
+      "audio_duration_s": 50.0
+    },
+    {
+      "file": "2026-03-31_205523.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 503.1,
+      "runs": 2,
+      "text": "So I think our-our-",
+      "audio_duration_s": 4.6
+    },
+    {
+      "file": "2026-03-31_205523.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 300.0,
+      "runs": 2,
+      "text": " So I think our",
+      "audio_duration_s": 4.6
+    },
+    {
+      "file": "2026-03-31_205523.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1216.9,
+      "runs": 2,
+      "text": "Um, so I think our, oh.",
+      "audio_duration_s": 4.6
+    },
+    {
+      "file": "2026-03-31_205523.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 4.6
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1835.9,
+      "runs": 2,
+      "text": "Think our-- (tapping and clacking)",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 1045.4,
+      "runs": 2,
+      "text": " I think I'll... Thank you. Thank you. All right.",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 6325.3,
+      "runs": 2,
+      "text": "I think our house is beautiful and I hope you enjoy it.",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 2138.8,
+      "runs": 2,
+      "text": "Think our... (typing) (computer mouse clicking)  (Chips eating sounds) (hand clapping sounds) (footsteps sounding) (mouse clicking sounds) (hand clapping sounds) (footsteps sounding) (mouse clicking sounds) (hand clapping sounds) (footsteps sounding) (mouse clicking sounds) (hand clapping sounds) (footsteps sounding) (\u624b\u3067\u7269\u3092\u53e9\u304f\u97f3) (tap water running) (tapping) (footsteps thumping) (metal clanks) (hammering sounds) (wood clatters) (hammering sounds) (heavy breathing) (hammering on metal) (videocamera seriel) (bips de cam\u00e9ra) (bruits de pas) 2022. (footsteps approaching) (heavy breathing) (footsteps thumping) (sighing sound) (soft mechanical humming) (sniffing) (rustling) (background noise and sounds)",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 388.3,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205711.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2547.5,
+      "runs": 2,
+      "text": "I think our... \uc2dc\uccad\ud574 \uc8fc\uc154\uc11c \uac10\uc0ac\ud569\ub2c8\ub2e4. Thank you so much for watching. I hope you enjoyed this video. I'll see you in the next video. Bye! Thank you so much for watching today. Have a nice day! \uc2dc\uccad\ud574 \uc8fc\uc154\uc11c \uac10\uc0ac\ud569\ub2c8\ub2e4.",
+      "audio_duration_s": 107.2
+    },
+    {
+      "file": "2026-03-31_205716.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 653.0,
+      "runs": 2,
+      "text": "And then-",
+      "audio_duration_s": 1.9
+    },
+    {
+      "file": "2026-03-31_205716.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 273.3,
+      "runs": 2,
+      "text": " And then",
+      "audio_duration_s": 1.9
+    },
+    {
+      "file": "2026-03-31_205716.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 524.0,
+      "runs": 2,
+      "text": "And then",
+      "audio_duration_s": 1.9
+    },
+    {
+      "file": "2026-03-31_205716.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.9
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1124.5,
+      "runs": 2,
+      "text": "And I don't know, to be honest, to where we put it. Ideally, it should be end of the session. So if you, you see a sign that session is finalized or something, that's the best place.",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 533.3,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1835.3,
+      "runs": 2,
+      "text": "And I don't know to be honest to where we put it ideally it should be end of the session So if you see a sign that session is finalized or something That's the best place",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1122.9,
+      "runs": 2,
+      "text": "And I don't know, to be honest, to where we put it. Ideally, it should be end of the session. So if you, you see a sign that session is finalized or something. That's the best place.",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 419.6,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_205730.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2386.6,
+      "runs": 2,
+      "text": "And I don't know to be honest to where we put it ideally it should be end of the session So if you see a sign that session is finalized or something that's the best place.",
+      "audio_duration_s": 12.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 5147.5,
+      "runs": 2,
+      "text": "Okay. You probably need to reassemble everything from the ground. Why? Because obviously you didn't check the flow, the states, and, uh, you mess it up heavily. So our initial, our initial, uh, path starts from initial assembly of company list. So it assemblies companies list, then gets their emails, enriches them, and that's up to SO3.",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 595.4,
+      "runs": 2,
+      "text": " Okay, you probably need to reassemble everything from the ground. Why? Because obviously you didn't check the flow, the states and you mess it up heavily. So our initial path starts from initial assembly of company list. So it assemblies companies list then gets their emails and reaches them and that's up to SO3",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1478.3,
+      "runs": 2,
+      "text": "Okay, you probably need to reassemble everything from the ground. Why? Because obviously you didn't check the flow, the states and you messed it up heavily. So our initial path starts from initial assembly of company list. So it assembles company's list, then gets their emails and reaches them and that's up to SO3.",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1477.5,
+      "runs": 2,
+      "text": "Okay. You probably need to reassemble everything from the ground. Why? Because obviously, you didn't check the flow, the states, and, uh, it messes it up heavily. So our initial, our initial, um... (clicks tongue) Initial... Uh, path starts from initial assembly of company list, so its assemblies company's list then gets their e-mails, and reaches them, and that's up to S three. (keyboard clicking)",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 260.9,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210058.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1652.7,
+      "runs": 2,
+      "text": "Okay, you probably need to reassemble everything from the ground. Why? Because obviously you didn't check the flow, the states... and You mess it up heavily. So our initial our initial initial path starts from initial assembly of company list. So it's assemblies company's list, then gets their emails and reaches them and that's up to S03",
+      "audio_duration_s": 32.5
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 3370.2,
+      "runs": 2,
+      "text": "Then, uh, we actually start to gather ICPs for that, uh, list, because, uh, that's where our list is big enough. It has, like, multi hun- multi-hundreds of records, emails campaigns, uh, emails, et cetera. And we may actually start assembling, uh, ICPs, which is the right point to do so. So it's stage three in that pipeline, and only in that stage, uh, which you name, like, you somehow put it in the first stage. So you need to rework everything from the ground.",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 563.5,
+      "runs": 2,
+      "text": " Then we actually start to gather ICPs for that list because that's where our list is big enough, it has like multi-hundreds of records, emails campaigns, emails etc. And we may actually start assembling ICPs which is is the right point to do so, so it's stage three in that pipeline. And only in that stage which you name like you somehow put it in the first stage. So you need to rework everything from the ground.",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2853.0,
+      "runs": 2,
+      "text": "Then we actually start to gather ICPs for that list, because that's where our list is big enough, it has like multi-hundreds of records, emails, campaigns, emails, etc. And we may actually start assembling ICPs, which is the right point to do so, so it's stage 3 in that pipeline. And only in that stage, which you name, like you somehow put it on the first stage. So you need to rework everything from the ground.",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1258.4,
+      "runs": 2,
+      "text": "Then, uh, we actually start to gather ICPs for that, uh, list, because, uh, that's where our list is big enough, it has like multi-- multi-hundreds of records, emails campaigns, uh, emails, etc. ...campaigns, emails, et cetera. And we may actually start assembling ICPs which is the right point to do so. So it's Stage 3 in that pipeline. And only in that stage, uh, which you name, like, you somehow put it on the first stage. So you need to rework everything from the ground up.",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 359.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210153.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1939.1,
+      "runs": 2,
+      "text": "Then we actually start to gather ICPs for that list, because that's where our list is big enough, it has like multi-hundreds of records, emails, campaigns, emails, etc. And we may actually start assembling ICPs, which is the right point to do so, so it's stage three in that pipeline and oddly in that stage which you name like you somehow put it on the first stage so you need to rework everything from the ground",
+      "audio_duration_s": 38.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 2588.6,
+      "runs": 2,
+      "text": "Okay. Can you cross-check with the new funnels repo? So it's in, uh, one folder above hours folder, and then you check new funnels repo. And, uh, in there, you might find a sign of that session ha- is over, and we don't send any more, uh, session requests, or it's final request. So I don't know, like, what would be the best place, but you may try to find a sign of it in there better than what you're doing now.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 491.6,
+      "runs": 2,
+      "text": " okay can you cross check with a new funnels repo so it's in one folder above hours folder and then you check new funnels repo and in there you might find a sign of that session is over and we don't send any more session requests or its final request so I don't know like what would be the best place but you may try to find a sign of it in there better than what you're doing now.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2118.9,
+      "runs": 2,
+      "text": "Okay, can you cross-check with a new funnels repo? So it's in one folder above ours folder and then you check new funnels repo and in there you might find a sign of that session is over and we don't send any more session requests or it's final request. So I don't know like what would be the best place but you may try to find a sign of it in there better than what you're doing now",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1212.2,
+      "runs": 2,
+      "text": "Okay. Can you cross-check with the new funnels repo? So it's in, uh, one folder above ours folder, and then you check new funnels repo, and, in there you may find a sign of that session ha- is over and we don't send any more, uh, session... requests or its final request. So I don't know like what would be the best place, but you may try to find a sign of it in there better than what you're doing now.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 342.8,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210355.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2244.1,
+      "runs": 2,
+      "text": "okay can you cross-check with a new funnels wrapper so it's in one folder above ours folder and then you check new funnels wrapper and funnels repo and in there you might find a sign of that session is over and we don't send any more sessions. more session requests or it's final request so I don't know like what would be the best place but you may try to find a sign of it in there better than what you're doing now.",
+      "audio_duration_s": 30.3
+    },
+    {
+      "file": "2026-03-31_210959.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 786.4,
+      "runs": 2,
+      "text": "One, two, three, four, five, six, seven, eight, nine, ten.",
+      "audio_duration_s": 3.0
+    },
+    {
+      "file": "2026-03-31_210959.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 267.9,
+      "runs": 2,
+      "text": " 1, 2, 3, 4, 5, 6, 7, 8, 9, 10",
+      "audio_duration_s": 3.0
+    },
+    {
+      "file": "2026-03-31_210959.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 434.1,
+      "runs": 2,
+      "text": "1 2 3 4 5 6 7 8 9 10",
+      "audio_duration_s": 3.0
+    },
+    {
+      "file": "2026-03-31_210959.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 3.0
+    },
+    {
+      "file": "2026-03-31_211008.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 681.8,
+      "runs": 2,
+      "text": "One, two, three, four, five, six, seven, eight, nine, ten.",
+      "audio_duration_s": 2.9
+    },
+    {
+      "file": "2026-03-31_211008.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 2.9
+    },
+    {
+      "file": "2026-03-31_211008.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 452.5,
+      "runs": 2,
+      "text": "1 2 3 4 5 6 7 8 9 10",
+      "audio_duration_s": 2.9
+    },
+    {
+      "file": "2026-03-31_211008.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.9
+    },
+    {
+      "file": "2026-03-31_211044.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1662.6,
+      "runs": 2,
+      "text": "One, two, three, four, five, six, seven, eight, nine, ten.",
+      "audio_duration_s": 3.7
+    },
+    {
+      "file": "2026-03-31_211044.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 208.4,
+      "runs": 2,
+      "text": " 12345678910",
+      "audio_duration_s": 3.7
+    },
+    {
+      "file": "2026-03-31_211044.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1366.2,
+      "runs": 2,
+      "text": "1 2 3 4 5 6 7 8 9 10",
+      "audio_duration_s": 3.7
+    },
+    {
+      "file": "2026-03-31_211044.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 3.7
+    },
+    {
+      "file": "2026-03-31_211221.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 637.7,
+      "runs": 2,
+      "text": "One, two, three, four, five, six, seven, eight, nine, ten.",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-03-31_211221.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 234.0,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-03-31_211221.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1237.5,
+      "runs": 2,
+      "text": "2 3 4 5 6 7 8 9 10",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-03-31_211221.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 4122.6,
+      "runs": 2,
+      "text": "Okay, so (sighs) I don't know. It still, it's not making sense. You may run a few iterations for your loops. Uh, think of, uh, think of, uh, user scenarios, user flaws and how, what should we do, like, what should be our user scenario, how we should or what should be accomplished, so you should be common sense, you should be working with, uh, basic UX. And when you polish it, uh, it should be a few rounds of polishment, making it properly done. Right now, it's a lot of things. There is some data, but how can you interact it? Not enough data to prepare decisions, not clear what you decide upon, and not clear what our benchmarks are, and so we should, a lot, bring a lot of common sense here. It's still not there.",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 1043.3,
+      "runs": 2,
+      "text": " Okay, so I don't know, it's still it's not making sense. You may run a few iterations, few loops. Think of user scenarios, user flaws and how, what should we do, like what should be our user scenario, how we should, what should be accomplished. So it should be common sense, you should be working with basic UX and when you polish it it should be a few rounds of polishment making it properly done right now it's a lot of things there is some data but how can you interact it not enough data to prepare decisions not clear what you decide upon and not clear what our benchmarks are and so we should a lot bring a lot of common sense here it's still not there",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3376.2,
+      "runs": 2,
+      "text": "Okay, so I Don't know it's still it's not making sense. You may run a few iterations for your loops Think of Think of user scenarios user flows, and how what should we do like what should be ours user scenario? How we should what should be accomplished, so it should be? common sense you should be working with basic UX and When you polish it it should be a few rounds of polish meant making it properly done Right now. It's a lot of things There is some data, but how can you interact it not enough data to prepare decisions? Not clear what you decide upon and not clear what our benchmarks are and so we should a lot Bring a lot of common sense here. It's still not there",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1955.6,
+      "runs": 2,
+      "text": "Okay, so (sighs) I don't know, it's still... It's not making sense. You may run a few iterations for your loops, ah- ... loops. Think of, uh, think of user scenarios, user flows and how what should we do, like, what should be our... user scenario? How we should-- What should be accomplished? So it should be a few rounds of polishment, making it properly done. Right now, it's a lot of things. There is some data, but how can you interact with it? Not enough data to prepare decisions. Not clear what you decide upon. And not clear what our benchmarks are. And so we should allot-- bring a lot of common sense here. It's still not there.",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 233.9,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2077.8,
+      "runs": 2,
+      "text": "Okay, so I Don't know. It's still it's not making sense you may run a few iterations for your loops few loops. Think of user scenarios, user flows, and what should we do, like what should be our user scenario how we should what should be accomplished so it should be a few rounds of polishment, making it properly done. Right now it's a lot of things. There is some data, but how can you interact it? Not enough data to prepare. decisions, not clear what you decide upon and not clear what our benchmarks are and so we should a lot bring a lot of common sense here, it's still not there.",
+      "audio_duration_s": 51.8
+    },
+    {
+      "file": "2026-03-31_212132.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 627.0,
+      "runs": 2,
+      "text": "One, two, three, four, five, six, se-",
+      "audio_duration_s": 1.6
+    },
+    {
+      "file": "2026-03-31_212132.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 282.0,
+      "runs": 2,
+      "text": " 1, 2, 3, 4, 5, 6, 7.",
+      "audio_duration_s": 1.6
+    },
+    {
+      "file": "2026-03-31_212132.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 735.7,
+      "runs": 2,
+      "text": "And we're free for a fight, except...",
+      "audio_duration_s": 1.6
+    },
+    {
+      "file": "2026-03-31_212132.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.6
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 5889.0,
+      "runs": 2,
+      "text": "Okay. So basically, what I need to do... What we need to do is update our... We need to have a separate report skill, if we don't have it yet. Uh, right now there is a confusion, and for some reason all the reporting goes to Heartbeat. But it's, uh, super wilily nilly there, so we need to restrict Heartbeat from, uh, generating any reports. And it all should be properly set up in our current jobs. You may se- see a lot of examples on how it's done. So I don't know where the way to put it. We, we for sure we can make a skill, uh, just to describe how it's done, but we also need to probably see through our MD me- methodology, uh, inside agent MD, Heartbeat MD, and different other MDs on how open close it up, because it's likely done the way that, uh, any user claim and ask for a report would be done there. But instead, they should be re-routed to that skill, and that skill should route them to the proper report to update if it's needed, to generate a new report, to make a new report if it's needed, because our reporting system is much more durable compared to Heartbeat one.",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 949.2,
+      "runs": 2,
+      "text": " okay so basically what I need to do what we need to do is update our we need to have a separate report skill if we don't have it yet right now there is a confusion and for some reason all the reporting goes to heartbeat but it's a super villainy there so we need to restrict heartbeat from generating any reports and it all should be properly set up in our cron jobs you may say see a lot of examples on how it's done so i don't know where to put it we we for sure we can make a skill just to describe how it's done but we also need to probably see through our md methodology inside AgentMD, HeartbeatMD and different other MDs on how OpenClaw is set up, because it's likely done the way that any user claim and ask for a report would be done there, but instead they should be rewrote it to that skill and that skill should draw them to the proper report to update if it's needed, to generate a new report, to make a new report if it's needed, because our reporting system is much more durable compared to heartbeat one",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 4231.7,
+      "runs": 2,
+      "text": "okay so basically what I need to do what we need to do is update our we need to have a separate report skill if we don't have it yet right now there is a confusion and for some reason all the reporting goes to heartbeat but it's a super willy-nilly there so we need to restrict heartbeat from generating any reports and it all should be properly set up in our cron jobs you may sell see a lot of examples on how it's done so I don't know where did we to put it we for sure we can make a skill just to describe how it's done but we also need to probably see through our MD methodology inside agent MD heartbeat MD and different other MDs on how open close it up because it's likely done the way that any user claim and ask for a report would be done there but instead they should be rewrote it to that skill and that skill should draw them to the proper report to update if it's needed to generate a new report to make a new report if it's needed because our reporting system is much more durable compared to heartbeat one",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1291.0,
+      "runs": 2,
+      "text": "Okay. So basically, what I need to do-- What we need to have a separate report skill if we don't have it yet. Uh, right now there is a confusion and for some reason all the reporting goes to Heartbeat, but it's a super willy-nilly there. So we need to restrict CardBID from generating any reports and it all should be properly set up in our cron jobs. You may se- see a lot of examples on how it's done. So I don't know where, where to put it. We, we for sure we can make a skill... just to describe how it's done, but you also need to probably see through our... MD me-methodology, uh, inside agent and the heartbeat MD. The Agent.md, Heartbeat.md, and different other MDs on how OpenClose set up, because it's likely done the way that, uh, any user claim and ask for a report would be done there, but instead they should be rerouted to that skill, and that skill should route them to the proper report to update if it's needed, to generate a new report, to make a new report if it's needed, because our reporting system is much more durable compared to Heartbeat one.",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 264.0,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231624.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2256.5,
+      "runs": 2,
+      "text": "okay so basically what I need to do what we need to do is update our we need to have a separate report skill if we don't have it yet right now there is a confusion and for some reason all the reporting goes to heartbeat but it's a super willy-nilly there so we need to restrict Carbid from generating any reports and it all should be properly set up in our cron jobs. You may see a lot of examples on how it's done. So I don't know where we to put it. We for sure we can make a skill. just to describe how it's done but we also need to probably see through our MD methodology inside agent MD heartbeat MD AgentMD, HeartbeatMD, and different other MDs on how OpenClose is set up, because it's likely done the way that any... user claim and ask for a report would be done there, but instead they should be rewrote it to that. skill and that skill should draw them to the proper report to update if it's needed to Generate a new report to make a new report if it's needed because our reporting system is much more durable compared to heartbeat one.",
+      "audio_duration_s": 88.1
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1713.4,
+      "runs": 2,
+      "text": "I would need some, uh, example on how is it used with some example session. So example, we would have a user, then they would generate something, so what would it look like for us to have them, um... Like, what would be their email link? How can we test it maybe? Maybe locally somehow? I don't know.",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 477.1,
+      "runs": 2,
+      "text": " I would need some example on how is it used with some example session. So example, we would have a user, then they would generate something. So what would it look like for us to have them? Like what would be their email link? How can we test it maybe locally somehow? I don't know.",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2808.2,
+      "runs": 2,
+      "text": "I would need some example on how is it used with some example sessions, so example we would have user, then they would generate something, so what would it look like for us to have them, like what would be their email link, how can we test it maybe maybe locally somehow I don't know",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1724.2,
+      "runs": 2,
+      "text": "I would need just some, uh, example on how is it used with some example sessions or example, we would have user, then they would generate something, so what would it look like for us to have them... uhhhm, like what would be their email link? How can we test it Maybe, maybe locally somehow, I don't know. (instrumental music)",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 232.9,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2551.6,
+      "runs": 2,
+      "text": "I would need some example on how is it used with some example sessions so example we would have a user then they would generate something so what would it look like for us to have them Like what would be their email link? How can we test it maybe? locally somehow, I don't know.",
+      "audio_duration_s": 28.3
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1394.1,
+      "runs": 2,
+      "text": "And for authentication request, uh, I'm not sure it, di- did you add it as a... Do we need to add the, some authentication header, header? I don't see it right now.",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 605.4,
+      "runs": 2,
+      "text": " And for authentication request, I'm not sure it did it, did you add it as a... Do we need to add some authentication header? I don't see it right now.",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1573.5,
+      "runs": 2,
+      "text": "And for authentication requests, I'm not sure it did it here. Did you add it as a Do we need to add? Some authentication header header I Don't see it right now",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 995.6,
+      "runs": 2,
+      "text": "And for authentication request, uh, I'm not sure it, did it- did you add it as a... Do we need to add the... some authentication header- header. I don't see it right now.",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 195.9,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2372.0,
+      "runs": 2,
+      "text": "And for authentication requests, I'm not sure it did it here. Did you add it as a Do we need to add? some authentication header. I don't see it right now.",
+      "audio_duration_s": 19.9
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1071.8,
+      "runs": 2,
+      "text": "Please check all the linting that we would be passing through when you make sure GitHub, uh, Actions. It's easy, and please do the linting.",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 311.0,
+      "runs": 2,
+      "text": " Please check all the LinkedIn that we would be passing through when you may check GitHub actions, it's easy and please do the LinkedIn.",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1181.0,
+      "runs": 2,
+      "text": "Please check all the linting that we would be passing through when you make a github actions. It's easy and please do the linting.",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1011.8,
+      "runs": 2,
+      "text": "Please check all the linting that we would be passing through when you make sure GitHub, uh, Actions. Actions, it's easy, and please do a LinkedIn.",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 158.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 1566.8,
+      "runs": 2,
+      "text": "Please check all the linting that we would be passing through when you make a github actions Actions, it's easy and please do the LinkedIn.",
+      "audio_duration_s": 13.8
+    },
+    {
+      "file": "2026-03-31_233803.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1149.9,
+      "runs": 2,
+      "text": "Hello.",
+      "audio_duration_s": 1.4
+    },
+    {
+      "file": "2026-03-31_233803.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 270.4,
+      "runs": 2,
+      "text": " \ud5ec\ub85c\uc6b0.",
+      "audio_duration_s": 1.4
+    },
+    {
+      "file": "2026-03-31_233803.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 630.2,
+      "runs": 2,
+      "text": "hello",
+      "audio_duration_s": 1.4
+    },
+    {
+      "file": "2026-03-31_233803.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.4
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 3206.3,
+      "runs": 2,
+      "text": "Others answering, um, I, I feel that these are not ICPs and these are mainly, uh, source companies, so we should be regenerating them based on, for example, we are searching for a company selling email marketing tools to e-commerce merchants. Then they should be probably targeting e-commerce merchants, right? And not another e-commerce for, focused email marketing tools, uh, because they're not their ICPs, and that's exactly what we've been solving with the pipeline. So please, please, please, common sense. Um, I understand the flow. Don't just willy-nillily put everything, like, in a messy, uh, filthy... I don't know.",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 661.6,
+      "runs": 2,
+      "text": " Others answering I feel that these are not ICPs and these are mainly source companies so we should be regenerating them based on for example we are searching for companies selling email marketing tools to e-commerce merchants then we should be probably targeting e-commerce merchants right and not another e-commerce for focused as marketing tools because they're not their ACPs and that's exactly what we've been solving with the pipeline so please please please common sense I understand the flow don't just willy-nilly put everything like in a messy, filthy... I don't know...",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3815.8,
+      "runs": 2,
+      "text": "Others answering, I feel that these are not ICPs and these are mainly source companies, so we should be regenerating them based on, for example, we are searching for companies selling email marketing tools to e-commerce merchants, then we should be probably targeting e-commerce merchants, right, and not another e-commerce focused on marketing tools, because they're not their ICPs, and that's exactly what we've been solving with the pipeline, so please, please, please, common sense, understand the flow, don't just willy-nilly put everything like in a messy, filthy, I don't know.",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1121.7,
+      "runs": 2,
+      "text": "Others answering. Um, I-I feel that these are not ICPs and these are mainly, uh, source companies. So we should be regenerating them. based on, for example, we are searching for a company selling email marketing tools to e-commerce merchants. Then- ...commerce merchants. Then we should be probably targeting ecommerce merchants, right? And not another ecommerce for, for customers marketing tools, um, because they're not their SCPs, and that's exactly what we've been solving with the pipeline. So please, please, please, common sense. Um, I understand the... flow. Don't just willy nilly put everything like in a messy, uh, filthy- Uh, filthy... I don't know (pauses) (camera clicks).",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 266.1,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-03-31_234734.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2620.5,
+      "runs": 2,
+      "text": "Others answering, I feel that these are not ICPs and these are mainly source companies. so we should be regenerating them based on, for example, we are searching for companies selling email marketing tools because they're not their ACPs and that's exactly what we've been solving with the pipeline. So, please, please, please, common sense. I understand the flow, don't just willy-nilly put everything like in a messy, filthy mess. filthy I don't know",
+      "audio_duration_s": 63.8
+    },
+    {
+      "file": "2026-04-01_080331.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1126.9,
+      "runs": 2,
+      "text": "(\u015bwist) (trzask)",
+      "audio_duration_s": 0.8
+    },
+    {
+      "file": "2026-04-01_080331.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 217.5,
+      "runs": 2,
+      "text": " .",
+      "audio_duration_s": 0.8
+    },
+    {
+      "file": "2026-04-01_080331.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 521.5,
+      "runs": 2,
+      "text": "MBC \ub274\uc2a4 \uc774\ub355\uc601\uc785\ub2c8\ub2e4.",
+      "audio_duration_s": 0.8
+    },
+    {
+      "file": "2026-04-01_080331.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 0.8
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 7746.5,
+      "runs": 2,
+      "text": "So the idea would be to-- to get a research segment section, um, another button, and fully new UI using Liveblocks. And the idea would be that user will be talking to agent. Agent will have all the tools, all the APIs that we have. Uh, they will have the general skill and process that we already have in place, but we will make it more flexible for our users so that they can either follow those steps that they already have, or they could bring in new things, uh, new charts, new widgets, uh, new... I don't know, new configuration pieces. For example, if we didn't bring prompts to configuration, they can ask for it. Uh, so they can build the whole new experience based on what they like and not what is pre-configured, and it should be persisted. We should prompt and, uh, we should work, um, (sighs) in a few iterations, but, uh, that should be making sense. It should work from start to end. You should fire it in and you should test it locally heavily, uh, that it's still working, that it has all the nee- necessary structure, but still flexible. And you may use or spin up as many agents with different trolls so that they're competing and delivering the best experience. Uh, and it should, uh, be a lot of common sense here, so definitely common sense used for verification that it all makes sense and that it's all aligned with our main process that we have already, uh, established.",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 924.0,
+      "runs": 2,
+      "text": " so the idea would be to to get a research segment section another button and fully new UI using live blocks and the idea would be that user will be talking to agent agent will have all the tools all the API's that we have they will have the general skill and process that we already have in place but we will make it more flexible for a user so that they can either follow those steps that they already have or they could bring and you things new charts and new widgets and you I don't know new configuration pieces for example if we didn't bring prompts to configuration they can ask for that so they can build the whole new experience based on what they like and not what is pre-configured and it should be persisted we should prompt and we should work in a few iterations but that should be making sense it should work from start to end you should fire it in and you should test it locally heavily that it's all working that it has all the necessary structure but still flexible and you may use a spin-up as many agents with different roles so that they're competing and delivering the best experience and it should be a lot of common sense here so definitely common sense use for verification that it all makes sense and it's all aligned with our main process that we have already established Thank you.",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 6395.7,
+      "runs": 2,
+      "text": "So the idea would be to to get a research segment section, another button and fully new UI using LiveBlocks and the idea would be that user will be talking to agent, agent will have all the tools, all the APIs that we have, they will have the general skill and process that we already have in place but we will make it more flexible for a user so that they can either follow those steps that they already have or they could bring new things, new charts, new widgets and you I don't know new configuration pieces for example if we didn't bring prompts to configuration they can ask for that so they can build the whole new experience based on what they like and not what is pre-configured and it should be persisted. We should prompt and we should work in a few iterations but that should be making sense, it should work from start to end, you should wire it in and you should test it locally heavily that it's all working, that it has all the necessary structure but still flexible and you may use a spin up as many agents with different roles so that they're competing and delivering the best experience and it should be a lot of common sense here so definitely common sense use for verification that it all makes sense and it's all aligned with our main process that we have already established.",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 2893.9,
+      "runs": 2,
+      "text": "So, the idea would be that user will be talking to agent, agent will have all the tools, all the APIs that we have. Uh, they will have the general- --more flexible for users so that they can either follow those steps that they already have or (smacks lips) they could bring and use things, uh, new charts, new widgets, uh, new-- I don't know. new configuration pieces. For example, if we didn't bring prompts to configuration, they can ask for it. Uh, so they can... build the whole new experience based on what they like and not what is pre-configured, and it should be persisted. We should prompt and we should work in a few iterations, but that should be making sense. It should work from start to end. You should wire it in and you should test it locally heavily, uh, that it's all working, that it has all the nee- necessary structure but still flexible. And you may use a spin up as many agents with different roles so that they're competing and delivering the best experience. Uh, and it should be a lot of common sense here. So definitely common sense used for verification that it all makes sense and it's all aligned with our main process that we have already, uh, established.",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 318.5,
+      "runs": 2,
+      "text": "",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134652.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2357.1,
+      "runs": 2,
+      "text": "so the idea would be that user will be talking to agent, agent will have all the tools, all the APIs that we have. They will have the general. skill and process that we already have in place, but we will make it more flexible for a user so that... they can either follow those steps that they already have or they could bring new things, new charts, new widgets, new, I don't know. new configuration pieces. For example, if we didn't bring prompts to configuration, they can ask for that. So they can. build the whole new experience based on what they like and not what is pre-configured and each view persisted we should prompt and we should work in a few iterations but that should be making sense it should work from start to end, you should wire it in, and you should test it locally heavily, that it's all working, that it... has all the necessary structure but still flexible and you may use spin up as many agents with different roles so that they're competing and delivering the best experience and it should be a lot of common sense here. So definitely common sense use for Verification that it all makes sense and it's all aligned with our main process that we have already established.",
+      "audio_duration_s": 111.6
+    },
+    {
+      "file": "2026-04-01_134709.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 576.0,
+      "runs": 2,
+      "text": "One, two, three, four, five.",
+      "audio_duration_s": 2.0
+    },
+    {
+      "file": "2026-04-01_134709.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 260.0,
+      "runs": 2,
+      "text": " 1, 2, 3, 4, 5",
+      "audio_duration_s": 2.0
+    },
+    {
+      "file": "2026-04-01_134709.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1196.8,
+      "runs": 2,
+      "text": "Now I'm 2-3-4-5.",
+      "audio_duration_s": 2.0
+    },
+    {
+      "file": "2026-04-01_134709.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.0
+    },
+    {
+      "file": "2026-04-01_134855.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 512.7,
+      "runs": 2,
+      "text": "Un, dos, tres, cuatro, cinco.",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-04-01_134855.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 223.8,
+      "runs": 1,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-04-01_134855.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 883.4,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-04-01_134855.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.2
+    },
+    {
+      "file": "2026-04-01_134916.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 479.5,
+      "runs": 2,
+      "text": "\u0423 \u043d\u0430\u0441 \u0435\u0441\u0442\u044c \u043f\u044f\u0442\u044c.",
+      "audio_duration_s": 2.8
+    },
+    {
+      "file": "2026-04-01_134916.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[error: Client error '429 Too Many Requests' for url 'https://api.groq.com/openai/v1/audio/transcriptions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429]",
+      "audio_duration_s": 2.8
+    },
+    {
+      "file": "2026-04-01_134916.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2505.4,
+      "runs": 2,
+      "text": "1, 2, 3, 4, 5...",
+      "audio_duration_s": 2.8
+    },
+    {
+      "file": "2026-04-01_134916.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 2.8
+    }
+  ],
+  "polish": [
+    {
+      "provider": "OpenAI gpt-5.4-nano",
+      "avg_ms": 1316.0,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "OpenAI gpt-5.4-mini",
+      "avg_ms": 1361.8,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "OpenAI nano (short prompt)",
+      "avg_ms": 782.8,
+      "runs": 2,
+      "polished_text": "What now?"
+    },
+    {
+      "provider": "Groq llama-3.3-70b",
+      "avg_ms": 241.1,
+      "runs": 2,
+      "polished_text": "What now?"
+    },
+    {
+      "provider": "Groq llama-3.1-8b",
+      "avg_ms": 250.2,
+      "runs": 2,
+      "polished_text": "We're going to take a text that was dictated and clean it up a bit. So, I'm assuming you're going to give me the dictated text and I'll go through it and remove some of the filler words like um, uh, like, and you know. I'll also fix any typos and add some punctuation to make it easier to read."
+    },
+    {
+      "provider": "Regex (no API)",
+      "avg_ms": 0.2396,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    }
+  ],
+  "pipelines": [
+    {
+      "file": "2026-03-31_175952.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 97.4,
+      "polish_ms": 0.2396,
+      "total_ms": 97.6
+    },
+    {
+      "file": "2026-03-31_175852.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 99.2,
+      "polish_ms": 0.2396,
+      "total_ms": 99.4
+    },
+    {
+      "file": "2026-03-31_173041.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 102.5,
+      "polish_ms": 0.2396,
+      "total_ms": 102.7
+    },
+    {
+      "file": "2026-03-31_180326.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 113.5,
+      "polish_ms": 0.2396,
+      "total_ms": 113.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 146.3,
+      "polish_ms": 0.2396,
+      "total_ms": 146.5
+    },
+    {
+      "file": "2026-03-31_232148.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 158.1,
+      "polish_ms": 0.2396,
+      "total_ms": 158.3
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "Regex (no API)",
+      "stt_ms": 185.1,
+      "polish_ms": 0.2396,
+      "total_ms": 185.3
+    },
+    {
+      "file": "2026-03-31_173219.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 189.6,
+      "polish_ms": 0.2396,
+      "total_ms": 189.8
+    },
+    {
+      "file": "2026-03-31_231933.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 195.9,
+      "polish_ms": 0.2396,
+      "total_ms": 196.1
+    },
+    {
+      "file": "2026-03-31_173027.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 200.6,
+      "polish_ms": 0.2396,
+      "total_ms": 200.8
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 201.8,
+      "polish_ms": 0.2396,
+      "total_ms": 202.0
+    },
+    {
+      "file": "2026-03-31_211044.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 208.4,
+      "polish_ms": 0.2396,
+      "total_ms": 208.6
+    },
+    {
+      "file": "2026-03-31_205427.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 210.6,
+      "polish_ms": 0.2396,
+      "total_ms": 210.8
+    },
+    {
+      "file": "2026-04-01_080331.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 217.5,
+      "polish_ms": 0.2396,
+      "total_ms": 217.7
+    },
+    {
+      "file": "2026-03-31_202453.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 220.9,
+      "polish_ms": 0.2396,
+      "total_ms": 221.1
+    },
+    {
+      "file": "2026-04-01_134855.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 223.8,
+      "polish_ms": 0.2396,
+      "total_ms": 224.0
+    },
+    {
+      "file": "2026-03-31_231906.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 232.9,
+      "polish_ms": 0.2396,
+      "total_ms": 233.1
+    },
+    {
+      "file": "2026-03-31_211318.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 233.9,
+      "polish_ms": 0.2396,
+      "total_ms": 234.1
+    },
+    {
+      "file": "2026-03-31_211221.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 234.0,
+      "polish_ms": 0.2396,
+      "total_ms": 234.2
+    },
+    {
+      "file": "2026-03-31_173553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 237.3,
+      "polish_ms": 0.2396,
+      "total_ms": 237.5
+    }
+  ]
+}

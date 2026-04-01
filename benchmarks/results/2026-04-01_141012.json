@@ -1,0 +1,261 @@
+{
+  "timestamp": "2026-04-01_141012",
+  "stt": [
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 3766.1,
+      "runs": 1,
+      "text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, we could be doing, um, I don't know, for performance, we could think about having, uh, (sighs) a similar... For example, when you're doing a long dictation, you could actually send it in chunks and, uh, and have it pre-transcribed for you so that it's faster. I don't know how to then you glue those chunks, but potentially it has, uh, it has a performance benefit. So I would, I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them, uh, so that we see, like, what potentially possible.",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": 870.9,
+      "runs": 1,
+      "text": " Yeah, okay, it's cool, but I would expect to do a better job. For example, we could be doing, I don't know, for performance we could think about having a similar, for example, when you're doing a long dictation, you could actually send it in chunks and and have it pre-transcribed for you so that it's faster. I don't know how to then you glue those chunks, but potentially it has a performance benefit. So I would do a few researchers, agents, that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3137.8,
+      "runs": 1,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance we could think about having a similar for example when you're doing a long dictation you could actually send it in chunks and and have it pre transcribed for you so that it's faster I don't know how to then you glue those chunks but potentially it has a it has a performance benefit so I would I would do a few researchers agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1392.6,
+      "runs": 1,
+      "text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, when you're doing a long dictation, you could actually send it in chunks and... Uh... (clicks tongue) Uh... And have it pre-transcribed for you so that it's faster. I don't know how to then you... glue those chunks but potentially it has a performance benefit. So I would... I would... do a few researchers, agents, that would try to find any and all ways to improve the performance... and find those ways and try to bench them so that we see like... what potentially possible.",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Groq Whisper (chunked 10s)",
+      "avg_ms": 303.1,
+      "runs": 1,
+      "text": "",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2279.5,
+      "runs": 1,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance, we could think about having a similar, for example, when you're doing a long dictation, you could actually send it in chunks, and and have it pre-transcribed for you so that it's faster. I don't know how to then you... than you glue those chunks but potentially it has it has a performance benefit so I would I would do a few researchers Agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    }
+  ],
+  "polish": [
+    {
+      "provider": "OpenAI gpt-5.4-nano",
+      "avg_ms": 1195.4,
+      "runs": 1,
+      "polished_text": "Yeah, it's cool, but I would expect to do a better job. For example, we could be doing, for performance, we could think about having a similar. For example, when you're doing a long dictation, you could actually send it in chunks and have it pre-transcribed for you so that it's faster. I don't know how to then glue those chunks, but potentially it has a performance benefit. So I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them so that we see what potentially possible."
+    },
+    {
+      "provider": "OpenAI gpt-5.4-mini",
+      "avg_ms": 1590.6,
+      "runs": 1,
+      "polished_text": "Yeah, okay, it's cool, but I would, I would expect to do a better job. For example, we could be doing, I don't know, for performance, we could think about having a similar... For example, when you're doing a long dictation, you could actually send it in chunks and have it pre-transcribed for you so that it's faster. I don't know how to then you glue those chunks, but potentially it has, it has a performance benefit. So I would, I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them so that we see what potentially possible."
+    },
+    {
+      "provider": "OpenAI nano (short prompt)",
+      "avg_ms": 1218.5,
+      "runs": 1,
+      "polished_text": "I would expect to do a better job. For example, for performance, we could think about having a similar approach. When you are doing a long dictation, you could send it in chunks and have it pre-transcribed so it is faster. I do not know how to glue those chunks together, but it could have a performance benefit. I would also do a few research efforts with agents to find any and all ways to improve performance, identify those ways, and benchmark them to see what is potentially possible."
+    },
+    {
+      "provider": "Groq llama-3.3-70b",
+      "avg_ms": 519.1,
+      "runs": 1,
+      "polished_text": "Yeah, okay, it's cool, but I would expect to do a better job. For example, we could be doing, I don't know, for performance, we could think about having a similar... For example, when you're doing a long dictation, you could actually send it in chunks and have it pre-transcribed for you so that it's faster. I don't know how to then glue those chunks, but potentially it has a performance benefit. So I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them, so that we see what's potentially possible."
+    },
+    {
+      "provider": "Groq llama-3.1-8b",
+      "avg_ms": 258.9,
+      "runs": 1,
+      "polished_text": "I would expect to do a better job. For example, we could be doing a similar approach for performance. We could think about having a system that sends dictations in chunks and has them pre-transcribed, so it's faster. I'm not sure how you glue those chunks together, but potentially it has a performance benefit. \n\nI would do a few research agents that would try to find any and all ways to improve performance, and find those ways and try to benchmark them, so that we see what's potentially possible."
+    },
+    {
+      "provider": "Regex (no API)",
+      "avg_ms": 0.5216,
+      "runs": 1,
+      "polished_text": "Yeah, okay, it's cool, but, I would, I would expect to do a better job. For example, we could be doing, I don't know, for performance, we could think about having, (sighs) a similar... For example, when you're doing a long dictation, you could actually send it in chunks and, and have it pre-transcribed for you so that it's faster. I don't know how to then you glue those chunks, but potentially it has, it has a performance benefit. So I would, I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them, so that we see, what potentially possible."
+    }
+  ],
+  "pipelines": [
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 303.1,
+      "polish_ms": 0.5216,
+      "total_ms": 303.6
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Groq llama-3.1-8b",
+      "stt_ms": 303.1,
+      "polish_ms": 258.9,
+      "total_ms": 562.0
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "Groq llama-3.3-70b",
+      "stt_ms": 303.1,
+      "polish_ms": 519.1,
+      "total_ms": 822.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 870.9,
+      "polish_ms": 0.5216,
+      "total_ms": 871.4
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "Groq llama-3.1-8b",
+      "stt_ms": 870.9,
+      "polish_ms": 258.9,
+      "total_ms": 1129.8
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "Groq llama-3.3-70b",
+      "stt_ms": 870.9,
+      "polish_ms": 519.1,
+      "total_ms": 1390.0
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 1392.6,
+      "polish_ms": 0.5216,
+      "total_ms": 1393.1
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-nano",
+      "stt_ms": 303.1,
+      "polish_ms": 1195.4,
+      "total_ms": 1498.5
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 303.1,
+      "polish_ms": 1218.5,
+      "total_ms": 1521.6
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Groq llama-3.1-8b",
+      "stt_ms": 1392.6,
+      "polish_ms": 258.9,
+      "total_ms": 1651.5
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 303.1,
+      "polish_ms": 1590.6,
+      "total_ms": 1893.7
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Groq llama-3.3-70b",
+      "stt_ms": 1392.6,
+      "polish_ms": 519.1,
+      "total_ms": 1911.7
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "OpenAI gpt-5.4-nano",
+      "stt_ms": 870.9,
+      "polish_ms": 1195.4,
+      "total_ms": 2066.3
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 870.9,
+      "polish_ms": 1218.5,
+      "total_ms": 2089.4
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "OpenAI Whisper (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 2279.5,
+      "polish_ms": 0.5216,
+      "total_ms": 2280.0
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "Groq Whisper",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 870.9,
+      "polish_ms": 1590.6,
+      "total_ms": 2461.5
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "OpenAI Whisper (chunked 10s)",
+      "polish": "Groq llama-3.1-8b",
+      "stt_ms": 2279.5,
+      "polish_ms": 258.9,
+      "total_ms": 2538.4
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-nano",
+      "stt_ms": 1392.6,
+      "polish_ms": 1195.4,
+      "total_ms": 2588.0
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 1392.6,
+      "polish_ms": 1218.5,
+      "total_ms": 2611.1
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "OpenAI Whisper (chunked 10s)",
+      "polish": "Groq llama-3.3-70b",
+      "stt_ms": 2279.5,
+      "polish_ms": 519.1,
+      "total_ms": 2798.6
+    }
+  ]
+}

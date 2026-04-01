@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-03-31_170201",
+  "stt": [
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1614.1,
+      "runs": 2,
+      "text": "Hmm. Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1428.9,
+      "runs": 2,
+      "text": "Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 5405.6,
+      "runs": 2,
+      "text": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps, and OpenAI will just use the same. And, uh, or we can take it from Umble configuration that we already have. So, uh, and just test that our benchmarking works, that we have, uh, clear reporting, uh, that you can read it, that you can present it to me, and that it's all working from end-to-end. Blah, blah, blah, blah, blah, blah. So, it's not c- not w... The work is not done yet, man.",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3001.7,
+      "runs": 2,
+      "text": "Okay but again I want you to do that so basically I need to check the API keys we are fine with whatever we have right now we have 11 labs and open AI we just use the same and we can take it from mumbly configuration that you already have so and just test that our benchmarking works that we have clear reporting that you can read it that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 43.2
+    }
+  ],
+  "polish": [
+    {
+      "provider": "OpenAI gpt-5.4-nano",
+      "avg_ms": 1113.4,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "OpenAI gpt-5.4-mini",
+      "avg_ms": 1255.3,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "Groq llama-3.3-70b",
+      "avg_ms": -1,
+      "runs": 0,
+      "polished_text": "[no key]"
+    },
+    {
+      "provider": "Groq llama-3.1-8b",
+      "avg_ms": -1,
+      "runs": 0,
+      "polished_text": "[no key]"
+    }
+  ]
+}

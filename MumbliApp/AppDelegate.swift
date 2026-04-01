@@ -15,7 +15,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // Services (direct API)
     private let sttService = ElevenLabsSTTService()
+    private let groqSTTService = GroqWhisperSTTService()
     private let polishingService = OpenAIPolishingService()
+    private let groqPolishingService = GroqPolishingService()
 
     // Audio accumulation buffer
     private var audioBuffer = Data()
@@ -70,6 +72,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if args.contains("--seed-history") {
             seedHistoryForTesting()
+        }
+
+        if args.contains("--save-recordings") {
+            UserDefaults.standard.set(true, forKey: "debugSaveRecordings")
+            NSLog("[AppDelegate] --save-recordings: will save audio to ~/Library/Application Support/Mumbli/recordings/")
         }
     }
 
@@ -293,6 +300,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         setupHotkeyManager()
         setupAudioCallbacks()
+        setupRetryObserver()
         log.log("[AppDelegate] startApp() completed — hotkey manager running")
     }
 
@@ -408,6 +416,84 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // MARK: - Retry Failed Dictation
+
+    private func setupRetryObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .mumbliRetryDictation,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self,
+                  let info = notification.userInfo,
+                  let entryIDStr = info["entryID"] as? String,
+                  let entryID = UUID(uuidString: entryIDStr),
+                  let filename = info["recordingFilename"] as? String,
+                  !filename.isEmpty else { return }
+            Task { @MainActor in
+                await self.retryDictation(entryID: entryID, recordingFilename: filename)
+            }
+        }
+    }
+
+    private func retryDictation(entryID: UUID, recordingFilename: String) async {
+        let fileURL = HistoryManager.recordingURL(for: recordingFilename)
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            log.log("[Retry] Recording file not found: \(recordingFilename)")
+            return
+        }
+
+        log.log("[Retry] Reprocessing \(recordingFilename)")
+
+        do {
+            // Read the WAV file and strip the 44-byte header to get raw PCM
+            let wavData = try Data(contentsOf: fileURL)
+            let pcmData = wavData.count > 44 ? wavData.dropFirst(44) : wavData
+
+            // Transcribe
+            let engineRaw = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
+            let engine = DictationEngine(rawValue: engineRaw) ?? .standard
+            let transcription: String
+            if engine.usesGroq {
+                transcription = try await groqSTTService.transcribe(audioData: Data(pcmData))
+            } else {
+                transcription = try await sttService.transcribe(audioData: Data(pcmData))
+            }
+
+            guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                log.log("[Retry] Empty transcription for \(recordingFilename)")
+                return
+            }
+
+            // Polish
+            let polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
+            let finalText: String
+            if polishingEnabled {
+                let prompt = OpenAIPolishingService.resolvedPrompt()
+                let polished: String
+                if engine.usesGroq {
+                    polished = try await groqPolishingService.polish(text: transcription, prompt: prompt)
+                } else {
+                    let model = OpenAIPolishingService.resolvedModel()
+                    polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                }
+                finalText = polished.isEmpty ? transcription : polished
+            } else {
+                finalText = transcription
+            }
+
+            // Save transcription file
+            RecordingManager.shared.saveTranscription(transcription, for: fileURL)
+
+            // Update the failed entry
+            historyManager.resolveEntry(id: entryID, text: finalText)
+            log.log("[Retry] Successfully reprocessed \(recordingFilename): \(finalText.prefix(80))...")
+
+        } catch {
+            log.log("[Retry] Failed to reprocess \(recordingFilename): \(error)")
+        }
+    }
+
     // MARK: - Dictation Flow
 
     private let log = FileLogger.shared
@@ -461,11 +547,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Switch overlay to processing state (keeps it visible during transcription + polishing)
         overlayController.showProcessing()
 
+        // Always save recording (needed for retry on failure; useful for benchmarking)
+        let savedURL = RecordingManager.shared.saveRecording(pcmData: capturedAudio)
+        let recordingFilename = savedURL.lastPathComponent
+        log.log("[Dictation] Saved recording: \(recordingFilename)")
+
+        let timer = PipelineTimer()
+        let audioDurationSec = Double(capturedAudio.count) / (16000.0 * 2.0)
+
         Task {
             do {
-                // Step 1: Transcribe audio via ElevenLabs
-                log.log("[Dictation] Sending \(capturedAudio.count) bytes to ElevenLabs STT")
-                let transcription = try await sttService.transcribe(audioData: capturedAudio)
+                // Step 1: Transcribe audio
+                let engineRaw = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
+                let engine = DictationEngine(rawValue: engineRaw) ?? .standard
+                log.log("[Dictation] Engine: \(engine.displayName) — Sending \(capturedAudio.count) bytes")
+                timer.mark("stt_start")
+                let transcription: String
+                if engine.usesGroq {
+                    transcription = try await groqSTTService.transcribe(audioData: capturedAudio)
+                } else {
+                    transcription = try await sttService.transcribe(audioData: capturedAudio)
+                }
+                timer.mark("stt_end")
 
                 guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                     log.log("[Dictation] Empty transcription received")
@@ -475,18 +578,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 log.log("[Dictation] Transcription result: \(transcription)")
 
-                // Step 2: Polish via OpenAI (if enabled)
+                // Save ground-truth transcription alongside recording
+                RecordingManager.shared.saveTranscription(transcription, for: savedURL)
+
+                // Step 2: Polish (if enabled)
                 let polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
                 let finalText: String
+                let polishModel: String
                 if polishingEnabled {
-                    let model = OpenAIPolishingService.resolvedModel()
                     let prompt = OpenAIPolishingService.resolvedPrompt()
-                    log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
-                    let polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                    timer.mark("polish_start")
+                    let polished: String
+                    if engine.usesGroq {
+                        polishModel = "groq-llama-3.1-8b"
+                        log.log("[Dictation] Sending transcription to Groq for polishing")
+                        polished = try await groqPolishingService.polish(text: transcription, prompt: prompt)
+                    } else {
+                        let model = OpenAIPolishingService.resolvedModel()
+                        polishModel = model
+                        log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
+                        polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                    }
+                    timer.mark("polish_end")
                     log.log("[Dictation] Polished result: \(polished)")
                     finalText = polished.isEmpty ? transcription : polished
                 } else {
                     log.log("[Dictation] Polishing disabled, using raw transcription")
+                    polishModel = "none"
+                    timer.mark("polish_start")
+                    timer.mark("polish_end")
                     finalText = transcription
                 }
                 log.log("[Dictation] Final text to inject: \(finalText)")
@@ -498,10 +618,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 // Step 3: Inject into the pre-captured target and save
                 log.log("[Dictation] Calling textInjector.inject()")
+                timer.mark("inject_start")
                 let result = textInjector.inject(text: finalText, target: capturedTarget)
+                timer.mark("inject_end")
                 log.log("[Dictation] TextInjector result: \(result)")
-                historyManager.addEntry(text: finalText)
+                historyManager.addEntry(text: finalText, recordingFilename: recordingFilename)
                 log.log("[Dictation] Saved to history")
+
+                // Log pipeline metrics
+                let metrics = timer.buildMetrics(
+                    audioBytes: capturedAudio.count,
+                    audioDurationSec: audioDurationSec,
+                    sttProvider: engine.usesGroq ? "Groq-Whisper" : "ElevenLabs",
+                    polishModel: polishModel
+                )
+                log.log(metrics.jsonLine)
 
                 NotificationCenter.default.post(
                     name: .mumbliDictationCompleted,
@@ -510,14 +641,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 )
             } catch {
                 log.log("[Dictation] Error in async flow: \(error)")
+                log.log("[METRICS] {\"error\":\"\(error.localizedDescription)\",\"total_ms\":\(String(format: "%.1f", timer.totalElapsed()))}")
+
+                // Save a failed entry so the user can retry from history
+                historyManager.addFailedEntry(recordingFilename: recordingFilename)
+                log.log("[Dictation] Saved failed entry for: \(recordingFilename)")
+
                 NotificationCenter.default.post(
                     name: .mumbliDictationError,
                     object: nil,
                     userInfo: ["error": error.localizedDescription]
                 )
+
+                // Show error on overlay (auto-dismisses after 2.5s)
+                overlayController.showError(message: error.localizedDescription)
+                return
             }
 
-            // Dismiss overlay after processing completes (success or error)
+            // Dismiss overlay after successful processing
             overlayController.dismiss(afterDelay: 0.3)
         }
     }
@@ -530,4 +671,5 @@ extension Notification.Name {
     static let mumbliDictationStarted = Notification.Name("mumbliDictationStarted")
     static let mumbliDictationStopped = Notification.Name("mumbliDictationStopped")
     static let mumbliDictationError = Notification.Name("mumbliDictationError")
+    static let mumbliRetryDictation = Notification.Name("mumbliRetryDictation")
 }

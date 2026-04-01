@@ -1,0 +1,201 @@
+[
+  {
+    "file": "2026-03-31_165930.wav",
+    "audio_duration_s": 1.8,
+    "provider": "Groq Whisper",
+    "baseline_text": "Hmm, okay what now?",
+    "candidate_text": " Okay, what now?",
+    "judgment": {
+      "meaning_score": 10,
+      "word_accuracy": 9,
+      "nuance_score": 7,
+      "overall_score": 9,
+      "changed_words": [
+        "Hmm,"
+      ],
+      "missing_content": "The filler interjection \"Hmm,\" at the start is missing.",
+      "meaning_changes": "None; the core question \"what now?\" is preserved.",
+      "notes": "Candidate omits the initial hesitation/filler \"Hmm,\" which slightly reduces nuance, but meaning and wording are otherwise the same."
+    }
+  },
+  {
+    "file": "2026-03-31_165930.wav",
+    "audio_duration_s": 1.8,
+    "provider": "OpenAI Whisper",
+    "baseline_text": "Hmm, okay what now?",
+    "candidate_text": "Okay, what now?",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 9,
+      "nuance_score": 6,
+      "overall_score": 8,
+      "changed_words": [
+        "Hmm,"
+      ],
+      "missing_content": "The filler/discourse marker \"Hmm,\" at the start is missing.",
+      "meaning_changes": "No substantive meaning change; the candidate removes the initial hesitation.",
+      "notes": "Candidate preserves the core question exactly, but loses the initial hesitation cue \"Hmm,\" which slightly reduces nuance."
+    }
+  },
+  {
+    "file": "2026-03-31_170047.wav",
+    "audio_duration_s": 43.2,
+    "provider": "Groq Whisper",
+    "baseline_text": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps in OpenAI. We just use the same, and, uh, w",
+    "candidate_text": " Okay, but again I want you to do that so basically I need to check the API keys. We are fine with whatever we have right now we have 11 labs and OpenAI we just use the same and we can take it from Ma",
+    "judgment": {
+      "meaning_score": 8,
+      "word_accuracy": 6,
+      "nuance_score": 6,
+      "overall_score": 6,
+      "changed_words": [
+        "ElevenLabs",
+        "Mambly",
+        "not c- not w-"
+      ],
+      "missing_content": "Missing the initial filler 'Um, okay.' and the specific self-correction 'not c- not w-' from the baseline.",
+      "meaning_changes": "Minor meaning/identity change: 'We have 11 laps in OpenAI' in the baseline appears to be transcribed as 'we have 11 labs and OpenAI' in the candidate; also 'Mambly configuration' likely corresponds to 'monthly configuration' in the baseline.",
+      "notes": "Candidate largely preserves the instruction flow (check API keys, confirm current setup, test benchmarking/reporting end-to-end, 'work is not done yet man'). However, it drops some filler/self-correction nuance ('Um, okay', 'not c- not w-') and has likely transcription errors ('laps' vs 'labs', 'Mambly' vs 'monthly'). Punctuation/casing differences are minor."
+    }
+  },
+  {
+    "file": "2026-03-31_170047.wav",
+    "audio_duration_s": 43.2,
+    "provider": "OpenAI Whisper",
+    "baseline_text": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps in OpenAI. We just use the same, and, uh, w",
+    "candidate_text": "Okay but again I want you to do that so basically I need to check the API keys we are fine with whatever we have right now we have 11 labs and open AI we just use the same and we can take it from mumb",
+    "judgment": {
+      "meaning_score": 8,
+      "word_accuracy": 7,
+      "nuance_score": 6,
+      "overall_score": 7,
+      "changed_words": [
+        "labs",
+        "mumbly",
+        "not not what the work is not done yet man"
+      ],
+      "missing_content": "Missing the initial filler 'Um,' and the phrase 'I want you to do that, so basically' is slightly restructured; also 'c- not w-' is not captured correctly (candidate ends with a garbled 'not not what the work is not done yet man').",
+      "meaning_changes": "Minor meaning/wording drift around 'OpenAI' vs 'open AI' is fine, but 'mumbly configuration' likely corresponds to 'monthly configuration' and the 'c- not w-' self-correction is not preserved, making the final intent less clear.",
+      "notes": "Candidate largely preserves the instruction to check API keys, confirm current setup (11 laps/11 labs), use existing configuration, test benchmarking and reporting end-to-end, and the closing sentiment that the work is not done yet. However, it drops 'Um,' and mishears 'monthly' as 'mumbly' and fails to capture the 'c- not w-' interruption, resulting in lower nuance and some word accuracy loss."
+    }
+  },
+  {
+    "file": "2026-03-31_170412.wav",
+    "audio_duration_s": 40.9,
+    "provider": "Groq Whisper",
+    "baseline_text": "Yeah, I also would expect you to have a loop of, uh, like, UX, uh, agent, and developer slash QA people, uh, to have a few loops of, uh, rework on UX end, like, is the UX good? Then the, the agent sen",
+    "candidate_text": " Yeah, I also would expect you to have a loop of like UX agent and developer slash QA people to have a few loops of rework on UX send, like is it UX good, then the agent sends to feedback to developer",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 8,
+      "nuance_score": 7,
+      "overall_score": 8,
+      "changed_words": [
+        "developer slash QA people (baseline includes 'agent' and 'developer slash QA people' with 'uh' fillers; candidate omits 'uh' and slightly restructures)",
+        "rework on UX send (baseline: 'rework on UX end')",
+        "then UX specialist checks it again (baseline: 'then they, then UX specialist checks it again'\u2014candidate omits 'they')"
+      ],
+      "missing_content": "Omitted filler/self-correction cues like 'uh' and the word 'they' before 'then UX specialist checks it again'.",
+      "meaning_changes": "Minor phrasing change: 'UX end' \u2192 'UX send' (likely transcription error) but overall process meaning remains the same.",
+      "notes": "Candidate preserves the overall workflow and intent (multiple rework loops between UX/agent/developer/QA, plus an extra loop to ensure no extra issues). Word accuracy is slightly reduced by the 'UX end' vs 'UX send' error and omission of some filler words ('uh') and 'they'. Nuance score reflects fewer disfluencies captured compared to baseline."
+    }
+  },
+  {
+    "file": "2026-03-31_170412.wav",
+    "audio_duration_s": 40.9,
+    "provider": "OpenAI Whisper",
+    "baseline_text": "Yeah, I also would expect you to have a loop of, uh, like, UX, uh, agent, and developer slash QA people, uh, to have a few loops of, uh, rework on UX end, like, is the UX good? Then the, the agent sen",
+    "candidate_text": "Yeah, I also would expect you to have a loop of, like, UX agent and developer slash QA people to have a few loops of rework on UX end. Like, is it UX good? Then the agent sends to feedback to develope",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 9,
+      "nuance_score": 8,
+      "overall_score": 9,
+      "changed_words": [
+        "agent sends to feedback to developer (baseline: agent sends to feedback to developer)",
+        "extra things that could be seen (baseline: no extra things that we could be seeing)"
+      ],
+      "missing_content": "Missing some filler words: baseline has multiple 'uh' occurrences that are not present in the candidate.",
+      "meaning_changes": "Minor wording change in the final clause: baseline emphasizes 'no extra things that we could be seeing,' while candidate says 'no extra things that could be seen'\u2014meaning is essentially the same.",
+      "notes": "Candidate preserves the overall structure and intent (loops of rework between UX, agent, developer/QA, and UX specialist; plus an extra loop to ensure no additional issues). Word choice is very close; main difference is reduced filler/self-correction markers ('uh') and a slight rephrase at the end."
+    }
+  },
+  {
+    "file": "2026-03-31_170553.wav",
+    "audio_duration_s": 61.2,
+    "provider": "Groq Whisper",
+    "baseline_text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, we could be doing, um, I don't know, for performance, we could think about having, uh, (sighs) a similar... For",
+    "candidate_text": " Yeah, okay, it's cool, but I would expect to do a better job. For example, we could be doing, I don't know, for performance we could think about having a similar, for example, when you're doing a lon",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 8,
+      "nuance_score": 6,
+      "overall_score": 8,
+      "changed_words": [
+        "um",
+        "uh",
+        "a similar... (baseline has ellipsis and a sigh cue)",
+        "a few researchers, agents (baseline includes 'I would, I would' repetition and 'uh, (sighs)' nuance)"
+      ],
+      "missing_content": "Missing the filler words 'um' and 'uh' in a few places, and the baseline's '(sighs)' emotional cue is not captured.",
+      "meaning_changes": "Minor: baseline includes 'I would, I would' repetition and 'uh, (sighs)' before 'a similar...'; candidate slightly smooths phrasing but preserves the overall intent.",
+      "notes": "Candidate preserves the core meaning and most wording. Word accuracy is slightly reduced due to omitted fillers ('um', 'uh') and punctuation/ellipsis differences. Nuance score is lower because the baseline includes an explicit sigh cue and more filler/self-pacing that the candidate largely omits."
+    }
+  },
+  {
+    "file": "2026-03-31_170553.wav",
+    "audio_duration_s": 61.2,
+    "provider": "OpenAI Whisper",
+    "baseline_text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, we could be doing, um, I don't know, for performance, we could think about having, uh, (sighs) a similar... For",
+    "candidate_text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance we could think about having a similar for example when you're doing a long ",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 8,
+      "nuance_score": 6,
+      "overall_score": 8,
+      "changed_words": [],
+      "missing_content": "Missing the explicit filler/emotion cue '(sighs)' and some punctuation/pauses; also 'pre-transcribed' hyphenation differs but meaning is preserved.",
+      "meaning_changes": "none",
+      "notes": "Candidate preserves the core meaning and nearly all words. Nuance is slightly reduced due to omission of '(sighs)' and reduced punctuation/segmenting (e.g., commas/ellipses). Word accuracy is high overall, with minor formatting differences (e.g., 'pre transcribed' vs 'pre-transcribed', 'potentially possible' vs 'what potentially possible'\u2014the latter is still present)."
+    }
+  },
+  {
+    "file": "2026-03-31_170828.wav",
+    "audio_duration_s": 24.7,
+    "provider": "Groq Whisper",
+    "baseline_text": "Okay. What I thought we should be also configuring observability and monitoring. So I need us to see how we... How best we f- we find all the requests done to that service, all the potential issues, a",
+    "candidate_text": " Okay, what I thought we should be also configuring observability and monitoring, so I need us to see how we how best we find all the requests done to that service, all the potential issues, all the e",
+    "judgment": {
+      "meaning_score": 9,
+      "word_accuracy": 9,
+      "nuance_score": 6,
+      "overall_score": 8,
+      "changed_words": [
+        "Okay. What I thought we should be also configuring observability and monitoring. So I need us to see how we... How best we f- we find"
+      ],
+      "missing_content": "The candidate omits the self-correction fragment 'f- we' and the non-speech cue '(traffic humming)'.",
+      "meaning_changes": "No clear meaning change; however, the candidate smooths over the stutter/self-correction ('f- we'), slightly reducing nuance.",
+      "notes": "Candidate preserves the main intent and most wording. Nuance score is lower due to missing the stutter/self-correction and the background noise marker."
+    }
+  },
+  {
+    "file": "2026-03-31_170828.wav",
+    "audio_duration_s": 24.7,
+    "provider": "OpenAI Whisper",
+    "baseline_text": "Okay. What I thought we should be also configuring observability and monitoring. So I need us to see how we... How best we f- we find all the requests done to that service, all the potential issues, a",
+    "candidate_text": "Okay what I thought we should be also configuring observability and monitoring so I need us to see how best we find all the requests done to that service, all the potential issues, all the errors lock",
+    "judgment": {
+      "meaning_score": 8,
+      "word_accuracy": 7,
+      "nuance_score": 6,
+      "overall_score": 7,
+      "changed_words": [
+        "f-",
+        "logged"
+      ],
+      "missing_content": "The baseline includes a self-correction/fragment 'f-' and a trailing sound cue '(traffic humming)'; candidate omits both.",
+      "meaning_changes": "Candidate changes 'errors logged' to 'errors locked', which slightly alters the word choice (though likely intended as 'logged').",
+      "notes": "Candidate preserves the overall intent about configuring observability/monitoring, seeing requests, potential issues, errors, and alerting. However, it drops the baseline's self-correction fragment ('f-') and the background cue '(traffic humming)'. Word accuracy is reduced by the likely misrecognition 'locked' vs 'logged'."
+    }
+  }
+]

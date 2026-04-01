@@ -12,8 +12,14 @@ struct HistoryView: View {
                 ScrollView {
                     LazyVStack(spacing: 2) {
                         ForEach(historyManager.entries) { entry in
-                            HistoryEntryRow(entry: entry, historyManager: historyManager)
-                                .accessibilityIdentifier("mumbli-history-entry")
+                            HistoryEntryRow(entry: entry, historyManager: historyManager, onRetry: { entry in
+                                NotificationCenter.default.post(
+                                    name: .mumbliRetryDictation,
+                                    object: nil,
+                                    userInfo: ["entryID": entry.id.uuidString, "recordingFilename": entry.recordingFilename ?? ""]
+                                )
+                            })
+                            .accessibilityIdentifier("mumbli-history-entry")
                         }
                     }
                     .padding(.horizontal, 8)
@@ -78,19 +84,37 @@ struct HistoryView: View {
 struct HistoryEntryRow: View {
     let entry: DictationEntry
     let historyManager: HistoryManager
+    var onRetry: ((DictationEntry) -> Void)?
 
     @State private var showCheckmark = false
     @State private var isHovered = false
+    @State private var isRetrying = false
+
+    private var hasRecording: Bool { entry.recordingFilename != nil }
 
     var body: some View {
-        Button(action: copyEntry) {
-            HStack(spacing: 10) {
+        Button(action: { entry.isFailed ? retryEntry() : copyEntry() }) {
+            HStack(spacing: 8) {
+                // Recording indicator
+                if hasRecording {
+                    Image(systemName: entry.isFailed ? "exclamationmark.circle.fill" : "waveform.circle")
+                        .font(.system(size: 13))
+                        .foregroundColor(entry.isFailed ? Color(nsColor: .systemRed) : Color(nsColor: .systemTeal).opacity(0.7))
+                }
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.text)
-                        .lineLimit(2)
-                        .truncationMode(.tail)
-                        .font(.system(size: 12.5, weight: .regular))
-                        .foregroundColor(.primary)
+                    if entry.isFailed {
+                        Text("Transcription failed — tap to retry")
+                            .lineLimit(1)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundColor(Color(nsColor: .systemRed).opacity(0.85))
+                    } else {
+                        Text(entry.text)
+                            .lineLimit(2)
+                            .truncationMode(.tail)
+                            .font(.system(size: 12.5, weight: .regular))
+                            .foregroundColor(.primary)
+                    }
 
                     Text(entry.timestamp.relativeFormatted())
                         .font(.system(size: 10, weight: .medium, design: .rounded))
@@ -100,29 +124,43 @@ struct HistoryEntryRow: View {
                 Spacer(minLength: 4)
 
                 ZStack {
-                    // Copy icon (shown on hover, hidden when checkmark is shown)
-                    Image(systemName: "doc.on.doc")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .opacity(isHovered && !showCheckmark ? 1 : 0)
-                        .scaleEffect(isHovered && !showCheckmark ? 1 : 0.8)
+                    if entry.isFailed {
+                        // Retry spinner or arrow
+                        if isRetrying {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                                .frame(width: 14, height: 14)
+                        } else {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(nsColor: .systemOrange))
+                                .opacity(isHovered ? 1 : 0.6)
+                        }
+                    } else {
+                        // Copy icon (shown on hover, hidden when checkmark is shown)
+                        Image(systemName: "doc.on.doc")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .opacity(isHovered && !showCheckmark ? 1 : 0)
+                            .scaleEffect(isHovered && !showCheckmark ? 1 : 0.8)
 
-                    // Checkmark (shown after copy)
-                    if showCheckmark {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [
-                                        Color(nsColor: .systemGreen),
-                                        Color(nsColor: .systemTeal),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
+                        // Checkmark (shown after copy)
+                        if showCheckmark {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [
+                                            Color(nsColor: .systemGreen),
+                                            Color(nsColor: .systemTeal),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
                                 )
-                            )
-                            .font(.system(size: 14))
-                            .transition(.scale(scale: 0.5).combined(with: .opacity))
-                            .accessibilityIdentifier("mumbli-history-checkmark")
+                                .font(.system(size: 14))
+                                .transition(.scale(scale: 0.5).combined(with: .opacity))
+                                .accessibilityIdentifier("mumbli-history-checkmark")
+                        }
                     }
                 }
                 .frame(width: 20)
@@ -132,11 +170,18 @@ struct HistoryEntryRow: View {
             .padding(.vertical, 9)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(isHovered ? Color.primary.opacity(0.06) : Color.clear)
+                    .fill(entry.isFailed
+                        ? Color(nsColor: .systemRed).opacity(isHovered ? 0.08 : 0.04)
+                        : (isHovered ? Color.primary.opacity(0.06) : Color.clear))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(isHovered ? Color.primary.opacity(0.04) : Color.clear, lineWidth: 0.5)
+                    .strokeBorder(
+                        entry.isFailed
+                            ? Color(nsColor: .systemRed).opacity(0.12)
+                            : (isHovered ? Color.primary.opacity(0.04) : Color.clear),
+                        lineWidth: 0.5
+                    )
             )
             .contentShape(RoundedRectangle(cornerRadius: 8))
         }
@@ -157,6 +202,12 @@ struct HistoryEntryRow: View {
                 showCheckmark = false
             }
         }
+    }
+
+    private func retryEntry() {
+        guard !isRetrying else { return }
+        isRetrying = true
+        onRetry?(entry)
     }
 }
 

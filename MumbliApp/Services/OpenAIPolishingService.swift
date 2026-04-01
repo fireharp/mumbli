@@ -1,5 +1,43 @@
 import Foundation
 
+/// Engine presets that combine STT strategy + default polish model.
+/// Stored in UserDefaults as raw values under "dictationEngine".
+enum DictationEngine: String, CaseIterable, Identifiable {
+    case standard = "standard"
+    case fast = "fast"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .standard: return "Standard"
+        case .fast: return "Fast"
+        }
+    }
+
+    var engineDescription: String {
+        switch self {
+        case .standard: return "ElevenLabs Scribe + GPT-5.4 Nano"
+        case .fast: return "Groq Whisper + Groq Llama 3.1 8B"
+        }
+    }
+
+    /// Whether this engine uses Groq APIs (STT + polish)
+    var usesGroq: Bool {
+        switch self {
+        case .standard: return false
+        case .fast: return true
+        }
+    }
+
+    var defaultPolishModel: String {
+        switch self {
+        case .standard: return PolishingModel.gpt5_4_nano.rawValue
+        case .fast: return "groq-llama-3.1-8b"
+        }
+    }
+}
+
 /// Polishing preset identifiers, stored in UserDefaults as raw values.
 enum PolishingPreset: String, CaseIterable, Identifiable {
     case light = "light"
@@ -36,7 +74,7 @@ enum PolishingPreset: String, CaseIterable, Identifiable {
         case .casual:
             return "Clean up this dictated text. Keep it casual and conversational. Just fix obvious errors and filler words."
         case .verbatim:
-            return "Clean up this dictated text minimally: remove filler words (um, uh, like, you know), fix typos, and add punctuation. Keep the content and wording exactly as spoken otherwise. Output only the cleaned text, nothing else."
+            return "Clean up this dictated text minimally: remove filler words (um, uh, like, you know), fix typos, and add punctuation. Keep every single word the speaker used — do NOT replace, censor, or rephrase any words, including slang, profanity, or informal language. Your job is punctuation and filler removal only. Output only the cleaned text, nothing else."
         case .custom:
             return "" // Provided by UserDefaults
         }

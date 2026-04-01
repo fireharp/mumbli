@@ -4,13 +4,29 @@ import AppKit
 /// A single dictation history entry.
 struct DictationEntry: Codable, Identifiable {
     let id: UUID
-    let text: String
+    var text: String
     let timestamp: Date
+    /// Relative filename of the saved WAV recording (e.g. "2026-04-01_134652.wav"), if any.
+    var recordingFilename: String?
+    /// True when STT failed and the entry is a placeholder awaiting reprocessing.
+    var isFailed: Bool
 
-    init(text: String, timestamp: Date = Date()) {
+    init(text: String, timestamp: Date = Date(), recordingFilename: String? = nil, isFailed: Bool = false) {
         self.id = UUID()
         self.text = text
         self.timestamp = timestamp
+        self.recordingFilename = recordingFilename
+        self.isFailed = isFailed
+    }
+
+    // Backwards-compatible decoding: missing keys get defaults.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        text = try c.decode(String.self, forKey: .text)
+        timestamp = try c.decode(Date.self, forKey: .timestamp)
+        recordingFilename = try c.decodeIfPresent(String.self, forKey: .recordingFilename)
+        isFailed = try c.decodeIfPresent(Bool.self, forKey: .isFailed) ?? false
     }
 }
 
@@ -30,10 +46,31 @@ final class HistoryManager: ObservableObject {
     }
 
     /// Add a new dictation entry and persist.
-    func addEntry(text: String) {
-        let entry = DictationEntry(text: text)
+    func addEntry(text: String, recordingFilename: String? = nil) {
+        let entry = DictationEntry(text: text, recordingFilename: recordingFilename)
         entries.insert(entry, at: 0)
         saveEntries()
+    }
+
+    /// Add a failed entry placeholder (recording saved, transcription failed).
+    func addFailedEntry(recordingFilename: String) {
+        let entry = DictationEntry(text: "", recordingFilename: recordingFilename, isFailed: true)
+        entries.insert(entry, at: 0)
+        saveEntries()
+    }
+
+    /// Mark a previously failed entry as successful with new text.
+    func resolveEntry(id: UUID, text: String) {
+        guard let idx = entries.firstIndex(where: { $0.id == id }) else { return }
+        entries[idx].text = text
+        entries[idx].isFailed = false
+        saveEntries()
+    }
+
+    /// Full URL for a recording filename.
+    static func recordingURL(for filename: String) -> URL {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        return appSupport.appendingPathComponent("Mumbli/recordings/\(filename)")
     }
 
     /// Copy the full text of an entry to the system pasteboard.

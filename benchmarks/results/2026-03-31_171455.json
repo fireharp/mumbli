@@ -1,0 +1,477 @@
+{
+  "timestamp": "2026-03-31_171455",
+  "stt": [
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 524.4,
+      "runs": 2,
+      "text": "Hmm. Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 1611.4,
+      "runs": 2,
+      "text": "Okay, what now?",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 1.8
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 2626.5,
+      "runs": 2,
+      "text": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps in OpenAI. We just use the same, and, uh, we can take it from monthly configuration that we already have. So, uh, and just test that our benchmarking works, that we have, uh, clear reporting, uh, that you can read it, that you can present it to me, and that it's all working from end-to-end. Blah, blah, blah, blah, blah, blah. So, it's not c- not w- the work is not done yet, man. (laughs)",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 5737.0,
+      "runs": 2,
+      "text": "Okay but again I want you to do that so basically I need to check the API keys we are fine with whatever we have right now we have 11 labs and open AI we just use the same and we can take it from mumbly configuration that you already have so and just test that our benchmarking works that we have clear reporting that you can read it that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1174.3,
+      "runs": 2,
+      "text": "Um, okay. But again, I want you to do that. So basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have eleven laps in OpenAI. We just use the same, and, uh, we can... take it from ambly configuration that we have clear reporting, uh, that you can read it, so that you can present it to me and that it's all working from end-to-end.\" Blah, blah, blah, blah, blah, blah. So, it's not c- not w- the work is not done. yet, man.",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2713.8,
+      "runs": 2,
+      "text": "Okay, but again, I want you to do that, so basically I need you to check the API keys, we are fine with whatever we have. right now we have 11 labs and open AI we just use the same and we can take it from memory configuration that you can read it, that you can present it. to me and that it's all working from end to end blah blah blah blah blah blah so it's not not the work is not done yet man",
+      "audio_duration_s": 43.2
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 2568.6,
+      "runs": 2,
+      "text": "Yeah, I also would expect you to have a loop of, uh, like, UX, uh, agent, and developer slash QA people, uh, to have a few loops of, uh, rework on UX end, like, is the UX good? And then the, the agent sends to feedback to developer, developer fixes it, and they, and UX specialist checks it again. So, should be kind of a few loops in between them. Then there should be extra loop just to see that there is no extra things that we could be seeing, and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3937.3,
+      "runs": 2,
+      "text": "Yeah, I also would expect you to have a loop of, like, UX agent and developer slash QA people to have a few loops of rework on UX end. Like, is it UX good? Then the agent sends to feedback to developer, developer fixes it, then UX specialist checks it again. So should be kind of a few loops in between them. Then there should be extra loop just to see that there is no extra things that we could be seeing and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1172.6,
+      "runs": 2,
+      "text": "Yeah. I also would expect you to have a few loops of rework on UX end like is it as good then that the agent sends to feedback to developer, developer fixes it, then they-- then UX specialist checks it again. So, should be kind of, uh, a few loops in between them. Then there should be extra loop just to see... that there is no extra things that we could be seeing and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2525.4,
+      "runs": 2,
+      "text": "Yeah, I also would expect you to have a few loops of rework on UX and like is it UX good then? The agent sends to feedback to developer developer fixes it and then UX specialist checks it again. So it should be kind of a few loops in between them. Then there should be extra loop just to see. that there is no extra things that we could be seen and you have to manage them properly.",
+      "audio_duration_s": 40.9
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 2928.6,
+      "runs": 2,
+      "text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, we could be doing, um, I don't know, for performance, we could think about having, uh, (sighs) a similar... For example, when you're doing a long dictation, you could actually send it in chunks and, uh, and have it pre-transcribed for you so that it's faster. I don't know how to then you glue those chunks, but potentially it has, uh, it has a performance benefit. So I would, I would do a few researchers, agents that would try to find any and all ways to improve the performance, and find those ways and try to bench them, uh, so that we see, like, what potentially possible.",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 3153.9,
+      "runs": 2,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance we could think about having a similar for example when you're doing a long dictation you could actually send it in chunks and and have it pre transcribed for you so that it's faster I don't know how to then you glue those chunks but potentially it has a it has a performance benefit so I would I would do a few researchers agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1088.9,
+      "runs": 2,
+      "text": "Yeah, okay, it's cool, but, um, I would, I would expect to do a better job. For example, when you're doing a long dictation, you could actually send it in chunks and... Uh... And have it pre-transcribed for you so that it's faster. I don't know how to then you... glue those chunks but potentially it has a performance benefit. So I would... do a few researchers, agents that would try to find any and all ways to improve the performance... and find those ways and try to bench them, uh, so that we see, like... what potentially possible, uh-",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2610.4,
+      "runs": 2,
+      "text": "yeah okay it's cool but I would I would expect to do a better job for example we could be doing I don't know for performance, we could think about having a similar, for example, when you're doing a long dictation, you could actually send it in chunks, and and have it pre-transcribed for you so that it's faster. I don't know how to then you... than you glue those chunks but potentially it has it has a performance benefit so I would I would do a few researchers Agents that would try to find any and all ways to improve the performance and find those ways and try to bench them so that we see like what potentially possible",
+      "audio_duration_s": 61.2
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1434.1,
+      "runs": 2,
+      "text": "Okay. What I thought we should be also configuring observability and monitoring. So, I need us to see how we... How best we f- we find all the requests done to that service, all the potential issues, all the errors logged, and if we find how we alert them. (traffic humming) (birds chirping)",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2285.4,
+      "runs": 2,
+      "text": "Okay what I thought we should be also configuring observability and monitoring so I need us to see how best we find all the requests done to that service, all the potential issues, all the errors locked and if we find how we alert them",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 903.7,
+      "runs": 2,
+      "text": "Okay. What I thought we should be also configuring observability and monitoring. So I need us to see how we... How best we f- we find how we alert them- (coughing)",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 2268.1,
+      "runs": 2,
+      "text": "okay what I thought we should be also configuring observability and monitoring so I need us to see how we how best we find how we alert them",
+      "audio_duration_s": 24.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "ElevenLabs Scribe",
+      "avg_ms": 1696.9,
+      "runs": 2,
+      "text": "I don't like that the implementer is you. You're just managing all those, and, uh, I'm not even five. I just see... Like, basically, you should be reviewing the final result, and I just check whatever you pass as a final result. It's not like... I'm not even considered here. It should be ready. So, if it's not ready, you're in charge and I will kill you.",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "Groq Whisper",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "OpenAI Whisper",
+      "avg_ms": 2619.4,
+      "runs": 2,
+      "text": "I don't like that implementer is you, you're just managing all those and I'm not even five, I just see like basically you should be reviewing the final result and I just check whatever you pass as a final result, it's not like... I'm not even consider it here, it should be ready, so if it's not ready you're in charge and I will kill you.",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "Deepgram Nova-2",
+      "avg_ms": -1,
+      "runs": 0,
+      "text": "[no key]",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "ElevenLabs Scribe (chunked 10s)",
+      "avg_ms": 1821.8,
+      "runs": 2,
+      "text": "I don't like that the implementer is you. You're just managing all those and I'm not even five. I just see like basically you should be reviewing the final result and I just check whatever you pass. as a final result is not like... I'm not even considered here. It should be ready. So if it's not ready, you are in charge and I will kill you.",
+      "audio_duration_s": 29.7
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "provider": "OpenAI Whisper (chunked 10s)",
+      "avg_ms": 5277.0,
+      "runs": 2,
+      "text": "I don't like that implementer is you, you're just managing all those and I'm not even five. I just see like, basically you should be reviewing the final result. And I just check whatever you pass. as a final result is not like... I'm not even consider it here, it should be ready, so... if it's not ready you're in charge and i will kill you",
+      "audio_duration_s": 29.7
+    }
+  ],
+  "polish": [
+    {
+      "provider": "OpenAI gpt-5.4-nano",
+      "avg_ms": 1125.4,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "OpenAI gpt-5.4-mini",
+      "avg_ms": 587.3,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    },
+    {
+      "provider": "OpenAI nano (short prompt)",
+      "avg_ms": 707.4,
+      "runs": 2,
+      "polished_text": "What now?"
+    },
+    {
+      "provider": "Groq llama-3.3-70b",
+      "avg_ms": -1,
+      "runs": 0,
+      "polished_text": "[no key]"
+    },
+    {
+      "provider": "Groq llama-3.1-8b",
+      "avg_ms": -1,
+      "runs": 0,
+      "polished_text": "[no key]"
+    },
+    {
+      "provider": "Regex (no API)",
+      "avg_ms": 2.5163,
+      "runs": 2,
+      "polished_text": "Okay, what now?"
+    }
+  ],
+  "pipelines": [
+    {
+      "file": "2026-03-31_165930.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "Regex (no API)",
+      "stt_ms": 524.4,
+      "polish_ms": 2.5163,
+      "total_ms": 526.9
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 903.7,
+      "polish_ms": 2.5163,
+      "total_ms": 906.2
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 1088.9,
+      "polish_ms": 2.5163,
+      "total_ms": 1091.4
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 524.4,
+      "polish_ms": 587.3,
+      "total_ms": 1111.7
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 1172.6,
+      "polish_ms": 2.5163,
+      "total_ms": 1175.1
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 1174.3,
+      "polish_ms": 2.5163,
+      "total_ms": 1176.8
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 524.4,
+      "polish_ms": 707.4,
+      "total_ms": 1231.8
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "Regex (no API)",
+      "stt_ms": 1434.1,
+      "polish_ms": 2.5163,
+      "total_ms": 1436.6
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 903.7,
+      "polish_ms": 587.3,
+      "total_ms": 1491.0
+    },
+    {
+      "file": "2026-03-31_170828.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 903.7,
+      "polish_ms": 707.4,
+      "total_ms": 1611.1
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "stt": "OpenAI Whisper",
+      "polish": "Regex (no API)",
+      "stt_ms": 1611.4,
+      "polish_ms": 2.5163,
+      "total_ms": 1613.9
+    },
+    {
+      "file": "2026-03-31_165930.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "OpenAI gpt-5.4-nano",
+      "stt_ms": 524.4,
+      "polish_ms": 1125.4,
+      "total_ms": 1649.8
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 1088.9,
+      "polish_ms": 587.3,
+      "total_ms": 1676.2
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "stt": "ElevenLabs Scribe",
+      "polish": "Regex (no API)",
+      "stt_ms": 1696.9,
+      "polish_ms": 2.5163,
+      "total_ms": 1699.4
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 1172.6,
+      "polish_ms": 587.3,
+      "total_ms": 1759.9
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI gpt-5.4-mini",
+      "stt_ms": 1174.3,
+      "polish_ms": 587.3,
+      "total_ms": 1761.6
+    },
+    {
+      "file": "2026-03-31_170553.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 1088.9,
+      "polish_ms": 707.4,
+      "total_ms": 1796.3
+    },
+    {
+      "file": "2026-03-31_170929.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "Regex (no API)",
+      "stt_ms": 1821.8,
+      "polish_ms": 2.5163,
+      "total_ms": 1824.3
+    },
+    {
+      "file": "2026-03-31_170412.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 1172.6,
+      "polish_ms": 707.4,
+      "total_ms": 1880.0
+    },
+    {
+      "file": "2026-03-31_170047.wav",
+      "stt": "ElevenLabs Scribe (chunked 10s)",
+      "polish": "OpenAI nano (short prompt)",
+      "stt_ms": 1174.3,
+      "polish_ms": 707.4,
+      "total_ms": 1881.7
+    }
+  ]
+}
