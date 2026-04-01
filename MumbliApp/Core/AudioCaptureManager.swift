@@ -165,7 +165,52 @@ final class AudioCaptureManager {
         }
     }
 
-    /// Set a specific device as the system default input.
+    /// Set a specific input device directly on the AVAudioEngine's input audio unit.
+    /// This does NOT change the system default input, so it won't trigger Bluetooth HFP switch.
+    private func setInputDeviceOnEngine(engine: AVAudioEngine) {
+        let allDeviceIDs = Self.getAllAudioInputDeviceIDs()
+
+        // Try user's selected device first
+        var targetDeviceID: AudioDeviceID?
+        if let selectedUID = UserDefaults.standard.string(forKey: "selectedMicrophoneID") {
+            targetDeviceID = Self.findDeviceByUID(selectedUID, among: allDeviceIDs)
+            if targetDeviceID != nil {
+                NSLog("[AudioCaptureManager] Setting engine input to user-selected device UID=%@", selectedUID)
+            }
+        }
+
+        // Fallback: built-in mic
+        if targetDeviceID == nil {
+            targetDeviceID = Self.findBuiltInMicrophone(among: allDeviceIDs)
+            if targetDeviceID != nil {
+                NSLog("[AudioCaptureManager] Setting engine input to built-in microphone")
+            }
+        }
+
+        guard var deviceID = targetDeviceID else {
+            NSLog("[AudioCaptureManager] No target device found — using engine default")
+            return
+        }
+
+        // Set the device on the input node's audio unit via kAudioOutputUnitProperty_CurrentDevice
+        let inputNode = engine.inputNode
+        let audioUnit = inputNode.audioUnit!
+        let status = AudioUnitSetProperty(
+            audioUnit,
+            kAudioOutputUnitProperty_CurrentDevice,
+            kAudioUnitScope_Global,
+            0,
+            &deviceID,
+            UInt32(MemoryLayout<AudioDeviceID>.size)
+        )
+        if status == noErr {
+            NSLog("[AudioCaptureManager] Successfully set engine input device to %d", deviceID)
+        } else {
+            NSLog("[AudioCaptureManager] Failed to set engine input device (status %d) — using default", status)
+        }
+    }
+
+    /// Set a specific device as the system default input (DEPRECATED — triggers Bluetooth HFP).
     private func setDefaultInputDevice(_ deviceID: AudioDeviceID) -> Bool {
         var mutableDeviceID = deviceID
         var address = AudioObjectPropertyAddress(
@@ -193,14 +238,15 @@ final class AudioCaptureManager {
             audioEngine = nil
         }
 
-        // Select the user's preferred mic to prevent Bluetooth A2DP → HFP switch
-        selectPreferredMicrophone()
-
-        // Create engine after device switch so inputNode picks up the new device
+        // Create engine first, then set the input device directly on the audio unit
+        // (NOT via system default, which triggers Bluetooth HFP switch)
         let engine = AVAudioEngine()
         engine.reset()
 
         let inputNode = engine.inputNode
+
+        // Set the specific mic device on the audio unit — avoids changing system default
+        setInputDeviceOnEngine(engine: engine)
         let nativeFormat = inputNode.outputFormat(forBus: 0)
 
         NSLog("[AudioCaptureManager] Input node native format: %@ (channels=%d, sampleRate=%.0f)", nativeFormat.description, nativeFormat.channelCount, nativeFormat.sampleRate)
