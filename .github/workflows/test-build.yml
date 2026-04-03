@@ -1,0 +1,49 @@
+name: Test DMG Build
+
+on:
+  push:
+    branches:
+      - feat/release-pipeline
+
+permissions:
+  contents: read
+
+jobs:
+  test-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build Release archive
+        run: |
+          xcodebuild archive \
+            -project MumbliApp.xcodeproj \
+            -scheme MumbliApp \
+            -configuration Release \
+            -archivePath build/Mumbli.xcarchive \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Create DMG
+        run: |
+          mkdir -p build/dmg-contents
+          cp -R build/Mumbli.xcarchive/Products/Applications/Mumbli.app build/dmg-contents/
+          ln -s /Applications build/dmg-contents/Applications
+          hdiutil create \
+            -volname "Mumbli" \
+            -srcfolder build/dmg-contents \
+            -ov \
+            -format UDZO \
+            "Mumbli-test.dmg"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mumbli-test-dmg
+          path: Mumbli-test.dmg
