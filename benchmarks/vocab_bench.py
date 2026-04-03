@@ -71,7 +71,8 @@ POLISH_PROMPT_BASE = (
 )
 
 POLISH_VOCAB_TEMPLATE = (
-    "\nCustom vocabulary (use these exact spellings when they appear in the text):\n<terms>\n{vocab}\n</terms>"
+    "\nCustom vocabulary — the <terms> tag below contains words that are often mistranscribed. "
+    "Use these exact spellings when the spoken words match:\n<terms>\n{vocab}\n</terms>"
 )
 
 POLISH_INJECTION_GUARD = """
