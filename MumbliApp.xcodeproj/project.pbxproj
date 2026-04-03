@@ -22,6 +22,7 @@
 		A1B2C3D4E5F60718293A4B5C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */; };
 		A1B2C3D4E5F60718293A4B6C /* ElevenLabsSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */; };
 		A1B2C3D4E5F60718293A4B7C /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */; };
+		7E2A1B3C4D5E6F7089012345 /* RepetitionGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2A1B3C4D5E6F7089012346 /* RepetitionGuard.swift */; };
 		AA1122334455667788990011 /* SettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1122334455667788990012 /* SettingsUITests.swift */; };
 		AE70B4298FFA673B4DBD7343 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */; };
 		B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A71BD33E19529E403D5933 /* SettingsView.swift */; };
@@ -66,6 +67,7 @@
 		A1B2C3D4E5F60718293A4B5D /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B6D /* ElevenLabsSTTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsSTTService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
+		7E2A1B3C4D5E6F7089012346 /* RepetitionGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepetitionGuard.swift; sourceTree = "<group>"; };
 		AA1122334455667788990012 /* SettingsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUITests.swift; sourceTree = "<group>"; };
 		B0CEC953C5CE455F1FE036EC /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		BB2233445566778899001123 /* DictationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationUITests.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */,
 				9EC660394FD794450188D2C3 /* GroqPolishingService.swift */,
 				0DA6941466F4E2D04D07E654 /* GroqWhisperSTTService.swift */,
+				7E2A1B3C4D5E6F7089012346 /* RepetitionGuard.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -273,6 +276,7 @@
 				FC37A330495FBDCE9CBA605C /* GroqPolishingService.swift in Sources */,
 				4F8D0985FD61EF181FFB6C23 /* GroqWhisperSTTService.swift in Sources */,
 				3B6E739914823271C74C9482 /* PipelineTimer.swift in Sources */,
+				7E2A1B3C4D5E6F7089012345 /* RepetitionGuard.swift in Sources */,
 				C5B1C8201412B08D5EAED651 /* RecordingManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,6 +316,8 @@
 				INFOPLIST_FILE = MumbliApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
 				PRODUCT_NAME = Mumbli;
 				SDKROOT = macosx;
@@ -466,6 +472,8 @@
 				INFOPLIST_FILE = MumbliApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
 				PRODUCT_NAME = Mumbli;
 				SDKROOT = macosx;

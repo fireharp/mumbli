@@ -1,0 +1,76 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+
+  build-dmg:
+    needs: release-please
+    if: needs.release-please.outputs.release_created
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build Release archive
+        run: |
+          xcodebuild archive \
+            -project MumbliApp.xcodeproj \
+            -scheme MumbliApp \
+            -configuration Release \
+            -archivePath build/Mumbli.xcarchive \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Extract app from archive
+        run: |
+          mkdir -p build/dmg-contents
+          cp -R build/Mumbli.xcarchive/Products/Applications/Mumbli.app build/dmg-contents/
+          ln -s /Applications build/dmg-contents/Applications
+
+      - name: Get version from tag
+        id: version
+        run: |
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create DMG
+        run: |
+          hdiutil create \
+            -volname "Mumbli" \
+            -srcfolder build/dmg-contents \
+            -ov \
+            -format UDZO \
+            "Mumbli-${{ steps.version.outputs.version }}.dmg"
+
+      - name: Upload DMG to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ needs.release-please.outputs.tag_name }}" \
+            "Mumbli-${{ steps.version.outputs.version }}.dmg" \
+            --clobber
