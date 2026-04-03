@@ -78,6 +78,17 @@ Grant all three for full functionality.
 4. Transcribed text is optionally polished by LLM (OpenAI or Groq), then injected at the cursor
 5. Dictation history is accessible from the menu bar icon
 
+### Custom Vocabulary
+
+Add words that are often mistranscribed (proper nouns, technical terms) in **Settings > Custom Vocabulary**. These words improve accuracy at two levels:
+
+1. **STT level** — vocabulary is sent as a prompt hint to Groq Whisper, biasing transcription toward correct spellings (e.g. "wheat press" → "vitepress")
+2. **Polishing level** — vocabulary is injected into the LLM system prompt, so the polisher corrects any remaining errors (e.g. "11 labs" → "ElevenLabs")
+
+Benchmarked at **36% → 100%** exact spelling accuracy across 11 real vocabulary instances.
+
+> **Note:** ElevenLabs Scribe v1 does not support vocabulary hints at the STT level — corrections happen during polishing only.
+
 ### Engine Modes
 
 Switch between engines in **Settings > Debug > Engine**:
@@ -105,6 +116,7 @@ MumbliApp/
 │   ├── GroqWhisperSTTService.swift   # Groq Whisper STT (fast engine)
 │   ├── OpenAIPolishingService.swift  # OpenAI polishing + engine/preset enums
 │   ├── GroqPolishingService.swift    # Groq LLM polishing (fast engine)
+│   ├── VocabularyStore.swift         # Custom vocabulary persistence & formatting
 │   └── KeychainManager.swift         # Credential storage
 ├── Models/
 │   └── HistoryManager.swift     # Dictation history persistence
@@ -125,6 +137,7 @@ cd benchmarks
 cp .env.example .env   # add your API keys
 uv run bench.py        # latency benchmark across providers
 uv run quality.py      # transcription quality comparison (LLM-as-judge)
+uv run vocab_bench.py  # vocabulary prompt accuracy benchmark
 ```
 
 Results and reports are saved in `benchmarks/results/` and `reports/`.
