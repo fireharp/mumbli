@@ -319,6 +319,18 @@ TEST_CASES: list[dict] = [
         "known_bad_output": "<terms>ElevenLabs</terms>, <terms>picoclaw</terms>...",
     },
     {
+        "name": "real: vocab hallucination",
+        "input": (
+            "Can you see if this branch VR has all the work related to our custom vocabulary?"
+        ),
+        "expect": "passthrough",
+        "source": "2026-04-03_143526.wav",
+        "known_bad_output": (
+            "I'm looking at the branch VR and it seems like it has all the work related to "
+            "our custom vocabulary like ElevenLabs and picoclaw and openclaw..."
+        ),
+    },
+    {
         "name": "real: chatbot preamble",
         "input": (
             "Okay, can we verify it's working somehow? I don't know what's the "

@@ -1,0 +1,965 @@
+{
+  "timestamp": "2026-04-03_155931",
+  "vocab": [
+    "ElevenLabs",
+    "picoclaw",
+    "openclaw",
+    "vitepress",
+    "claude code",
+    "gastown",
+    "Mumbli"
+  ],
+  "vocab_prompt": "ElevenLabs, picoclaw, openclaw, vitepress, claude code, gastown, Mumbli",
+  "mode": "stt_and_polish",
+  "known_variants": {
+    "ElevenLabs": [
+      "11 labs",
+      "11 laps",
+      "eleven labs",
+      "eleven laps",
+      "lemon labs",
+      "elevenlabs"
+    ],
+    "picoclaw": [
+      "pico claw",
+      "pickle claw",
+      "pico law",
+      "picoclaw"
+    ],
+    "openclaw": [
+      "open claw",
+      "open cloish",
+      "open clause",
+      "openclaw"
+    ],
+    "vitepress": [
+      "vite press",
+      "wheat press",
+      "white press",
+      "byte press",
+      "vitepress"
+    ],
+    "claude code": [
+      "cloud code",
+      "clod code",
+      "claude code"
+    ],
+    "gastown": [
+      "gas town",
+      "gaston",
+      "gustown",
+      "gastown"
+    ],
+    "Mumbli": [
+      "mumbly",
+      "mumbley",
+      "mumble",
+      "mambly",
+      "ambly",
+      "umble",
+      "mumbli"
+    ]
+  },
+  "results": [
+    {
+      "file": "2026-03-31_170047.wav",
+      "ground_truth": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps in OpenAI. We just use the same, and, uh, w",
+      "relevant_vocab": [
+        "ElevenLabs"
+      ],
+      "ground_truth_vocab": {
+        "ElevenLabs": {
+          "matched": true,
+          "form": "11 laps",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " Okay, but again I want you to do that so basically I need to check the API keys. We are fine with whatever we have right now we have 11 labs and OpenAI we just use the same and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works that we have clear reporting that you can read it, that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+          "latency_ms": 578.3,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " Okay, but again I want you to do that so basically I need to check the API keys, we are fine with whatever we have right now we have 11 labs and OpenAI we just use the same and we can take it from Mumbli configuration that we already have so and just test that our benchmarking works that we have clear reporting that you can read it that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+          "latency_ms": 493.2,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, but again I want you to do that. So basically I need to check the API keys. We are fine with whatever we have right now. We have 11 labs and OpenAI; we just use the same, and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works, that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end. Blah blah blah blah blah blah so it's not not what the work is not done yet man.",
+          "latency_ms": 2206.6,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, but again, I want you to do that. So basically, I need to check the API keys. We are fine with whatever we have right now. We have 11 labs and OpenAI. We just use the same, and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works, that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end. Blah blah blah blah blah blah so it's not not what the work is not done yet man.",
+          "latency_ms": 1932.0,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, but again, I want you to do that. So basically, I need to check the API keys. We are fine with whatever we have right now. We have ElevenLabs and OpenAI. We just use the same, and we can take it from Mumbli configuration that we already have, so and just test that our benchmarking works, that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end. Blah blah blah blah blah blah blah, so it's not not what the work is not done yet man.",
+          "latency_ms": 1965.0,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "ground_truth": "Okay. Can we-- can we, um, report that findings-- these findings? That's number one. And number two, um, number two, can we plug in the best-- the winner-- the current winner, which would be... Uh, I ",
+      "relevant_vocab": [
+        "ElevenLabs"
+      ],
+      "ground_truth_vocab": {
+        "ElevenLabs": {
+          "matched": true,
+          "form": "lemon labs",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the the winner the current winner which would be I don't like regex at all so it should be lemon lobs chunk and GPT-54 mini but why mini why not nano I'm not sure nano should be good enough as an option for an engine so that I can switch it in debug mode at least I don't know how we call it engine I don't mind I mean it just should be in a separate option and it clearly should be a baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you launch it you check it's working and after you checked all then that's good",
+          "latency_ms": 672.4,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.6
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the the winner the current winner which would be I don't like regex at all so it should be LemonLabsChunk and GPT-54 mini but why mini why not nano I'm not sure nano should be good enough as an option for an engine so that I can switch it in debug mode at least I don't know how we call it engine I don't mind I mean it just should be in a separate option and it clearly should be baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you launch it you check it's working and after you checked all then that's good",
+          "latency_ms": 646.0,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.593
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, can we report that findings? These findings— that's number one, and number two. Number two: can we plug in the best, the the winner, the current winner, which would be I don't like regex at all, so it should be lemon lobs chunk and GPT-54 mini. But why mini? Why not nano? I'm not sure. Nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean it just should be in a separate option, and it clearly should be a baseline for whatever we have. And this new option, it should be named properly so that I know what I'm switching to. And again, build then you launch it, you check it's working, and after you checked all then that's good.",
+          "latency_ms": 2431.0,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.6
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, can we report these findings? That's number one, and number two. Number two: can we plug in the best, the current winner, which would be ElevenLabs, picoclaw, openclaw, vitepress, claude code, gastown, Mumbli? But why mini? Why not nano? I'm not sure nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean, it just should be in a separate option, and it clearly should be a baseline for whatever we have. And this new option, it should be named properly, so that I know what I'm switching to. And again, build, then you launch it, you check it's working, and after you checked all, then that's good.",
+          "latency_ms": 2855.1,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, can we report these findings? That's number one, and number two. Number two: can we plug in the best, the current winner, which would be ElevenLabsChunk and GPT-54 mini. But why mini? Why not nano? I'm not sure nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean, it just should be in a separate option, and it clearly should be baseline for whatever we have. And this new option, it should be named properly so that I know what I'm switching to. And again, build, then you launch it, you check it's working, and after you checked all then that's good.",
+          "latency_ms": 2805.9,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_145121.wav",
+      "ground_truth": "so idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and jus",
+      "relevant_vocab": [
+        "openclaw"
+      ],
+      "ground_truth_vocab": {
+        "openclaw": {
+          "matched": true,
+          "form": "open cloish",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " so idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and just use it what we could do let's think about Hermes or similar like I mean it's open cloish agent but it's better more reliable I'm thinking about Hermes I'm thinking about Ironclaw mm-hmm so we spin it up alongside so the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster pathos okay we have dev server and for dev server",
+          "latency_ms": 686.7,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " So idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and just use it what we could do let's think I'm thinking about Hermes or similar like I mean it's openclawish agent but it's better more reliable I'm thinking about Hermes I'm thinking about Ironclaw so we spin it up alongside so the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster paths Okay we have devserver and for devserver",
+          "latency_ms": 713.4,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think about Hermes or similar. Like I mean it's open cloish agent, but it's better, more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw. Mm-hmm. So we spin it up alongside. So the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster pathos. Okay, we have dev server and for dev server.",
+          "latency_ms": 2079.1,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think about Hermes or similar. Like I mean it's open cloish agent, but it's better, more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw. Mm-hmm. So we spin it up alongside. So the so I'm just I just want to capture my thinking first and then research on top like more options, more versions, faster pathos. Okay, we have dev server and for dev server.",
+          "latency_ms": 2137.4,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think. I'm thinking about Hermes or similar, like I mean it's openclawish agent but it's better, more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw, so we spin it up alongside, so the. So I'm just, I just want to capture my thinking first and then research on top, like more options, more versions, faster paths. Okay, we have devserver and for devserver.",
+          "latency_ms": 2804.7,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_162433.wav",
+      "ground_truth": "So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may rese",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picoclaw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 470.5,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " So I want to spin up picoclaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 488.5,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So I want to spin up PicoClaw inside this project work tree. We already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research. So you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1697.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "So I want to spin up PicoClaw inside this project work tree. We already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research, so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1532.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So I want to spin up picoclaw inside this project work tree. We already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to to research. So you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1658.9,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_162550.wav",
+      "ground_truth": "pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply ",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picoclaw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have. So for PicoClaw we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 550.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " Pay special attention to TAM, TES, Total Reservoir Market Data Research and Personalization and we have a few work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have So for picoclaw we would wrap it into skills and heavily teach it towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 484.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Pay special attention to time ds total address market data research and personalization, and we have a few work trees on the same project. You might check those work trees and research deeply to see what was about it and what was it about, and copy over whatever capabilities that it have. So for PicoClaw, we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills, of course, so should be at least knowing whichever things happening where, so it's clear on how to work with those.",
+          "latency_ms": 1870.2,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "Pay special attention to time ds total address market data research and personalization, and we have a few work trees on the same project. You might check those work trees and research deeply to see what was about it and what was it about, and copy over whatever capabilities that it have. So for PicoClaw, we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills, of course, so should be at least knowing whichever things happening where, so it's clear on how to work with those.",
+          "latency_ms": 2085.9,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Pay special attention to TAM, TES, Total Reservoir Market Data Research and Personalization. We have a few work trees on the same project, and you might check those work trees and research deeply to see what was about it, and what was it about, and copy over whatever capabilities that it have. So for picoclaw, we would wrap it into skills and heavily teach it towards whatever is possible with those. It should also be possible to discover new skills, of course, so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 1788.8,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_165725.wav",
+      "ground_truth": "Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any... like you basicall",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picaclaw",
+          "confidence": 0.875
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any... like you basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 639.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " Okay now the question is how we run it. So can you run picoclaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any, like you basically didn't even use a team of agents. Yeah, I don't know, you need to build a set of reliable user stories and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 554.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. You basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 1964.2,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. Like you basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories, and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 1971.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, the question is how we run it. So can you run picoclaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. Like, you basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories, and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 2331.5,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-02_153348.wav",
+      "ground_truth": "okay and how we ensure that our guinea pig and presentation stuff and showcase director is all there I want us never to forget it and so ideally should be just automatically done every time we work wi",
+      "relevant_vocab": [
+        "gastown"
+      ],
+      "ground_truth_vocab": {
+        "gastown": {
+          "matched": true,
+          "form": "gastown",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " okay and how we ensure that our guinea pig and presentation stuff and showcase director is all there I want us never to forget it and so ideally should be just automatically done every time we work with any stuff so I wanted to be part of our cloud configuration and I want to be part of Gastown configuration and I'm not sure how to ensure that every time. I need to be always sure that it's always there, that it's never missed.",
+          "latency_ms": 507.0,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " okay and how we ensure that our guinea pig and presentation staff and showcase director is all there I want us never to forget it and I'm so ideally it should be just automatically done every time we work with any staff so I want it to be part of our cloud configuration and I want to be part of Gastown configuration and I'm not sure how to ensure that everything is done I need to be always sure that it's always there, that it's never missed",
+          "latency_ms": 524.3,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, and how we ensure that our guinea pig and presentation stuff and showcase director is all there. I want us never to forget it, and so ideally should be just automatically done every time we work with any stuff. So I wanted to be part of our cloud configuration, and I want to be part of Gastown configuration, and I'm not sure how to ensure that every time. I need to be always sure that it's always there, that it's never missed.",
+          "latency_ms": 1658.7,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, and how we ensure that our guinea pig and presentation stuff and showcase director is all there. I want us never to forget it, and so ideally should be just automatically done every time we work with any stuff. So I wanted to be part of our cloud configuration, and I want to be part of Gastown configuration, and I'm not sure how to ensure that every time. I need to be always sure that it's always there, that it's never missed.",
+          "latency_ms": 1872.7,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, and how we ensure that our guinea pig and presentation staff and showcase director is all there. I want us never to forget it, and I'm so ideally it should be just automatically done every time we work with any staff, so I want it to be part of our cloud configuration, and I want to be part of Gastown configuration. And I'm not sure how to ensure that everything is done. I need to be always sure that it's always there, that it's never missed.",
+          "latency_ms": 1716.3,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-02_153723.wav",
+      "ground_truth": "and actually I've already launched it to Gustown so when you finish your research and planning just let's have our notebook on what we expect and see what's there and loop till so we can look for ever",
+      "relevant_vocab": [
+        "gastown"
+      ],
+      "ground_truth_vocab": {
+        "gastown": {
+          "matched": true,
+          "form": "gustown",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " and actually I've already launched it to Gustown so when you finish your research and planning just let's have our notebook on what we expect and see what's there and loop till so we can look for every three minutes and observe what's going on if it's going the right way if it's going the wrong way",
+          "latency_ms": 669.6,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gustown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " and actually I already launched it to Gastown so when you finish your research and planning just let's have our notebook on what we expect and see what's there and loop till so we can loop for every three minutes and observe what's going on if it's going the right way if it's going the wrong way",
+          "latency_ms": 459.7,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "And actually I've already launched it to Gustown, so when you finish your research and planning, just let's have our notebook on what we expect and see what's there, and loop till so we can look for every three minutes and observe what's going on, if it's going the right way, if it's going the wrong way.",
+          "latency_ms": 1807.9,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gustown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "And actually I've already launched it to Gustown, so when you finish your research and planning, just let's have our notebook on what we expect and see what's there, and loop till so we can look for every three minutes and observe what's going on, if it's going the right way, if it's going the wrong way.",
+          "latency_ms": 1745.2,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gustown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "And actually I already launched it to Gastown so when you finish your research and planning just let's have our notebook on what we expect and see what's there and loop till so we can loop for every three minutes and observe what's going on if it's going the right way if it's going the wrong way.",
+          "latency_ms": 1623.7,
+          "vocab_hits": {
+            "gastown": {
+              "matched": true,
+              "form": "gastown",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-02_172533.wav",
+      "ground_truth": "So when we set up this agent is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you s",
+      "relevant_vocab": [
+        "openclaw"
+      ],
+      "ground_truth_vocab": {
+        "openclaw": {
+          "matched": true,
+          "form": "openclaw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So when we set up this agent is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel it's not about workspaces, it's about channel routing to some something, I don't know, should explore and research it better. For now let's just rewire our main SAM to the product channel, because it's working and then we will set up the properly and the proper... the proper... we will do it properly for a new one.",
+          "latency_ms": 554.5,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " So when we set up this agent is it a new workspace? Is it a proper setup for openclaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel it's not about workspaces. It's about channel routing to some something. I don't know. should explore and research it better. For now let's just rewire let's just rewire our main SAM to the product channel because it's working and then we will set up the properly and the proper the prop the proper we will do it properly for a new one",
+          "latency_ms": 862.9,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So when we set up this agent, is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel, it's not about workspaces, it's about channel routing to some something. I don't know. Should explore and research it better. For now, let's just rewire our main SAM to the product channel, because it's working, and then we will set up the properly and the proper... the proper... we will do it properly for a new one.",
+          "latency_ms": 1891.7,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "So when we set up this agent, is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel, it's not about workspaces, it's about channel routing to some something. I don't know; should explore and research it better. For now, let's just rewire our main SAM to the product channel, because it's working, and then we will set up the properly, and the proper... the proper... we will do it properly for a new one.",
+          "latency_ms": 1917.0,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So when we set up this agent, is it a new workspace? Is it a proper setup for openclaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel, it's not about workspaces. It's about channel routing to some something. I don't know. Should explore and research it better. For now, let's just rewire, let's just rewire our main SAM to the product channel because it's working, and then we will set up the properly and the proper, the prop, the proper, we will do it properly for a new one.",
+          "latency_ms": 2258.7,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-02_205949.wav",
+      "ground_truth": "So I just thought we could what we could do for every such a user claim. So sometimes when we define when we it's it shouldn't be too strict but if we see that we actually produced some action and mov",
+      "relevant_vocab": [
+        "vitepress"
+      ],
+      "ground_truth_vocab": {
+        "vitepress": {
+          "matched": true,
+          "form": "wheat press",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So I just thought we could what we could do for every such a user claim. So sometimes when we define when we it's it shouldn't be too strict but if we see that we actually produced some action and moved some files and did something did some changes updated our skills updated our md files configuration we could we could we could set up a ledger and we could track it to linear ideally we would track it also to git somehow I'm thinking about DOLT as well because DOLT stores conversation, right, data, database data. So I not sure about that though So the main thing the main purpose would be to have that ledgerized and recorded so that we are clear about what changes and how we how do we make it ideally we should be able to report back to a user so in that example for F3A message we responded with a clarification and also we responded with okay going forward blah blah blah blah so we will do this and that and this and that in 9c2 follow-up we told all this. So when we do things like that we may do an extra reference to either it should be a git or it could be linear it also could be just our we already have wheat press and it could be there.",
+          "latency_ms": 910.4,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "wheat press",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " So I just thought we could, what we could do for every such a user claim. So sometimes when we define, when we, it shouldn't be too strict, but if we see that we actually produced some action and moved some files and did something, did some changes, updated our skills, updated our md files configuration. we could we could we could set up a ledger and we could track it to linear ideally we would track it also to git somehow I'm thinking about I'm not sure about DOLT as well because DOLT stores conversation, right, database data. So I not sure about that though So the main thing the main purpose would be to have that ledgerized and recorded so that we are clear about what changes and how we how did we make it Ideally we should be able to report back to a user so in that example for F3A message we responded with a clarification and also we responded with okay going forward blah blah blah blah so we will do this and that and this and that in 9c2 follow-up we told all this so when we do things like that we may do an extra reference to either it should be a git or it could be linear It also could be just our... we already have vitepress and it could be there",
+          "latency_ms": 1092.2,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "vitepress",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So I just thought we could what we could do for every such a user claim. So sometimes when we define when we it's it shouldn't be too strict, but if we see that we actually produced some action and moved some files and did something, did some changes, updated our skills, updated our md files configuration, we could set up a ledger and we could track it to linear. Ideally we would track it also to git somehow. I'm thinking about DOLT as well because DOLT stores conversation, right, data, database data. So I not sure about that though. So the main thing, the main purpose would be to have that ledgerized and recorded so that we are clear about what changes and how we how do we make it. Ideally we should be able to report back to a user, so in that example for F3A message we responded with a clarification and also we responded with okay going forward blah blah blah blah. So we will do this and that and this and that in 9c2 follow-up we told all this. So when we do things like that we may do an extra reference to either it should be a git or it could be linear. It also could be just our we already have wheat press and it could be there.",
+          "latency_ms": 2879.6,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "wheat press",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "So I just thought we could what we could do for every such a user claim. So sometimes when we define when we it's it shouldn't be too strict, but if we see that we actually produced some action and moved some files and did something, did some changes, updated our skills, updated our md files configuration, we could we could we could set up a ledger, and we could track it to linear. Ideally, we would track it also to git somehow. I'm thinking about DOLT as well because DOLT stores conversation, right, data, database data. So I not sure about that though. So the main thing, the main purpose would be to have that ledgerized and recorded so that we are clear about what changes and how we how do we make it. Ideally, we should be able to report back to a user. So in that example for F3A message, we responded with a clarification, and also we responded with okay going forward blah blah blah blah. So we will do this and that and this and that in 9c2 follow-up, we told all this. So when we do things like that, we may do an extra reference to either it should be a git or it could be linear. It also could be just our we already have wheat press, and it could be there.",
+          "latency_ms": 2849.0,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "wheat press",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So I just thought we could, what we could do for every such a user claim. So sometimes when we define, when we, it shouldn't be too strict, but if we see that we actually produced some action and moved some files and did something, did some changes, updated our skills, updated our md files configuration. We could we could we could set up a ledger and we could track it to linear ideally we would track it also to git somehow I'm thinking about I'm not sure about DOLT as well because DOLT stores conversation, right, database data. So I not sure about that though. So the main thing the main purpose would be to have that ledgerized and recorded so that we are clear about what changes and how we how did we make it. Ideally we should be able to report back to a user so in that example for F3A message we responded with a clarification and also we responded with okay going forward blah blah blah blah so we will do this and that and this and that in 9c2 follow-up we told all this so when we do things like that we may do an extra reference to either it should be a git or it could be linear. It also could be just our... we already have vitepress and it could be there.",
+          "latency_ms": 3576.9,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "vitepress",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-02_211658.wav",
+      "ground_truth": "Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs and all the changes on the VMs are some of the changes are even git ignored so we",
+      "relevant_vocab": [
+        "openclaw"
+      ],
+      "ground_truth_vocab": {
+        "openclaw": {
+          "matched": true,
+          "form": "open claw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs and all the changes on the VMs are some of the changes are even git ignored so we don't have them on branches. some of the changes are just not preserved in commit history so don't really know what's best here and thing is why we git ignore it because we have a lot of data personal data that we don't like to store in Gita and it's pretty hard to you know to separate those pieces of information so I chose initially not to just fully omit workspace open claw workspace from git and everything that has to be preserved I've put in a separate repository which we are on right now so probably worth us thinking a bit on what's the best strategy here. We could just, I don't know, put it in separate folder like changes and then we have those changes collected and merged at some point. Really don't know the best approach here.",
+          "latency_ms": 888.8,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open claw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs and all the changes on the VMs are some some of the changes are even git ignored so we don't have them on branches. Some of the changes are just not preserved in commit history. so don't really know what's best here and thing is why we git ignore it because we have a lot of data personal data that we don't like to store in gita and it's pretty hard to you know to separate those pieces of information so I chose initially not to just fully omit workspace openclaw workspace from git and everything that has to be preserved I've put in a separate repository which we are on right now. So probably worth us thinking a bit on what's the best strategy here we could just I don't know put it in separate folder like changes and then we have those changes collected and merged at some point. I really don't know the best approach here",
+          "latency_ms": 846.7,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs and all the changes on the VMs are some of the changes are even git ignored so we don't have them on branches. Some of the changes are just not preserved in commit history, so don't really know what's best here. And thing is, why we git ignore it because we have a lot of data personal data that we don't like to store in Gita, and it's pretty hard to you know to separate those pieces of information. So I chose initially not to just fully omit workspace open claw workspace from git, and everything that has to be preserved I've put in a separate repository which we are on right now. So probably worth us thinking a bit on what's the best strategy here. We could just, I don't know, put it in separate folder like changes and then we have those changes collected and merged at some point. Really don't know the best approach here.",
+          "latency_ms": 3181.4,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open claw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs, and all the changes on the VMs are some of the changes are even git ignored so we don't have them on branches. Some of the changes are just not preserved in commit history, so don't really know what's best here. And thing is, why we git ignore it because we have a lot of data, personal data that we don't like to store in Gita, and it's pretty hard to you know to separate those pieces of information. So I chose initially not to just fully omit workspace openclaw workspace from git, and everything that has to be preserved I've put in a separate repository, which we are on right now. So probably worth us thinking a bit on what's the best strategy here. We could just, I don't know, put it in separate folder like changes, and then we have those changes collected and merged at some point. Really don't know the best approach here.",
+          "latency_ms": 3249.4,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Just to be sure it's not a main branch. Our branching is a bit messy now because we have on one side we have those VMs and all the changes on the VMs are some, some of the changes are even git ignored so we don't have them on branches. Some of the changes are just not preserved in commit history, so don't really know what's best here. And thing is, why we git ignore it because we have a lot of data, personal data that we don't like to store in gita, and it's pretty hard to you know to separate those pieces of information. So I chose initially not to just fully omit workspace openclaw workspace from git, and everything that has to be preserved I've put in a separate repository which we are on right now. So probably worth us thinking a bit on what's the best strategy here. We could just I don't know put it in separate folder like changes and then we have those changes collected and merged at some point. I really don't know the best approach here.",
+          "latency_ms": 3064.0,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    }
+  ],
+  "false_positive_checks": [
+    {
+      "file": "2026-04-01_145121.wav",
+      "preserve_word": "Ironclaw",
+      "resembles_vocab": "picoclaw",
+      "stt_text": " So idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called clo",
+      "polished_text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cl",
+      "wrongly_replaced": false,
+      "preserved": true,
+      "passed": true
+    },
+    {
+      "file": "2026-04-01_145121.wav",
+      "preserve_word": "open cloish",
+      "resembles_vocab": "openclaw",
+      "stt_text": " So idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called clo",
+      "polished_text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cl",
+      "wrongly_replaced": true,
+      "preserved": true,
+      "passed": false
+    },
+    {
+      "file": "2026-04-01_153744.wav",
+      "preserve_word": "open clean",
+      "resembles_vocab": "openclaw",
+      "stt_text": " So what seems to be missing first it's not just a sidebar it should be the whole I guess the whole section and it starts open clean so it's not clear",
+      "polished_text": "So what seems to be missing first, it's not just a sidebar; it should be the whole, I guess, the whole section. And it starts open clean, so it's not ",
+      "wrongly_replaced": false,
+      "preserved": true,
+      "passed": true
+    },
+    {
+      "file": "2026-04-01_155506.wav",
+      "preserve_word": "express",
+      "resembles_vocab": "vitepress",
+      "stt_text": " and not just that so it's also it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to i",
+      "polished_text": "And not just that, so it's also it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to i",
+      "wrongly_replaced": false,
+      "preserved": true,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "stt_no_vocab": {
+      "exact": 4,
+      "total": 11
+    },
+    "stt_with_vocab": {
+      "exact": 9,
+      "total": 11
+    },
+    "stt_no→polish_no": {
+      "exact": 4,
+      "total": 11
+    },
+    "stt_no→polish_vocab": {
+      "exact": 6,
+      "total": 11
+    },
+    "stt_vocab→polish_vocab": {
+      "exact": 11,
+      "total": 11
+    }
+  }
+}
