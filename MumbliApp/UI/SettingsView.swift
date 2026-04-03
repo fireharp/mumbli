@@ -29,6 +29,11 @@ struct SettingsView: View {
     @State private var polishingModel: String = PolishingModel.gpt5_4_nano.rawValue
     @State private var customPolishingModel: String = ""
 
+    // Vocabulary settings
+    @State private var vocabWords: [String] = []
+    @State private var newVocabWord: String = ""
+    @State private var vocabSearch: String = ""
+
     // Debug settings
     @State private var saveRecordings: Bool = false
     @State private var dictationEngine: String = DictationEngine.standard.rawValue
@@ -306,6 +311,56 @@ struct SettingsView: View {
                         }
                     }
 
+                    // Custom Vocabulary section
+                    SettingsSection(title: "Custom Vocabulary", icon: "text.book.closed") {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Words that are often mistranscribed (proper nouns, technical terms)")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+
+                            HStack(spacing: 6) {
+                                TextField("Add word…", text: $newVocabWord)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 12))
+                                    .onSubmit { addVocabWord() }
+                                Button("Add") { addVocabWord() }
+                                    .font(.system(size: 12))
+                                    .disabled(newVocabWord.trimmingCharacters(in: .whitespaces).isEmpty)
+                            }
+
+                            if !vocabWords.isEmpty {
+                                if vocabWords.count > 8 {
+                                    TextField("Filter…", text: $vocabSearch)
+                                        .textFieldStyle(.roundedBorder)
+                                        .font(.system(size: 11))
+                                }
+
+                                VocabFlowLayout(spacing: 6) {
+                                    ForEach(filteredVocabWords, id: \.self) { word in
+                                        HStack(spacing: 4) {
+                                            Text(word)
+                                                .font(.system(size: 12))
+                                            Button(action: { removeVocabWord(word) }) {
+                                                Image(systemName: "xmark")
+                                                    .font(.system(size: 9, weight: .bold))
+                                                    .foregroundColor(.secondary)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(RoundedRectangle(cornerRadius: 6).fill(Color(nsColor: .controlBackgroundColor)))
+                                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color.primary.opacity(0.1)))
+                                    }
+                                }
+
+                                Text("\(vocabWords.count) word\(vocabWords.count == 1 ? "" : "s")")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+
                     // Shortcuts section
                     SettingsSection(title: "Shortcuts", icon: "keyboard") {
                         VStack(spacing: 10) {
@@ -403,7 +458,25 @@ struct SettingsView: View {
             saveRecordings = UserDefaults.standard.bool(forKey: "debugSaveRecordings")
             dictationEngine = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
             if hasElevenLabsKey { checkElevenLabsQuota() }
+            vocabWords = VocabularyStore.words()
         }
+    }
+
+    private var filteredVocabWords: [String] {
+        vocabSearch.isEmpty ? vocabWords : vocabWords.filter { $0.localizedCaseInsensitiveContains(vocabSearch) }
+    }
+
+    private func addVocabWord() {
+        let trimmed = newVocabWord.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !vocabWords.contains(trimmed) else { return }
+        vocabWords.append(trimmed)
+        VocabularyStore.save(vocabWords)
+        newVocabWord = ""
+    }
+
+    private func removeVocabWord(_ word: String) {
+        vocabWords.removeAll { $0 == word }
+        VocabularyStore.save(vocabWords)
     }
 
     private func loadAudioDevices() {
@@ -738,4 +811,44 @@ struct KeyCap: View {
 struct AudioDevice: Identifiable {
     let id: String
     let name: String
+}
+
+/// A simple wrapping flow layout for vocabulary chips.
+struct VocabFlowLayout: Layout {
+    var spacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let maxWidth = proposal.width ?? .infinity
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth, x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+        return CGSize(width: maxWidth, height: y + rowHeight)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x: CGFloat = bounds.minX
+        var y: CGFloat = bounds.minY
+        var rowHeight: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > bounds.maxX, x > bounds.minX {
+                x = bounds.minX
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+        }
+    }
 }

@@ -33,6 +33,7 @@
 		DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */; };
 		DF6AFCB1273D1D9445327479 /* FirstLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */; };
 		F1A2B3C4D5E6F708192A3B4C /* FileLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */; };
+		F1A2B3C4D5E6F708192A3B50 /* VocabularyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F708192A3B51 /* VocabularyStore.swift */; };
 		F8D24EC935CEA740CDD878E4 /* HistoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7807B0E85666A499BC1620 /* HistoryUITests.swift */; };
 		FC37A330495FBDCE9CBA605C /* GroqPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC660394FD794450188D2C3 /* GroqPolishingService.swift */; };
 /* End PBXBuildFile section */
@@ -75,6 +76,7 @@
 		E67637B02EA318BA075AE159 /* RecordingManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
 		E84BA2982E2449184B19BBA7 /* FirstLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLaunchUITests.swift; sourceTree = "<group>"; };
 		F1A2B3C4D5E6F708192A3B4D /* FileLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLogger.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F708192A3B51 /* VocabularyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabularyStore.swift; sourceTree = "<group>"; };
 		F7FDDCDB5DE6880465439978 /* PipelineTimer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PipelineTimer.swift; sourceTree = "<group>"; };
 		FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				A1B2C3D4E5F60718293A4B7D /* OpenAIPolishingService.swift */,
 				9EC660394FD794450188D2C3 /* GroqPolishingService.swift */,
 				0DA6941466F4E2D04D07E654 /* GroqWhisperSTTService.swift */,
+				F1A2B3C4D5E6F708192A3B51 /* VocabularyStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -274,6 +277,7 @@
 				4F8D0985FD61EF181FFB6C23 /* GroqWhisperSTTService.swift in Sources */,
 				3B6E739914823271C74C9482 /* PipelineTimer.swift in Sources */,
 				C5B1C8201412B08D5EAED651 /* RecordingManager.swift in Sources */,
+				F1A2B3C4D5E6F708192A3B50 /* VocabularyStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
