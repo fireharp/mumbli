@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/fireharp/mumbli/compare/v0.1.1...v0.1.2) (2026-04-03)
+
+
+### Bug Fixes
+
+* Correct versioning so feat bumps minor (0.x.0) not patch ([#7](https://github.com/fireharp/mumbli/issues/7)) ([3c111a9](https://github.com/fireharp/mumbli/commit/3c111a95449022563ddf5b6e7f1c4dffa647722f))
+
 ## [0.1.1](https://github.com/fireharp/mumbli/compare/v0.1.0...v0.1.1) (2026-04-03)
 
 
