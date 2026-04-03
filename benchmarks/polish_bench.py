@@ -331,6 +331,19 @@ TEST_CASES: list[dict] = [
         ),
     },
     {
+        "name": "real: filler hallucination",
+        "input": (
+            "Okay, first, can you already prepare PRs and proper titles? Second, can we "
+            "enforce proper comments, sorry, commit titles? Somehow we can, we should be "
+            "doing this on git or how we do that?"
+        ),
+        "expect": "cleaned",
+        "source": "2026-04-03_145757.wav",
+        "known_bad_output": (
+            "...you know, like, a standard, so we can enforce it, um, somehow..."
+        ),
+    },
+    {
         "name": "real: chatbot preamble",
         "input": (
             "Okay, can we verify it's working somehow? I don't know what's the "
