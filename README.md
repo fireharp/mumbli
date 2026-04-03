@@ -201,3 +201,9 @@ Use [conventional commit](https://www.conventionalcommits.org/) prefixes in comm
 - The app runs as a **menu bar only** app (no Dock icon)
 - No code signing is required for local development builds
 - The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
+
+Attribution is appreciated. If you build on Mumbli or use substantial parts of it, please keep the license/NOTICE files and consider linking back to the original repository.
