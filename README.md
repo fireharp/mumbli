@@ -17,7 +17,13 @@ A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn ke
    cd mumbli
    ```
 
-2. **Configure API keys**
+2. **Set up git hooks** (enforces conventional commit messages)
+
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
+3. **Configure API keys**
 
    Create a `.env` file in the project root (this file is gitignored):
 
@@ -117,6 +123,7 @@ MumbliApp/
 │   ├── OpenAIPolishingService.swift  # OpenAI polishing + engine/preset enums
 │   ├── GroqPolishingService.swift    # Groq LLM polishing (fast engine)
 │   ├── VocabularyStore.swift         # Custom vocabulary persistence & formatting
+│   ├── RepetitionGuard.swift        # Post-polish safety guard
 │   └── KeychainManager.swift         # Credential storage
 ├── Models/
 │   └── HistoryManager.swift     # Dictation history persistence
@@ -128,6 +135,19 @@ MumbliApp/
     └── OverlayController.swift  # Listening indicator
 ```
 
+## Safety Guards
+
+Polishing LLMs (especially smaller models like Groq Llama 3.1 8B) can hallucinate, repeat phrases in a loop, or leak system prompt tags when the dictated speech sounds conversational. Mumbli has three layers of defense:
+
+1. **XML boundary** — Raw transcription is wrapped in `<dictation>` tags before polishing, creating a clear separation between system instructions and user content.
+2. **Injection-hardened prompts** — The polishing prompt explicitly forbids the LLM from adding, inventing, or continuing content beyond what was spoken.
+3. **RepetitionGuard** — A deterministic post-polish check that catches:
+   - **Sentence explosion** — output has more sentences than input
+   - **Length explosion** — output is >2x the input character count
+   - **Tag leakage** — system prompt tags (`<dictation>`, `<terms>`) appearing in output
+
+   If the guard trips on the Groq (Fast) engine, it automatically retries with GPT-5.4 Nano. If that also fails, it falls back to the raw transcription.
+
 ## Benchmarking
 
 A Python benchmark harness lives in `benchmarks/`:
@@ -138,9 +158,43 @@ cp .env.example .env   # add your API keys
 uv run bench.py        # latency benchmark across providers
 uv run quality.py      # transcription quality comparison (LLM-as-judge)
 uv run vocab_bench.py  # vocabulary prompt accuracy benchmark
+uv run polish_bench.py # polishing prompt injection & hallucination benchmark
 ```
 
 Results and reports are saved in `benchmarks/results/` and `reports/`.
+
+## Releases & Versioning
+
+Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated releases:
+
+- **`fix:` commits** → patch bump (0.1.0 → 0.1.1)
+- **`feat:` commits** (or anything else) → minor bump (0.1.0 → 0.2.0)
+
+### How it works
+
+1. Push to `main` (directly or via PR merge)
+2. [release-please](https://github.com/googleapis/release-please) analyzes commits and opens a **Release PR** with a generated changelog
+3. Merge the Release PR → version is bumped, git tag created, GitHub Release published
+4. A DMG is automatically built and attached to the release
+
+### Install from DMG
+
+1. Go to [Releases](https://github.com/fireharp/mumbli/releases)
+2. Download the latest `Mumbli-x.y.z.dmg`
+3. Mount it (double-click)
+4. Drag **Mumbli** to **Applications**
+5. Launch from Applications
+
+### Contributing
+
+Use [conventional commit](https://www.conventionalcommits.org/) prefixes in commit messages or PR titles:
+
+| Prefix | Effect |
+|--------|--------|
+| `feat:` | New feature → minor version bump |
+| `fix:` | Bug fix → patch version bump |
+| `docs:` | Documentation (no release) |
+| `chore:` | Maintenance (no release) |
 
 ## Notes
 

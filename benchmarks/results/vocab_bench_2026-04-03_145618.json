@@ -1,0 +1,164 @@
+{
+  "timestamp": "2026-04-03_145618",
+  "vocab": [
+    "ElevenLabs",
+    "picoclaw",
+    "openclaw",
+    "vitepress",
+    "claude code",
+    "gastown",
+    "Mumbli"
+  ],
+  "vocab_prompt": "ElevenLabs, picoclaw, openclaw, vitepress, claude code, gastown, Mumbli",
+  "results": [
+    {
+      "file": "2026-04-01_162433.wav",
+      "ground_truth": "So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+      "without_prompt": {
+        "text": " So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+        "latency_ms": 552.8,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": true,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 1.0
+      },
+      "with_prompt": {
+        "text": " So I want to spin up picoclaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+        "latency_ms": 486.0,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": true,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 1.0
+      },
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "improved": false
+    },
+    {
+      "file": "2026-04-01_162550.wav",
+      "ground_truth": "pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have. So for PicoClaw we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+      "without_prompt": {
+        "text": " pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have. So for PicoClaw we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+        "latency_ms": 523.0,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": true,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 1.0
+      },
+      "with_prompt": {
+        "text": " Pay special attention to TAM, TES, Total Reservoir Market Data Research and Personalization and we have a few work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have So for picoclaw we would wrap it into skills and heavily teach it towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+        "latency_ms": 523.1,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": true,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 0.917
+      },
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "improved": false
+    },
+    {
+      "file": "2026-04-02_153348.wav",
+      "ground_truth": "okay and how we ensure that our guinea pig and presentation stuff and showcase director is all there I want us never to forget it and so ideally should be just automatically done every time we work with any stuff so I wanted to be part of our cloud configuration and I want to be part of Gastown configuration and I'm not sure how to ensure that every time. I need to be always sure that it's always there, that it's never missed.",
+      "without_prompt": {
+        "text": " okay and how we ensure that our guinea pig and presentation stuff and showcase director is all there I want us never to forget it and so ideally should be just automatically done every time we work with any stuff so I wanted to be part of our cloud configuration and I want to be part of Gastown configuration and I'm not sure how to ensure that every time. I need to be always sure that it's always there, that it's never missed.",
+        "latency_ms": 526.3,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": false,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": true,
+          "Mumbli": false
+        },
+        "word_accuracy": 1.0
+      },
+      "with_prompt": {
+        "text": " okay and how we ensure that our guinea pig and presentation staff and showcase director is all there I want us never to forget it and I'm so ideally it should be just automatically done every time we work with any staff so I want it to be part of our cloud configuration and I want to be part of Gastown configuration and I'm not sure how to ensure that everything is done I need to be always sure that it's always there, that it's never missed",
+        "latency_ms": 465.7,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": false,
+          "openclaw": false,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": true,
+          "Mumbli": false
+        },
+        "word_accuracy": 0.92
+      },
+      "relevant_vocab": [
+        "gastown"
+      ],
+      "improved": false
+    },
+    {
+      "file": "2026-04-02_172533.wav",
+      "ground_truth": "So when we set up this agent is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel it's not about workspaces, it's about channel routing to some something, I don't know, should explore and research it better. For now let's just rewire our main SAM to the product channel, because it's working and then we will set up the properly and the proper... the proper... we will do it properly for a new one.",
+      "without_prompt": {
+        "text": " So when we set up this agent is it a new workspace? Is it a proper setup for OpenClaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel it's not about workspaces, it's about channel routing to some something, I don't know, should explore and research it better. For now let's just rewire our main SAM to the product channel, because it's working and then we will set up the properly and the proper... the proper... we will do it properly for a new one.",
+        "latency_ms": 578.6,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": false,
+          "openclaw": true,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 1.0
+      },
+      "with_prompt": {
+        "text": " So when we set up this agent is it a new workspace? Is it a proper setup for openclaw? I think it's not. Should be same workspace and just different wiring. I don't know how you call it. So when you set up slack channel it's not about workspaces. It's about channel routing to some something. I don't know. should explore and research it better. For now let's just rewire let's just rewire our main SAM to the product channel because it's working and then we will set up the properly and the proper the prop the proper we will do it properly for a new one",
+        "latency_ms": 536.6,
+        "vocab_hits": {
+          "ElevenLabs": false,
+          "picoclaw": false,
+          "openclaw": true,
+          "vitepress": false,
+          "claude code": false,
+          "gastown": false,
+          "Mumbli": false
+        },
+        "word_accuracy": 0.906
+      },
+      "relevant_vocab": [
+        "openclaw"
+      ],
+      "improved": false
+    }
+  ],
+  "summary": {
+    "total_files": 4,
+    "files_with_vocab": 4,
+    "improved": 0
+  }
+}

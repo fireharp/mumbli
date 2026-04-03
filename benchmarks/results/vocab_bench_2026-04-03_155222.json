@@ -1,0 +1,878 @@
+{
+  "timestamp": "2026-04-03_155222",
+  "vocab": [
+    "ElevenLabs",
+    "picoclaw",
+    "openclaw",
+    "vitepress",
+    "claude code",
+    "gastown",
+    "Mumbli"
+  ],
+  "vocab_prompt": "ElevenLabs, picoclaw, openclaw, vitepress, claude code, gastown, Mumbli",
+  "mode": "stt_and_polish",
+  "known_variants": {
+    "ElevenLabs": [
+      "11 labs",
+      "11 laps",
+      "eleven labs",
+      "eleven laps",
+      "lemon labs",
+      "elevenlabs"
+    ],
+    "picoclaw": [
+      "pico claw",
+      "pickle claw",
+      "pico law",
+      "picoclaw"
+    ],
+    "openclaw": [
+      "open claw",
+      "open cloish",
+      "open clause",
+      "openclaw"
+    ],
+    "vitepress": [
+      "vite press",
+      "wheat press",
+      "white press",
+      "byte press",
+      "vitepress"
+    ],
+    "claude code": [
+      "cloud code",
+      "clod code",
+      "claude code"
+    ],
+    "gastown": [
+      "gas town",
+      "gaston",
+      "gustown",
+      "gastown"
+    ],
+    "Mumbli": [
+      "mumbly",
+      "mumbley",
+      "mumble",
+      "mambly",
+      "ambly",
+      "umble",
+      "mumbli"
+    ]
+  },
+  "results": [
+    {
+      "file": "2026-03-31_170047.wav",
+      "ground_truth": "Um, okay. But again, I want you to do that, so basically, I need you to check the API keys. Uh, we are fine with whatever we have right now. We have 11 laps in OpenAI. We just use the same, and, uh, w",
+      "relevant_vocab": [
+        "ElevenLabs"
+      ],
+      "ground_truth_vocab": {
+        "ElevenLabs": {
+          "matched": true,
+          "form": "11 laps",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " Okay, but again I want you to do that so basically I need to check the API keys. We are fine with whatever we have right now we have 11 labs and OpenAI we just use the same and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works that we have clear reporting that you can read it, that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+          "latency_ms": 616.7,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " Okay, but again I want you to do that so basically I need to check the API keys, we are fine with whatever we have right now we have 11 labs and OpenAI we just use the same and we can take it from Mumbli configuration that we already have so and just test that our benchmarking works that we have clear reporting that you can read it that you can present it to me and that it's all working from end to end blah blah blah blah blah blah so it's not not what the work is not done yet man",
+          "latency_ms": 497.2,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, but again I want you to do that. So basically I need to check the API keys. We are fine with whatever we have right now. We have 11 labs and OpenAI; we just use the same and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end. Blah blah blah blah blah blah blah. So it's not not what the work is not done yet man.",
+          "latency_ms": 2176.8,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "11 labs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, but again, I want you to do that. So basically, I need to check the API keys. We are fine with whatever we have right now. We have ElevenLabs and OpenAI. We just use the same, and we can take it from Mambly configuration that you already have. So and just test that our benchmarking works, that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end, blah blah blah blah blah blah so it's not not what the work is not done yet man.",
+          "latency_ms": 1853.9,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, but again, I want you to do that. So basically, I need to check the API keys. We are fine with whatever we have right now. We have ElevenLabs and OpenAI. We just use the same, and we can take it from Mumbli configuration that we already have, so just test that our benchmarking works, that we have clear reporting that you can read it, that you can present it to me, and that it's all working from end to end. Blah blah blah blah blah blah blah, so it's not not what the work is not done yet, man.",
+          "latency_ms": 2489.7,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-03-31_172241.wav",
+      "ground_truth": "Okay. Can we-- can we, um, report that findings-- these findings? That's number one. And number two, um, number two, can we plug in the best-- the winner-- the current winner, which would be... Uh, I ",
+      "relevant_vocab": [
+        "ElevenLabs"
+      ],
+      "ground_truth_vocab": {
+        "ElevenLabs": {
+          "matched": true,
+          "form": "lemon labs",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the the winner the current winner which would be I don't like regex at all so it should be lemon lobs chunk and GPT-54 mini but why mini why not nano I'm not sure nano should be good enough as an option for an engine so that I can switch it in debug mode at least I don't know how we call it engine I don't mind I mean it just should be in a separate option and it clearly should be a baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you launch it you check it's working and after you checked all then that's good",
+          "latency_ms": 727.7,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.6
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " okay can we can we report that findings these findings that's number one and number two number two can we plug in the best the the winner the current winner which would be I don't like regex at all so it should be LemonLabsChunk and GPT-54 mini but why mini why not nano I'm not sure nano should be good enough as an option for an engine so that I can switch it in debug mode at least I don't know how we call it engine I don't mind I mean it just should be in a separate option and it clearly should be baseline for whatever we have and this new option it should be named properly so that I know what what I'm switching to and again build then you launch it you check it's working and after you checked all then that's good",
+          "latency_ms": 710.7,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.593
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, can we report these findings? These findings are number one, and number two. Can we plug in the best, the current winner, which would be I don't like regex at all, so it should be lemon lobs chunk and GPT-54 mini. But why mini? Why not nano? I'm not sure nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean, it just should be in a separate option, and it clearly should be a baseline for whatever we have. And this new option, it should be named properly, so that I know what I'm switching to. And again, build then you launch it, you check it's working, and after you checked all, then that's good.",
+          "latency_ms": 2804.1,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.6
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, can we report these findings? That's number one, and number two. Number two: can we plug in the best, the current winner, which would be ElevenLabs, picoclaw, openclaw, vitepress, claude code, gastown, Mumbli? But why mini? Why not nano? I'm not sure nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean, it just should be in a separate option, and it clearly should be a baseline for whatever we have. And this new option, it should be named properly so that I know what I'm switching to. And again, build then you launch it, you check it's working, and after you checked all then that's good.",
+          "latency_ms": 2396.9,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, can we report these findings? That's number one, and number two. Number two: can we plug in the best, the current winner, which would be ElevenLabsChunk and GPT-54 mini. But why mini? Why not nano? I'm not sure nano should be good enough as an option for an engine, so that I can switch it in debug mode at least. I don't know how we call it engine. I don't mind. I mean, it just should be in a separate option, and it clearly should be baseline for whatever we have. And this new option, it should be named properly, so that I know what I'm switching to. And again, build, then you launch it, you check it's working, and after you checked all, then that's good.",
+          "latency_ms": 2318.5,
+          "vocab_hits": {
+            "ElevenLabs": {
+              "matched": true,
+              "form": "elevenlabs",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_145121.wav",
+      "ground_truth": "so idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and jus",
+      "relevant_vocab": [
+        "picoclaw",
+        "openclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "ironclaw",
+          "confidence": 0.75
+        },
+        "openclaw": {
+          "matched": true,
+          "form": "open cloish",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " so idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and just use it what we could do let's think about Hermes or similar like I mean it's open cloish agent but it's better more reliable I'm thinking about Hermes I'm thinking about Ironclaw mm-hmm so we spin it up alongside so the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster pathos okay we have dev server and for dev server",
+          "latency_ms": 862.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "ironclaw",
+              "confidence": 0.75
+            },
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " So idea would be I'll go through trigger dev I don't know why do we need it even pass path so we just use yeah cloud agent SDK or directly called cloud agent like CLI we can launch CLI process and just use it what we could do let's think I'm thinking about Hermes or similar like I mean it's openclawish agent but it's better more reliable I'm thinking about Hermes I'm thinking about Ironclaw so we spin it up alongside so the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster paths Okay we have devserver and for devserver",
+          "latency_ms": 620.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "ironclaw",
+              "confidence": 0.75
+            },
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think about Hermes or similar. Like I mean it's open cloish agent but it's better more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw. Mm-hmm. So we spin it up alongside, so the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster pathos. Okay, we have dev server and for dev server.",
+          "latency_ms": 2301.8,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.706
+            },
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think about Hermes or similar. Like I mean it's open cloish agent but it's better more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw. Mm-hmm. So we spin it up alongside. So the so I'm just I just want to capture my thinking first and then research on top like more options more versions faster pathos. Okay, we have dev server and for dev server.",
+          "latency_ms": 2233.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.706
+            },
+            "openclaw": {
+              "matched": true,
+              "form": "open cloish",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So idea would be I'll go through trigger dev. I don't know why do we need it even pass path, so we just use yeah cloud agent SDK or directly called cloud agent like CLI. We can launch CLI process and just use it. What we could do, let's think. I'm thinking about Hermes or similar, like I mean it's openclawish agent but it's better, more reliable. I'm thinking about Hermes. I'm thinking about Ironclaw, so we spin it up alongside. So the so I'm just I just want to capture my thinking first and then research on top, like more options, more versions, faster paths. Okay, we have devserver and for devserver.",
+          "latency_ms": 2164.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.706
+            },
+            "openclaw": {
+              "matched": true,
+              "form": "openclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_153744.wav",
+      "ground_truth": "So what seems to be missing first it's not just a sidebar it should be the whole I guess the whole section and it starts open clean so it's it's not clear what should you do like what's the next actio",
+      "relevant_vocab": [
+        "openclaw"
+      ],
+      "ground_truth_vocab": {
+        "openclaw": {
+          "matched": true,
+          "form": "open clean",
+          "confidence": 0.778
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So what seems to be missing first it's not just a sidebar it should be the whole I guess the whole section and it starts open clean so it's it's not clear what should you do like what's the next action new research etc so it should be probably coupled with some UI that we are pre-configured and then what's good in chat that you see those like pipeline progress but you can't interact with it so what's how can you interact with what sections inside the main section how can you restart is there any helper quick responses quick roads quick actions it's just again I need to to put a lot of more a lot more effort into how can we how can we manage that how can we make it more sense and I don't know if you spun up if you spun up a few agents and on top like that would be checking for if it makes sense if it's easy for human to use so ease of use making sense and UX should be a huge loop so we have to loop it we see what happens, we make it better than we loop again, then we loop again, then we loop again, then we loop again, then we loop again until it's, it's actually making sense and easy for human to use, please. Otherwise, it doesn't make sense.",
+          "latency_ms": 875.3,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open clean",
+              "confidence": 0.778
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " So what seems to be missing first it's not just a sidebar it should be the whole I guess the whole section and it starts open clean so it's not clear what should you do like what's the next action new research etc so it should be probably coupled with some UI that we are pre-configured and then what's good in chat that you see those like pipeline progress but you can't interact with it so what's how can you interact with what sections inside the main section how can you restart is there any helper quick responses quick roads quick actions it's just again we need to to put a lot of more a lot more effort into how can we how can we manage that how can we make it more sense and I don't know if you spun up a few agents on top like that would be checking for if it makes sense if it's easy for human to use so ease of use making sense and UX should be a huge loop so we have to loop it we see what happens we make it better then we loop again then we loop again then we loop again then we loop again then we loop again until it's it's actually making sense and easy for human to use please otherwise it doesn't make sense",
+          "latency_ms": 915.0,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": true,
+              "form": "open clean",
+              "confidence": 0.778
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "So what seems to be missing first, it's not just a sidebar; it should be the whole, I guess the whole section. And it starts open clean, so it's not clear what should you do, like what's the next action, new research, etc. So it should be probably coupled with some UI that we are pre-configured. And then what's good in chat that you see those like pipeline progress, but you can't interact with it. So what's how can you interact with what sections inside the main section? How can you restart? Is there any helper, quick responses, quick roads, quick actions? It's just again, I need to put a lot more effort into how can we, how can we manage that, how can we make it more sense. And I don't know if you spun up, if you spun up a few agents and on top like that would be checking for if it makes sense if it's easy for human to use. So ease of use, making sense and UX should be a huge loop. So we have to loop it. We see what happens, we make it better than we loop again, then we loop again, then we loop again, then we loop again, then we loop again until it's actually making sense and easy for human to use, please. Otherwise, it doesn't make sense.",
+          "latency_ms": 2884.9,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.737
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "So what seems to be missing first, it's not just a sidebar; it should be the whole, I guess, the whole section. And it starts open clean, so it's not clear what should you do, like what's the next action, new research, etc. So it should be probably coupled with some UI that we are pre-configured. And then what's good in chat: that you see those like pipeline progress, but you can't interact with it. So what's how can you interact with what sections inside the main section? How can you restart? Is there any helper quick responses, quick roads, quick actions? It's just again, I need to put a lot of more, a lot more effort into how can we, how can we manage that? How can we make it more sense? And I don't know if you spun up, if you spun up a few agents and on top like that, would be checking for if it makes sense if it's easy for human to use. So ease of use, making sense, and UX should be a huge loop. So we have to loop it. We see what happens, we make it better, than we loop again, then we loop again, then we loop again, then we loop again, then we loop again until it's, it's actually making sense and easy for human to use, please. Otherwise, it doesn't make sense.",
+          "latency_ms": 3095.5,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.737
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So what seems to be missing first, it's not just a sidebar; it should be the whole, I guess, the whole section. And it starts open clean, so it's not clear what should you do, like what's the next action, new research, etc. So it should be probably coupled with some UI that we are pre-configured. And then what's good in chat, that you see those like pipeline progress, but you can't interact with it. So what's how can you interact with what sections inside the main section? How can you restart? Is there any helper, quick responses, quick roads, quick actions? It's just again, we need to put a lot more effort into how can we, how can we manage that? How can we make it more sense? And I don't know if you spun up a few agents on top like that, would be checking for if it makes sense if it's easy for human to use. So ease of use, making sense, and UX should be a huge loop. So we have to loop it. We see what happens, we make it better, then we loop again, then we loop again, then we loop again, then we loop again, then we loop again until it's actually making sense and easy for human to use. Please otherwise it doesn't make sense.",
+          "latency_ms": 2989.5,
+          "vocab_hits": {
+            "openclaw": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.737
+            }
+          },
+          "exact_spellings": 0
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_155506.wav",
+      "ground_truth": "And not just that, so it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern w",
+      "relevant_vocab": [
+        "vitepress"
+      ],
+      "ground_truth_vocab": {
+        "vitepress": {
+          "matched": true,
+          "form": "express",
+          "confidence": 0.75
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " And not just that, so it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern ways that we know. Text to speech if you like so it's not necessary but that's what I'm thinking that when you see like that what i'm trying to express when you see into that chat you should be super easy and comfortable to interact with",
+          "latency_ms": 584.6,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "express",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " and not just that so it's also it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern ways that we know text to speech if you like so it's not necessary but that's what I'm thinking when you see like that what I'm trying to express when you see into that chat you should be super easy and comfortable to interact with",
+          "latency_ms": 808.6,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "express",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_no": {
+          "text": "And not just that, so it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern ways that we know. Text to speech if you like so it's not necessary, but that's what I'm thinking that when you see that what I'm trying to express when you see into that chat you should be super easy and comfortable to interact with.",
+          "latency_ms": 1665.5,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "express",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "And not just that, so it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern ways that we know. Text to speech if you like, so it's not necessary, but that's what I'm thinking. That when you see that, what I'm trying to express, when you see into that chat, you should be super easy and comfortable to interact with.",
+          "latency_ms": 1973.8,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": false,
+              "form": null,
+              "confidence": 0.706
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "And not just that, so it's also it also may have extra helper tools like quick responses, quick actions, comments, everything that would help you to interact with the agent in this chat UI with all the modern ways that we know text to speech. If you like, so it's not necessary, but that's what I'm thinking when you see that, what I'm trying to express when you see into that chat, you should be super easy and comfortable to interact with.",
+          "latency_ms": 2131.5,
+          "vocab_hits": {
+            "vitepress": {
+              "matched": true,
+              "form": "express",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_162433.wav",
+      "ground_truth": "So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may rese",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picoclaw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So I want to spin up PicoClaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 460.9,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " So I want to spin up picoclaw inside this project work tree, we already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to to research so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 503.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So I want to spin up PicoClaw inside this project work tree. We already have this new work tree, so and try to teach it with all the possible things from L60 and L01 on how to research, so you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1701.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "So I want to spin up PicoClaw inside this project work tree. We already have this new work tree, so try to teach it with all the possible things from L60 and L01 on how to research. So you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1726.4,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So I want to spin up picoclaw inside this project work tree. We already have this new work tree, so try to teach it with all the possible things from L60 and L01 on how to research. So you may research and investigate all the possible ways of what those two wrappers and APIs have. So it has to be capable of doing whatever those two projects are capable of.",
+          "latency_ms": 1629.9,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_162550.wav",
+      "ground_truth": "pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply ",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picoclaw",
+          "confidence": 1.0
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " pay special attention to uh time ds total address market data research and personalization and we have a few uh work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have. So for PicoClaw we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 567.1,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_with_vocab": {
+          "text": " Pay special attention to TAM, TES, Total Reservoir Market Data Research and Personalization and we have a few work trees on the same project and you might check those work trees and research deeply to see what was about it and what was it about and copy over whatever capabilities that it have So for picoclaw we would wrap it into skills and heavily teach it towards whatever is possible with those. It should also be possible to discover new skills of course so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 538.8,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Pay special attention to time DS total address market data research and personalization, and we have a few work trees on the same project. You might check those work trees and research deeply to see what was about it and what was it about, and copy over whatever capabilities that it have. So for PicoClaw, we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills of course, so should be at least knowing whichever things happening where, so it's clear on how to work with those.",
+          "latency_ms": 1959.9,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_vocab": {
+          "text": "Pay special attention to time, ds total address market data research and personalization, and we have a few work trees on the same project. You might check those work trees and research deeply to see what was about it and what was it about, and copy over whatever capabilities that it have. So for PicoClaw, we would wrap it into skills and heavily teach it in towards whatever is possible with those. It should also be possible to discover new skills, of course, so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 1907.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Pay special attention to TAM, TES, Total Reservoir Market Data Research and Personalization. We have a few work trees on the same project, and you might check those work trees and research deeply to see what was about it, what it was about, and copy over whatever capabilities that it have. So for picoclaw, we would wrap it into skills and heavily teach it towards whatever is possible with those. It should also be possible to discover new skills, of course, so should be at least knowing whichever things happening where so it's clear on how to work with those.",
+          "latency_ms": 1923.4,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_165725.wav",
+      "ground_truth": "Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any... like you basicall",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "picaclaw",
+          "confidence": 0.875
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any... like you basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 587.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " Okay now the question is how we run it. So can you run picoclaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any, like you basically didn't even use a team of agents. Yeah, I don't know, you need to build a set of reliable user stories and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 544.5,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, now the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. You basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories, and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 2003.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, the question is how we run it. So can you run PicaClaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. You basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories, and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 2112.6,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picaclaw",
+              "confidence": 0.875
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, the question is how we run it. So can you run picoclaw and try to work through those skills, try to test them, try to see if it's working at all, because I don't see any. Like, you basically didn't even use a team of agents. Yeah, I don't know. You need to build a set of reliable user stories, and those user stories should be ran by an agent that doesn't know anything about our project or doesn't know much, and then we will see if they are able to execute those or don't. If they don't, where was they failing and why? So what is missing?",
+          "latency_ms": 1886.4,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_200153.wav",
+      "ground_truth": "okay what else do we need to add here is likely so the demonstration of the thing and it should be PikaClaw that is working with ICP generation and can launch multiple ICP generation and you may open ",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "pikaclaw",
+          "confidence": 0.75
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " okay what else do we need to add here is likely so the demonstration of the thing and it should be PikaClaw that is working with ICP generation and can launch multiple ICP generation and you may open some dashboard to see all the statuses and it also may report the status to chat.",
+          "latency_ms": 655.8,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " okay what else do we need to add here is likely so the demonstration of the thing and it should be picoclaw that is working with ICP generation and can launch multiple ICP generation and you may open some dashboard to see all the statuses and it also may report the status to chat",
+          "latency_ms": 424.3,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "Okay, what else do we need to add? Here is likely so the demonstration of the thing, and it should be PikaClaw that is working with ICP generation and can launch multiple ICP generation, and you may open some dashboard to see all the statuses, and it also may report the status to chat.",
+          "latency_ms": 1869.2,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "Okay, what else do we need to add? Here is likely so the demonstration of the thing, and it should be PikaClaw that is working with ICP generation and can launch multiple ICP generation, and you may open some dashboard to see all the statuses, and it also may report the status to chat.",
+          "latency_ms": 1893.1,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "Okay, what else do we need to add? Here is likely so the demonstration of the thing, and it should be picoclaw that is working with ICP generation and can launch multiple ICP generation, and you may open some dashboard to see all the statuses, and it also may report the status to chat.",
+          "latency_ms": 1509.1,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    },
+    {
+      "file": "2026-04-01_210436.wav",
+      "ground_truth": "So question, how do I communicate to PikaClaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now and then we connect it to some, I don't know, telegram or whatever.",
+      "relevant_vocab": [
+        "picoclaw"
+      ],
+      "ground_truth_vocab": {
+        "picoclaw": {
+          "matched": true,
+          "form": "pikaclaw",
+          "confidence": 0.75
+        }
+      },
+      "pipelines": {
+        "stt_no_vocab": {
+          "text": " So question, how do I communicate to PikaClaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now and then we connect it to some, I don't know, telegram or whatever.",
+          "latency_ms": 535.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_with_vocab": {
+          "text": " So question, how do I communicate to picoclaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now and then we connect it to some, I don't know, telegram or whatever.",
+          "latency_ms": 301.8,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        },
+        "stt_no→polish_no": {
+          "text": "So, question: how do I communicate to PikaClaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now, and then we connect it to some, I don't know, telegram or whatever.",
+          "latency_ms": 1655.2,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_no→polish_vocab": {
+          "text": "So, question: how do I communicate to PikaClaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now, and then we connect it to some, I don't know, telegram or whatever.",
+          "latency_ms": 1702.7,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "pikaclaw",
+              "confidence": 0.75
+            }
+          },
+          "exact_spellings": 0
+        },
+        "stt_vocab→polish_vocab": {
+          "text": "So, question: how do I communicate to picoclaw itself? Is it a dashboard? It would be fine for me to go with dashboard for now, and then we connect it to some, I don't know, telegram or whatever.",
+          "latency_ms": 1293.5,
+          "vocab_hits": {
+            "picoclaw": {
+              "matched": true,
+              "form": "picoclaw",
+              "confidence": 1.0
+            }
+          },
+          "exact_spellings": 1
+        }
+      }
+    }
+  ],
+  "summary": {
+    "stt_no_vocab": {
+      "exact": 2,
+      "total": 11
+    },
+    "stt_with_vocab": {
+      "exact": 6,
+      "total": 11
+    },
+    "stt_no→polish_no": {
+      "exact": 2,
+      "total": 11
+    },
+    "stt_no→polish_vocab": {
+      "exact": 4,
+      "total": 11
+    },
+    "stt_vocab→polish_vocab": {
+      "exact": 8,
+      "total": 11
+    }
+  }
+}
