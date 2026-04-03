@@ -23,6 +23,6 @@ enum VocabularyStore {
     static func polishingSnippet() -> String? {
         let w = words()
         guard !w.isEmpty else { return nil }
-        return "\nCustom vocabulary (use these exact spellings when they appear in the text): \(w.joined(separator: ", "))"
+        return "\n<terms>\nCustom vocabulary (use these exact spellings when they appear in the text): \(w.joined(separator: ", "))\n</terms>"
     }
 }

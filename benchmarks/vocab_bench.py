@@ -71,7 +71,7 @@ POLISH_PROMPT_BASE = (
 )
 
 POLISH_VOCAB_TEMPLATE = (
-    "\nCustom vocabulary (use these exact spellings when they appear in the text): {vocab}"
+    "\n<terms>\nCustom vocabulary (use these exact spellings when they appear in the text): {vocab}\n</terms>"
 )
 
 POLISH_INJECTION_GUARD = """
