@@ -470,14 +470,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let finalText: String
             if polishingEnabled {
                 let prompt = OpenAIPolishingService.resolvedPrompt()
+                let wrappedInput = OpenAIPolishingService.wrapForPolishing(transcription)
                 let polished: String
                 if engine.usesGroq {
-                    polished = try await groqPolishingService.polish(text: transcription, prompt: prompt)
+                    polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
                 } else {
                     let model = OpenAIPolishingService.resolvedModel()
-                    polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                    polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
                 }
-                finalText = polished.isEmpty ? transcription : polished
+                let guardResult = RepetitionGuard.check(polished: polished, raw: transcription)
+                if guardResult.didIntervene {
+                    log.log("[Retry] RepetitionGuard intervened: \(guardResult.reason ?? "unknown")")
+                    // On retry, just fall back to raw — don't chain another retry
+                    finalText = transcription
+                } else {
+                    finalText = polished.isEmpty ? transcription : polished
+                }
             } else {
                 finalText = transcription
             }
