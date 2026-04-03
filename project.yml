@@ -4,7 +4,7 @@ options:
   deploymentTarget:
     macOS: "13.0"
   xcodeVersion: "15.0"
-  objectVersion: 56
+  objectVersion: 54
   generateEmptyDirectories: true
 
 targets:
@@ -19,6 +19,8 @@ targets:
     info:
       path: MumbliApp/Info.plist
       properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSUIElement: true
         NSMicrophoneUsageDescription: "Mumbli needs microphone access to capture your voice for dictation."
         LSMinimumSystemVersion: "13.0"
@@ -32,6 +34,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mumbli.app
         PRODUCT_NAME: Mumbli
+        MARKETING_VERSION: "0.1.0" # x-release-please-version
+        CURRENT_PROJECT_VERSION: "1"
         INFOPLIST_FILE: MumbliApp/Info.plist
         CODE_SIGN_ENTITLEMENTS: MumbliApp/MumbliApp.entitlements
         MACOSX_DEPLOYMENT_TARGET: "13.0"

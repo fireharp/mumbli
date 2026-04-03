@@ -17,7 +17,13 @@ A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn ke
    cd mumbli
    ```
 
-2. **Configure API keys**
+2. **Set up git hooks** (enforces conventional commit messages)
+
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
+3. **Configure API keys**
 
    Create a `.env` file in the project root (this file is gitignored):
 
@@ -128,6 +134,39 @@ uv run quality.py      # transcription quality comparison (LLM-as-judge)
 ```
 
 Results and reports are saved in `benchmarks/results/` and `reports/`.
+
+## Releases & Versioning
+
+Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated releases:
+
+- **`fix:` commits** → patch bump (0.1.0 → 0.1.1)
+- **`feat:` commits** (or anything else) → minor bump (0.1.0 → 0.2.0)
+
+### How it works
+
+1. Push to `main` (directly or via PR merge)
+2. [release-please](https://github.com/googleapis/release-please) analyzes commits and opens a **Release PR** with a generated changelog
+3. Merge the Release PR → version is bumped, git tag created, GitHub Release published
+4. A DMG is automatically built and attached to the release
+
+### Install from DMG
+
+1. Go to [Releases](https://github.com/fireharp/mumbli/releases)
+2. Download the latest `Mumbli-x.y.z.dmg`
+3. Mount it (double-click)
+4. Drag **Mumbli** to **Applications**
+5. Launch from Applications
+
+### Contributing
+
+Use [conventional commit](https://www.conventionalcommits.org/) prefixes in commit messages or PR titles:
+
+| Prefix | Effect |
+|--------|--------|
+| `feat:` | New feature → minor version bump |
+| `fix:` | Bug fix → patch version bump |
+| `docs:` | Documentation (no release) |
+| `chore:` | Maintenance (no release) |
 
 ## Notes
 
