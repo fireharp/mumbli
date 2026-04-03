@@ -17,7 +17,13 @@ A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn ke
    cd mumbli
    ```
 
-2. **Configure API keys**
+2. **Set up git hooks** (enforces conventional commit messages)
+
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
+3. **Configure API keys**
 
    Create a `.env` file in the project root (this file is gitignored):
 

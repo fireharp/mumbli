@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Enforce conventional commit messages.
+# Valid: feat: ..., fix: ..., docs: ..., chore: ..., etc.
+# Also allows: Merge ..., Revert ..., and release-please auto-commits.
+
+msg=$(head -1 "$1")
+
+# Allow merge commits, reverts, and release-please
+if echo "$msg" | grep -qE '^(Merge |Revert |chore\(main\): release)'; then
+  exit 0
+fi
+
+# Require conventional commit prefix
+if ! echo "$msg" | grep -qE '^(feat|fix|perf|refactor|docs|chore|test|ci)(\(.+\))?: .+'; then
+  echo ""
+  echo "❌ Commit message must follow conventional commits format:"
+  echo ""
+  echo "  feat: Add new feature"
+  echo "  fix: Fix audio crash"
+  echo "  docs: Update README"
+  echo "  chore: Clean up build files"
+  echo ""
+  echo "  Got: $msg"
+  echo ""
+  exit 1
+fi
