@@ -3,7 +3,7 @@ name: Release Please
 on:
   push:
     branches:
-      - test-release
+      - main
 
 permissions:
   contents: write
@@ -21,14 +21,15 @@ jobs:
         with:
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
-          target-branch: test-release
 
   build-dmg:
     needs: release-please
     if: needs.release-please.outputs.release_created
     runs-on: macos-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install xcodegen
         run: brew install xcodegen
