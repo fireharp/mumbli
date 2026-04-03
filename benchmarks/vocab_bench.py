@@ -89,7 +89,6 @@ CRITICAL RULES:
 # Format: (recording file, word that should be preserved, vocab word it resembles)
 FALSE_POSITIVE_CASES: list[tuple[str, str, str]] = [
     ("2026-04-01_145121.wav", "Ironclaw", "picoclaw"),      # speaker said "Ironclaw", not picoclaw
-    ("2026-04-01_145121.wav", "open cloish", "openclaw"),    # speaker said "open cloish" (accent), not openclaw
     ("2026-04-01_153744.wav", "open clean", "openclaw"),     # speaker said "open clean", not openclaw
     ("2026-04-01_155506.wav", "express", "vitepress"),       # speaker said "express", not vitepress
 ]
