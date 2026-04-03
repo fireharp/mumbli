@@ -470,14 +470,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let finalText: String
             if polishingEnabled {
                 let prompt = OpenAIPolishingService.resolvedPrompt()
+                let wrappedInput = OpenAIPolishingService.wrapForPolishing(transcription)
                 let polished: String
                 if engine.usesGroq {
-                    polished = try await groqPolishingService.polish(text: transcription, prompt: prompt)
+                    polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
                 } else {
                     let model = OpenAIPolishingService.resolvedModel()
-                    polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                    polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
                 }
-                finalText = polished.isEmpty ? transcription : polished
+                let guardResult = RepetitionGuard.check(polished: polished, raw: transcription)
+                if guardResult.didIntervene {
+                    log.log("[Retry] RepetitionGuard intervened: \(guardResult.reason ?? "unknown")")
+                    // On retry, just fall back to raw — don't chain another retry
+                    finalText = transcription
+                } else {
+                    finalText = polished.isEmpty ? transcription : polished
+                }
             } else {
                 finalText = transcription
             }
@@ -587,21 +595,48 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let polishModel: String
                 if polishingEnabled {
                     let prompt = OpenAIPolishingService.resolvedPrompt()
+                    let wrappedInput = OpenAIPolishingService.wrapForPolishing(transcription)
                     timer.mark("polish_start")
                     let polished: String
                     if engine.usesGroq {
                         polishModel = "groq-llama-3.1-8b"
                         log.log("[Dictation] Sending transcription to Groq for polishing")
-                        polished = try await groqPolishingService.polish(text: transcription, prompt: prompt)
+                        polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
                     } else {
                         let model = OpenAIPolishingService.resolvedModel()
                         polishModel = model
                         log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
-                        polished = try await polishingService.polish(text: transcription, model: model, prompt: prompt)
+                        polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
                     }
                     timer.mark("polish_end")
                     log.log("[Dictation] Polished result: \(polished)")
-                    finalText = polished.isEmpty ? transcription : polished
+
+                    // Safety guard: detect hallucination, length explosion, tag leakage
+                    let guardResult = RepetitionGuard.check(polished: polished, raw: transcription)
+                    if guardResult.didIntervene && engine.usesGroq {
+                        // Groq failed — retry with GPT-5.4 Nano as fallback
+                        log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — retrying with gpt-5.4-nano")
+                        timer.mark("polish_retry_start")
+                        let retryPolished = try await polishingService.polish(
+                            text: wrappedInput,
+                            model: PolishingModel.gpt5_4_nano.rawValue,
+                            prompt: prompt
+                        )
+                        timer.mark("polish_retry_end")
+                        log.log("[Dictation] Retry polished result: \(retryPolished)")
+                        let retryGuard = RepetitionGuard.check(polished: retryPolished, raw: transcription)
+                        if retryGuard.didIntervene {
+                            log.log("[Dictation] Retry also failed (\(retryGuard.reason ?? "unknown")) — falling back to raw transcription")
+                            finalText = transcription
+                        } else {
+                            finalText = retryPolished.isEmpty ? transcription : retryPolished
+                        }
+                    } else if guardResult.didIntervene {
+                        log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — falling back to raw transcription")
+                        finalText = guardResult.text.isEmpty ? transcription : guardResult.text
+                    } else {
+                        finalText = polished.isEmpty ? transcription : polished
+                    }
                 } else {
                     log.log("[Dictation] Polishing disabled, using raw transcription")
                     polishModel = "none"

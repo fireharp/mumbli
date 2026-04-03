@@ -111,6 +111,7 @@ MumbliApp/
 │   ├── GroqWhisperSTTService.swift   # Groq Whisper STT (fast engine)
 │   ├── OpenAIPolishingService.swift  # OpenAI polishing + engine/preset enums
 │   ├── GroqPolishingService.swift    # Groq LLM polishing (fast engine)
+│   ├── RepetitionGuard.swift        # Post-polish safety guard
 │   └── KeychainManager.swift         # Credential storage
 ├── Models/
 │   └── HistoryManager.swift     # Dictation history persistence
@@ -122,6 +123,19 @@ MumbliApp/
     └── OverlayController.swift  # Listening indicator
 ```
 
+## Safety Guards
+
+Polishing LLMs (especially smaller models like Groq Llama 3.1 8B) can hallucinate, repeat phrases in a loop, or leak system prompt tags when the dictated speech sounds conversational. Mumbli has three layers of defense:
+
+1. **XML boundary** — Raw transcription is wrapped in `<dictation>` tags before polishing, creating a clear separation between system instructions and user content.
+2. **Injection-hardened prompts** — The polishing prompt explicitly forbids the LLM from adding, inventing, or continuing content beyond what was spoken.
+3. **RepetitionGuard** — A deterministic post-polish check that catches:
+   - **Sentence explosion** — output has more sentences than input
+   - **Length explosion** — output is >2x the input character count
+   - **Tag leakage** — system prompt tags (`<dictation>`, `<terms>`) appearing in output
+
+   If the guard trips on the Groq (Fast) engine, it automatically retries with GPT-5.4 Nano. If that also fails, it falls back to the raw transcription.
+
 ## Benchmarking
 
 A Python benchmark harness lives in `benchmarks/`:
@@ -131,6 +145,7 @@ cd benchmarks
 cp .env.example .env   # add your API keys
 uv run bench.py        # latency benchmark across providers
 uv run quality.py      # transcription quality comparison (LLM-as-judge)
+uv run polish_bench.py # polishing prompt injection & hallucination benchmark
 ```
 
 Results and reports are saved in `benchmarks/results/` and `reports/`.
