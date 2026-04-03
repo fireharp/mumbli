@@ -147,7 +147,8 @@ final class OpenAIPolishingService {
         } else {
             basePrompt = preset.prompt
         }
-        return basePrompt + injectionGuard
+        let vocabSnippet = VocabularyStore.polishingSnippet() ?? ""
+        return basePrompt + vocabSnippet + injectionGuard
     }
 
     /// Polish raw transcription text using the configured model and prompt.

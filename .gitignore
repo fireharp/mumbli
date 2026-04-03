@@ -36,3 +36,6 @@ DerivedData/
 .idea/
 
 reports/screenshots
+
+# Benchmark results
+benchmarks/results/
