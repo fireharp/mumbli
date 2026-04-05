@@ -1,0 +1,72 @@
+---
+title: "Custom Vocabulary for Dictation — Mumbli"
+description: "Add proper nouns, brand names, and technical terms to Mumbli's vocabulary. Benchmarked improvement from 36% to 100% accuracy."
+"og:title": "Custom Vocabulary for Dictation — Mumbli"
+"og:description": "Stop getting names and jargon wrong. Custom vocabulary improves accuracy from 36% to 100%."
+---
+
+# Custom vocabulary for dictation
+
+Speech engines are trained on general language. They struggle with proper nouns, brand names, acronyms, and technical jargon. Mumbli lets you fix that.
+
+## The problem
+
+Without custom vocabulary, speech engines make predictable mistakes:
+
+| You say | You get | You wanted |
+|---------|---------|------------|
+| "VitePress" | "wheat press" | VitePress |
+| "ElevenLabs" | "11 labs" | ElevenLabs |
+| "Supabase" | "super base" | Supabase |
+| "kubectl" | "cube control" | kubectl |
+
+These errors are consistent — the same word gets mistranscribed the same way every time.
+
+## The fix
+
+Open **Settings > Custom Vocabulary** and add the words that matter to you. Mumbli uses them at two levels:
+
+<Steps>
+  <Step title="Transcription hints">
+    Your vocabulary is sent as a prompt hint to the speech-to-text engine (Groq Whisper). This biases the transcription toward your preferred spellings before any text is generated.
+  </Step>
+  <Step title="Polishing corrections">
+    Your vocabulary is injected into the LLM polishing prompt. Even if the transcription engine still gets it wrong, the polisher knows what you meant and corrects it.
+  </Step>
+</Steps>
+
+Two layers of correction means errors get caught at both stages of the pipeline.
+
+## Benchmarked results
+
+We tested 11 real vocabulary instances that were consistently mistranscribed:
+
+| Metric | Without vocabulary | With vocabulary |
+|--------|-------------------|-----------------|
+| **Exact match accuracy** | 36% | **100%** |
+| **Test instances** | 11 | 11 |
+
+Every single test word was transcribed correctly after adding it to the vocabulary list.
+
+## What to add
+
+Good candidates for your vocabulary list:
+
+- **People's names** — colleagues, contacts, public figures
+- **Brand names** — products, companies, services you mention often
+- **Technical terms** — frameworks, libraries, CLI tools, protocols
+- **Acronyms** — spelled out the way you want them (e.g., "GROQ" not "grock")
+- **Domain-specific jargon** — medical terms, legal terms, industry language
+
+## Engine support
+
+| Engine | STT hints | Polish corrections |
+|--------|-----------|-------------------|
+| **Standard** (ElevenLabs) | Not supported (Scribe v1) | Yes |
+| **Fast** (Groq Whisper) | Yes | Yes |
+
+ElevenLabs Scribe v1 doesn't accept vocabulary hints at the STT level, so corrections happen during polishing only. Groq Whisper supports hints at both levels.
+
+<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Free and open source. Add your vocabulary in Settings after install.
+</Card>

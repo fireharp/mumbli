@@ -1,0 +1,66 @@
+---
+title: "Privacy — Mumbli"
+description: "How Mumbli handles your data. No accounts, no telemetry, no stored audio. Your API keys, your data."
+"og:title": "Privacy — Mumbli"
+"og:description": "Mumbli stores nothing externally. Your keys, your data, your machine."
+---
+
+# Privacy
+
+Mumbli is designed around a simple principle: **your voice data stays under your control**.
+
+## What Mumbli does NOT do
+
+- **No accounts** — There is no Mumbli account, login, or registration
+- **No telemetry** — The app sends no usage data, analytics, or crash reports to us
+- **No audio storage** — Audio is streamed to your chosen transcription provider and discarded after processing
+- **No cloud storage** — Dictation history is stored locally on your Mac, not on any server
+- **No third-party tracking** — No analytics SDKs, no advertising identifiers
+
+## What Mumbli does
+
+- **Sends audio to transcription APIs** — Your speech is sent to ElevenLabs or Groq for transcription, using your own API keys
+- **Sends text to polishing APIs** — Transcribed text is sent to OpenAI or Groq for polishing, using your own API keys
+- **Stores API keys in macOS Keychain** — Your credentials are stored securely in the system keychain, not in plain text
+- **Stores dictation history locally** — Past dictations are saved on your Mac for your convenience
+
+## Your API keys
+
+Mumbli uses **your** API keys to connect to transcription and polishing services. This means:
+
+- You have a direct relationship with each provider (ElevenLabs, OpenAI, Groq)
+- You control your own usage and billing
+- Mumbli never sees, stores, or proxies your API keys through any intermediary
+- Keys are stored in macOS Keychain, protected by your system's security
+
+## Data flow
+
+```
+Your voice → Your Mac (Mumbli) → Your API keys → Provider APIs
+                                                      ↓
+                                              Transcribed text
+                                                      ↓
+                                          Your Mac (cursor injection)
+```
+
+At no point does data pass through Mumbli's infrastructure — because there is no Mumbli infrastructure. It's a local app that talks directly to the APIs you configure.
+
+## Open source
+
+Mumbli is [open source on GitHub](https://github.com/fireharp/mumbli). You can audit exactly what the app does, how it handles audio, and where data goes.
+
+## macOS permissions
+
+Mumbli requests three system permissions:
+
+| Permission | Purpose | Data access |
+|---|---|---|
+| **Microphone** | Record audio for dictation | Audio stream, discarded after transcription |
+| **Accessibility** | Inject text at cursor position | Write-only access to text fields |
+| **Input Monitoring** | Detect Fn key presses | Key events only (Fn key) |
+
+These permissions are standard macOS system permissions managed through System Settings > Privacy & Security.
+
+## Questions
+
+If you have questions about how Mumbli handles your data, [open an issue on GitHub](https://github.com/fireharp/mumbli/issues).

@@ -1,0 +1,78 @@
+---
+title: "Dictation App for Mac — Mumbli"
+description: "A lightweight macOS dictation app that lives in your menu bar. Hold Fn to dictate into any text field with AI transcription and polishing."
+"og:title": "Dictation App for Mac — Mumbli"
+"og:description": "Menu bar dictation app for macOS. Hold Fn, speak, get clean text in any app."
+---
+
+# Dictation app for Mac
+
+Mumbli is a menu bar dictation app for macOS. It stays out of your way until you need it — then turns speech into clean text in under a second.
+
+## Menu bar, not another window
+
+Mumbli runs as a menu bar app. No Dock icon, no window to manage. Click the menu bar icon to see your dictation history, adjust settings, or quit. That's it.
+
+When you're dictating, a small overlay appears near your cursor — just enough to know Mumbli is listening. It disappears the moment you stop.
+
+## Two activation modes
+
+| Mode | How | When to use |
+|------|-----|-------------|
+| **Hold mode** | Press and hold Fn | Quick phrases, replies, short dictation |
+| **Hands-free** | Double-tap Fn | Longer dictation, thinking out loud, when your hands are busy |
+
+Both modes are always available. No configuration needed.
+
+## AI-powered, not basic
+
+Most dictation tools give you raw speech-to-text. Mumbli adds a polishing layer:
+
+- **Filler words removed** — "um", "uh", "like" are stripped automatically
+- **Self-corrections applied** — "Tuesday, wait, Wednesday" becomes "Wednesday"
+- **Grammar cleaned up** — Punctuation, capitalization, and sentence structure
+- **Your voice preserved** — The polisher cleans, it doesn't rewrite
+
+## Use cases
+
+<CardGroup cols={2}>
+  <Card title="Universal text input" icon="keyboard">
+    Any app, any text field. Browser, email, Slack, IDE, terminal — if there's a cursor, Mumbli works.
+  </Card>
+  <Card title="Accessibility" icon="universal-access">
+    For users with RSI, physical limitations, or temporary injuries. Reliable enough to be your primary input method.
+  </Card>
+  <Card title="Thinking out loud" icon="brain">
+    Speak a stream of consciousness into a note. The polisher cleans it up enough to be readable without losing the raw thought.
+  </Card>
+  <Card title="Quick replies" icon="reply">
+    In a messaging app or email, speak your reply instead of typing. Faster for anything longer than a few words.
+  </Card>
+</CardGroup>
+
+## Dictation history
+
+Every dictation is saved locally with a timestamp. Access it from the menu bar dropdown:
+
+- Click any entry to copy it to your clipboard
+- Most recent entries appear first
+- History persists across app restarts
+- All data stays on your machine
+
+## Safety built in
+
+Mumbli guards against LLM hallucination with three layers:
+
+1. **XML boundaries** between system instructions and your speech
+2. **Injection-hardened prompts** that prevent the LLM from inventing content
+3. **RepetitionGuard** that catches runaway output and falls back to raw transcription
+
+## Requirements
+
+- **macOS 13.0+** (Ventura or later)
+- Your own API keys for transcription (ElevenLabs or Groq) and polishing (OpenAI or Groq)
+- Microphone, Accessibility, and Input Monitoring permissions
+
+<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Free and open source. Get the latest DMG from GitHub Releases.
+</Card>

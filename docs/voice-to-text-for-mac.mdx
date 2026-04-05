@@ -1,0 +1,88 @@
+---
+title: "Voice to Text for Mac — Mumbli"
+description: "The fastest way to turn speech into text on your Mac. Hold Fn, speak, get clean text in any app. AI-powered transcription with custom vocabulary support."
+"og:title": "Voice to Text for Mac — Mumbli"
+"og:description": "Hold Fn, speak, get polished text in any app. Fast AI transcription for macOS."
+---
+
+# Voice to text for Mac
+
+Mumbli turns your Mac into a voice-first machine. Hold **Fn**, speak naturally, and polished text appears right where your cursor is — in any application.
+
+No dictation box. No copy-paste. No app-specific plugins. Just speak and type.
+
+## Why Mumbli
+
+**Apple Dictation** is built into macOS, but it has limits: no polishing, no custom vocabulary, no way to handle filler words or self-corrections. It works fine for short phrases but falls apart for longer dictation.
+
+Mumbli fills the gap:
+
+- **Filler word removal** — "um", "uh", and verbal tics are cleaned out automatically
+- **Self-correction handling** — Say "at 4 pm, actually 3 pm" and get "at 3 pm"
+- **Grammar and punctuation** — Light cleanup without rewriting your voice
+- **Custom vocabulary** — Add names, jargon, and technical terms that speech engines get wrong
+- **Multi-language** — Language detection is automatic, no switching needed
+
+## How it works
+
+<Steps>
+  <Step title="Hold Fn to record">
+    Press and hold the Fn key. A small overlay appears near your cursor showing that Mumbli is listening. Or double-tap Fn for hands-free mode.
+  </Step>
+  <Step title="Speak naturally">
+    Talk at your normal pace. Audio is captured at 16 kHz mono and sent to an AI transcription service.
+  </Step>
+  <Step title="Get polished text">
+    The raw transcription passes through a lightweight LLM that cleans it up while preserving your voice. Text is injected at the cursor via the Accessibility API.
+  </Step>
+</Steps>
+
+## Speed matters
+
+Mumbli offers two engine configurations:
+
+| Engine | Transcription | Polish | End-to-end |
+|--------|--------------|--------|------------|
+| **Standard** | ElevenLabs Scribe | GPT-5.4 Nano | ~3-5 seconds |
+| **Fast** | Groq Whisper | Groq Llama 3.1 8B | ~0.5-1 second |
+
+The Fast engine delivers sub-second transcription — faster than you can move your hands back to the keyboard.
+
+## Custom vocabulary
+
+Speech engines struggle with proper nouns, brand names, and technical terms. Mumbli lets you add a custom vocabulary list in Settings. These words are:
+
+1. Sent as hints to the transcription engine, biasing it toward correct spellings
+2. Injected into the polishing prompt so the LLM fixes any remaining errors
+
+Real-world benchmark: accuracy jumped from **36% to 100%** across 11 vocabulary instances.
+
+## Works everywhere
+
+Mumbli uses the macOS Accessibility API to inject text at your cursor. This means it works in:
+
+- Browsers (Chrome, Safari, Firefox, Arc)
+- Email clients (Mail, Outlook, Gmail)
+- Messaging apps (Slack, Discord, Messages, Telegram)
+- IDEs (VS Code, Xcode, IntelliJ)
+- Note-taking apps (Notes, Obsidian, Notion)
+- Terminals and command lines
+- Any app with a text field
+
+No integrations to configure. No plugins to install.
+
+## Permissions
+
+Mumbli needs three macOS permissions to work:
+
+| Permission | Why |
+|---|---|
+| **Microphone** | Audio capture for dictation |
+| **Accessibility** | Injecting text at the cursor |
+| **Input Monitoring** | Detecting Fn key presses |
+
+You'll be prompted on first launch. All processing uses your own API keys — nothing is stored on external servers.
+
+<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Free and open source. macOS 13.0+ required.
+</Card>
