@@ -2,6 +2,14 @@
 
 A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn key** to dictate into any text field. Audio is transcribed via [ElevenLabs STT](https://elevenlabs.io/) or [Groq Whisper](https://groq.com/) and optionally polished with [OpenAI](https://openai.com/) or [Groq LLM](https://groq.com/).
 
+## Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash
+```
+
+Requires **macOS 13.0+** (Ventura or later). API keys can be configured in the app's Settings after first launch.
+
 ## Requirements
 
 - **macOS 13.0+** (Ventura or later)
@@ -177,12 +185,12 @@ Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated relea
 3. Merge the Release PR → version is bumped, git tag created, GitHub Release published
 4. A DMG is automatically built and attached to the release
 
-### Install from DMG
+### Manual install
 
 1. Go to [Releases](https://github.com/fireharp/mumbli/releases)
 2. Download the latest `Mumbli-x.y.z.dmg`
-3. Mount it (double-click)
-4. Drag **Mumbli** to **Applications**
+3. Mount it, drag **Mumbli** to **Applications**
+4. Run `xattr -cr /Applications/Mumbli.app` (required — the app is not code-signed)
 5. Launch from Applications
 
 ### Contributing
