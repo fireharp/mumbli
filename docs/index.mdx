@@ -76,6 +76,10 @@ LLMs can hallucinate, especially smaller ones. Mumbli has three layers of defens
 
 Mumbli is MIT-licensed. Bring your own API keys for the transcription and polishing services.
 
-<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
-  Get the latest DMG from GitHub Releases. macOS 13.0+ (Ventura or later).
-</Card>
+### Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash
+```
+
+Or [download the DMG](https://github.com/fireharp/mumbli/releases/latest) manually and run `xattr -cr /Applications/Mumbli.app` after installing (the app is not code-signed).

@@ -128,4 +128,8 @@ Releases are automated:
 2. `release-please` opens a Release PR with generated changelog
 3. Merge the Release PR → version bumped, tag created, DMG built and attached
 
+<Note>
+The app is not code-signed. Users installing from the DMG need to run `xattr -cr /Applications/Mumbli.app` or use the install script: `curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash`
+</Note>
+
 The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen).
