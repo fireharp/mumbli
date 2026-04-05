@@ -1,0 +1,82 @@
+name: Deploy Docs & SEO Ping
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'CHANGELOG.md'
+      - 'reports/performance-benchmark-*.md'
+  release:
+    types: [published]
+
+jobs:
+  sync-changelog:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || contains(github.event.head_commit.message, 'CHANGELOG')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate changelog page from CHANGELOG.md
+        run: |
+          cat > docs/changelog.mdx << 'FRONTMATTER'
+          ---
+          title: "Changelog"
+          description: "Release history for Mumbli — voice to text for macOS."
+          ---
+
+          # Changelog
+
+          FRONTMATTER
+          cat CHANGELOG.md >> docs/changelog.mdx
+
+      - name: Commit updated changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/changelog.mdx
+          git diff --staged --quiet || git commit -m "docs: sync changelog"
+          git push
+
+  seo-ping:
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine changed URLs
+        id: urls
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- docs/ 2>/dev/null || echo "")
+          URLS=""
+          for f in $CHANGED_FILES; do
+            SLUG=$(echo "$f" | sed 's|^docs/||;s|\.mdx$||;s|/index$||;s|^index$||')
+            if [ -n "$SLUG" ]; then
+              URLS="${URLS}\"https://mumbli.fireharp.com/${SLUG}\","
+            else
+              URLS="${URLS}\"https://mumbli.fireharp.com/\","
+            fi
+          done
+          # Remove trailing comma
+          URLS=$(echo "$URLS" | sed 's/,$//')
+          echo "urls=[$URLS]" >> "$GITHUB_OUTPUT"
+          echo "has_urls=$( [ -n "$URLS" ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
+
+      - name: Ping IndexNow
+        if: steps.urls.outputs.has_urls == 'true' && vars.INDEXNOW_KEY != ''
+        run: |
+          curl -s -X POST "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"host\": \"mumbli.fireharp.com\",
+              \"key\": \"${{ vars.INDEXNOW_KEY }}\",
+              \"urlList\": ${{ steps.urls.outputs.urls }}
+            }"
+
+      - name: Ping Google sitemap
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://mumbli.fireharp.com/sitemap.xml"

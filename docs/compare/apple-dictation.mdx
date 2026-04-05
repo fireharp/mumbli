@@ -1,0 +1,92 @@
+---
+title: "Mumbli vs Apple Dictation — Comparison"
+description: "How Mumbli compares to built-in macOS Dictation. Custom vocabulary, AI polishing, filler word removal, and more."
+"og:title": "Mumbli vs Apple Dictation"
+"og:description": "Side-by-side comparison of Mumbli and Apple's built-in Dictation for macOS."
+---
+
+# Mumbli vs Apple Dictation
+
+Apple Dictation is built into every Mac. It's free, it's private, and it works. So why would you use Mumbli instead?
+
+## Side-by-side comparison
+
+| Feature | Apple Dictation | Mumbli |
+|---------|----------------|--------|
+| **Price** | Free (built-in) | Free (open source, BYOK) |
+| **Works in any app** | Yes | Yes |
+| **Filler word removal** | No | Yes |
+| **Self-correction handling** | No | Yes |
+| **Grammar polishing** | No | Yes |
+| **Custom vocabulary** | No | Yes (36% → 100% accuracy) |
+| **Activation** | Globe key or menu | Fn key (hold or double-tap) |
+| **Hands-free mode** | Yes (auto-punctuation) | Yes (double-tap Fn to lock) |
+| **Dictation history** | No | Yes (local, searchable) |
+| **Multi-language** | Yes (per-language setup) | Yes (auto-detection) |
+| **Privacy** | On-device or Apple servers | Your own API keys |
+| **Engine choice** | Apple's engine only | ElevenLabs, Groq Whisper, OpenAI |
+| **Open source** | No | Yes |
+
+## Where Apple Dictation wins
+
+- **Zero setup** — It's already on your Mac, no API keys needed
+- **On-device processing** — With Apple Silicon, dictation can run entirely on-device
+- **No cost** — No API usage fees
+- **System integration** — Works with Siri, voice commands, and macOS accessibility features
+
+Apple Dictation is the right choice if you want basic speech-to-text with zero configuration.
+
+## Where Mumbli wins
+
+### AI polishing
+
+Apple Dictation gives you raw speech-to-text. If you say:
+
+> "So I was thinking about the um the meeting on Tuesday actually wait Wednesday and I think we should uh probably reschedule it"
+
+Apple Dictation produces:
+> "So I was thinking about the um the meeting on Tuesday actually wait Wednesday and I think we should uh probably reschedule it"
+
+Mumbli produces:
+> "I was thinking about the meeting on Wednesday and I think we should probably reschedule it."
+
+The polishing removes filler words, applies self-corrections, and cleans up grammar — without changing what you said.
+
+### Custom vocabulary
+
+If you regularly say proper nouns or technical terms, Apple Dictation will consistently get them wrong. Mumbli lets you add a vocabulary list that fixes this at both the transcription and polishing levels.
+
+Real examples from our benchmarks:
+
+| You say | Apple Dictation | Mumbli (with vocabulary) |
+|---------|----------------|--------------------------|
+| "VitePress" | "vite press" | "VitePress" |
+| "ElevenLabs" | "eleven labs" | "ElevenLabs" |
+| "Supabase" | "super base" | "Supabase" |
+
+### Dictation history
+
+Every dictation in Mumbli is saved with a timestamp. Click any entry in the menu bar dropdown to copy it to your clipboard. Apple Dictation has no history — once text is injected, it's gone.
+
+### Engine flexibility
+
+Mumbli lets you choose your transcription and polishing engines. Want the fastest possible speed? Use Groq Whisper + Groq LLM for sub-second results. Want the highest accuracy? Use ElevenLabs + GPT-5.4. Apple gives you one engine with no choice.
+
+## When to use which
+
+**Use Apple Dictation if:**
+- You want zero setup and zero cost
+- You do short, simple dictation
+- You don't need polishing or custom vocabulary
+- Privacy requires on-device processing
+
+**Use Mumbli if:**
+- You dictate frequently and want cleaner output
+- You use technical terms, proper nouns, or jargon
+- You want dictation history
+- You want to choose your AI engine
+- You want an open-source tool you can audit and modify
+
+<Card title="Try Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Free and open source. macOS 13.0+ required.
+</Card>

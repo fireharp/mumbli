@@ -1,0 +1,131 @@
+---
+title: "For Developers — Mumbli"
+description: "Build, contribute, and understand Mumbli's architecture. Native Swift, no external dependencies, built on Apple system frameworks."
+"og:title": "For Developers — Mumbli"
+"og:description": "Contribute to Mumbli. Swift 5.9, no external deps, fully documented architecture."
+---
+
+# For developers
+
+Mumbli is open source, MIT-licensed, and built entirely on Apple system frameworks with zero external dependencies.
+
+## Quick start
+
+```bash
+git clone https://github.com/fireharp/mumbli.git
+cd mumbli
+git config core.hooksPath .githooks
+open MumbliApp.xcodeproj
+```
+
+Then **Product > Run** (`Cmd+R`) in Xcode.
+
+### API keys
+
+Create a `.env` file in the project root:
+
+```
+ELEVENLABS_API_KEY=your_elevenlabs_key
+OPENAI_API_KEY=your_openai_key
+GROQ_API_KEY=your_groq_key          # optional, for Fast engine
+```
+
+Or enter keys in the app's Settings view after first launch. Keys are stored in macOS Keychain.
+
+## Requirements
+
+- **macOS 13.0+** (Ventura or later)
+- **Xcode 15.0+** (Swift 5.9)
+- No CocoaPods, SPM, or Carthage — zero external dependencies
+
+## Architecture
+
+```
+MumbliApp/
+├── Core/
+│   ├── HotkeyManager.swift          # Fn key detection (Carbon)
+│   ├── AudioCaptureManager.swift     # Microphone (AVAudioEngine, 16kHz mono)
+│   ├── TextInjector.swift            # Cursor injection (Accessibility API)
+│   ├── PipelineTimer.swift           # Latency measurement
+│   └── RecordingManager.swift        # Save WAVs for benchmarking
+├── Services/
+│   ├── ElevenLabsSTTService.swift    # ElevenLabs STT
+│   ├── GroqWhisperSTTService.swift   # Groq Whisper STT
+│   ├── OpenAIPolishingService.swift  # OpenAI polishing
+│   ├── GroqPolishingService.swift    # Groq LLM polishing
+│   ├── VocabularyStore.swift         # Custom vocabulary
+│   ├── RepetitionGuard.swift         # Post-polish safety
+│   └── KeychainManager.swift         # Credential storage
+├── Models/
+│   └── HistoryManager.swift          # Dictation history
+└── UI/
+    ├── MenuBarController.swift       # Status bar & popover
+    ├── HistoryView.swift             # History list
+    ├── SettingsView.swift            # Preferences
+    ├── FirstLaunchView.swift         # Onboarding
+    └── OverlayController.swift       # Listening indicator
+```
+
+### Key design decisions
+
+- **Carbon for Fn key** — AppKit doesn't expose the Fn key. `HotkeyManager` uses the Carbon framework to detect it.
+- **Accessibility API for text injection** — `TextInjector` uses `AXUIElement` to write text at the cursor. Falls back to clipboard paste.
+- **No WebSocket** — The app calls STT and LLM APIs directly via `URLSession`. No backend server needed.
+- **Protocol-based services** — STT and polishing services conform to protocols, making engine switching trivial.
+
+## Build from command line
+
+```bash
+# Debug build
+xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Debug build
+
+# Release build
+xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Release build
+
+# Run UI tests
+xcodebuild test -project MumbliApp.xcodeproj -scheme MumbliAppUITests -destination 'platform=macOS'
+```
+
+## Safety guards
+
+Polishing LLMs can hallucinate. Mumbli has three layers of defense:
+
+1. **XML boundary** — Raw transcription wrapped in `<dictation>` tags
+2. **Injection-hardened prompts** — LLM forbidden from adding content beyond what was spoken
+3. **RepetitionGuard** — Catches sentence explosion, length explosion, and tag leakage. Auto-retries with a better model, then falls back to raw transcription.
+
+## Benchmarking
+
+A Python benchmark harness lives in `benchmarks/`:
+
+```bash
+cd benchmarks
+cp .env.example .env   # add API keys
+uv run bench.py        # latency across providers
+uv run quality.py      # transcription quality (LLM-as-judge)
+uv run vocab_bench.py  # vocabulary accuracy
+uv run polish_bench.py # polishing injection & hallucination
+```
+
+## Contributing
+
+Mumbli uses [conventional commits](https://www.conventionalcommits.org/):
+
+| Prefix | Effect |
+|--------|--------|
+| `feat:` | Minor version bump |
+| `fix:` | Patch version bump |
+| `docs:` | No release |
+| `chore:` | No release |
+
+PRs must have conventional commit titles (enforced by CI). Releases are fully automated via [release-please](https://github.com/googleapis/release-please).
+
+## Releases
+
+Releases are automated:
+
+1. Push to `main` (directly or via PR merge)
+2. `release-please` opens a Release PR with generated changelog
+3. Merge the Release PR → version bumped, tag created, DMG built and attached
+
+The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen).

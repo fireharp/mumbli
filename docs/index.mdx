@@ -1,0 +1,81 @@
+---
+title: "Mumbli — Voice to Text for Mac"
+description: "Dictate into any Mac app with a single key. Hold Fn to speak, get clean text. AI transcription with custom vocabulary. Free and open source."
+"og:title": "Mumbli — Voice to Text for Mac"
+"og:description": "Hold Fn to speak, get polished text in any app. Free macOS dictation."
+---
+
+<script type="application/ld+json">
+{JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Mumbli",
+  "operatingSystem": "macOS 13.0+",
+  "applicationCategory": "UtilitiesApplication",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "downloadUrl": "https://github.com/fireharp/mumbli/releases/latest",
+  "softwareVersion": "0.1.1",
+  "description": "Voice-to-text dictation for macOS. Hold Fn to speak into any text field.",
+  "author": { "@type": "Organization", "name": "fireharp", "url": "https://github.com/fireharp" }
+})}
+</script>
+
+# Voice to text, the way it should work
+
+Hold **Fn** to speak. Release to get clean, polished text — right where your cursor is.
+
+Mumbli is a macOS menu bar app that turns speech into text in any application. No app-specific setup. No integrations. If there's a text cursor, Mumbli works there.
+
+<CardGroup cols={2}>
+  <Card title="Works Everywhere" icon="display">
+    Dictate into any text field — browser, email, Slack, IDE, terminal. Mumbli uses the Accessibility API to inject text at your cursor.
+  </Card>
+  <Card title="Hold or Hands-Free" icon="microphone">
+    Hold Fn to dictate while you press, or double-tap to go hands-free. Both modes are always available.
+  </Card>
+  <Card title="AI Polishing" icon="wand-magic-sparkles">
+    Filler words removed, grammar fixed, self-corrections handled. Your voice, cleaned up — not rewritten.
+  </Card>
+  <Card title="Custom Vocabulary" icon="book">
+    Add proper nouns and technical terms that get mistranscribed. Benchmarked at 36% to 100% accuracy improvement.
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Activate">
+    Press and hold **Fn** (or double-tap for hands-free mode). A small overlay appears near your cursor.
+  </Step>
+  <Step title="Speak">
+    Audio is captured at 16 kHz and sent to an AI transcription service (ElevenLabs or Groq Whisper).
+  </Step>
+  <Step title="Get text">
+    Transcription is polished by a lightweight LLM, then injected at your cursor. The whole process takes under 2 seconds with the Fast engine.
+  </Step>
+</Steps>
+
+## Two engines, your choice
+
+| Engine | Transcription | Polishing | Typical Latency |
+|--------|--------------|-----------|-----------------|
+| **Standard** | ElevenLabs Scribe v1 | OpenAI GPT-5.4 Nano | ~3-5s |
+| **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
+
+Switch between engines in Settings anytime.
+
+## Built for safety
+
+LLMs can hallucinate, especially smaller ones. Mumbli has three layers of defense:
+
+1. **XML boundaries** — Dictation is wrapped in tags, separating it from system instructions
+2. **Injection-hardened prompts** — The LLM is explicitly forbidden from inventing content
+3. **RepetitionGuard** — Catches sentence explosion, length explosion, and tag leakage. Falls back to raw transcription if polishing goes wrong.
+
+## Free and open source
+
+Mumbli is MIT-licensed. Bring your own API keys for the transcription and polishing services.
+
+<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Get the latest DMG from GitHub Releases. macOS 13.0+ (Ventura or later).
+</Card>

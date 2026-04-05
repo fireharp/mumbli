@@ -1,0 +1,75 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Mumbli",
+  "theme": "maple",
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "topbar": {
+    "links": [
+      {
+        "name": "Download",
+        "url": "https://github.com/fireharp/mumbli/releases/latest"
+      }
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Product",
+        "pages": [
+          "index",
+          "voice-to-text-for-mac",
+          "dictation-app-for-mac",
+          "works-in-any-app",
+          "menu-bar-dictation-app",
+          "custom-vocabulary-for-dictation",
+          "privacy"
+        ]
+      },
+      {
+        "tab": "Developers",
+        "pages": [
+          "for-developers",
+          "benchmarks",
+          {
+            "group": "Compare",
+            "pages": ["compare/apple-dictation"]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Changelog",
+          "href": "/changelog",
+          "icon": "clock-rotate-left"
+        },
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/fireharp/mumbli",
+          "icon": "github"
+        }
+      ]
+    }
+  },
+  "seo": {
+    "indexing": "all",
+    "metatags": {
+      "google-site-verification": "PLACEHOLDER",
+      "msvalidate.01": "PLACEHOLDER"
+    }
+  },
+  "footerSocials": {
+    "github": "https://github.com/fireharp/mumbli"
+  },
+  "redirects": []
+}

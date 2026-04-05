@@ -1,0 +1,61 @@
+---
+title: "Works in Any App — Mumbli Voice to Text"
+description: "Mumbli dictates into any text field on your Mac — browsers, email, Slack, IDEs, terminals. No plugins, no integrations, no setup per app."
+"og:title": "Works in Any App — Mumbli Voice to Text"
+"og:description": "Dictate into any macOS text field. No plugins needed. Browser, email, Slack, IDE, terminal."
+---
+
+# Works in any app
+
+Most dictation tools only work in their own window. You dictate, then copy-paste. Mumbli skips that entirely — it types directly where your cursor is.
+
+## No plugins. No integrations.
+
+Mumbli uses the macOS **Accessibility API** to inject text at your cursor position. This means it works in every app that has a text field, without any app-specific setup:
+
+<CardGroup cols={3}>
+  <Card title="Browsers" icon="globe">
+    Chrome, Safari, Firefox, Arc — forms, Gmail, Google Docs, any web app
+  </Card>
+  <Card title="Email" icon="envelope">
+    Mail, Outlook, Spark — compose emails by speaking
+  </Card>
+  <Card title="Messaging" icon="comments">
+    Slack, Discord, Messages, Telegram, WhatsApp — reply without typing
+  </Card>
+  <Card title="IDEs" icon="code">
+    VS Code, Xcode, IntelliJ, Cursor — dictate comments, docs, or code
+  </Card>
+  <Card title="Notes" icon="note-sticky">
+    Notes, Obsidian, Notion, Bear — brain dump by voice
+  </Card>
+  <Card title="Terminal" icon="terminal">
+    Terminal, iTerm, Warp — even command lines work
+  </Card>
+</CardGroup>
+
+## How it works under the hood
+
+1. You activate Mumbli (hold Fn or double-tap)
+2. You speak — audio is transcribed and polished
+3. Mumbli finds the focused text field using `AXUIElement` (Accessibility API)
+4. Text is injected at the cursor position
+5. If the Accessibility API can't reach the text field, Mumbli falls back to clipboard paste (Cmd+V)
+
+The fallback ensures dictation works even in apps with non-standard text fields.
+
+## The cursor stays where you put it
+
+Mumbli doesn't open a new window, steal focus, or move your cursor. You click where you want text, hold Fn, speak, and the text appears right there. Your workflow doesn't change — you just stop typing and start talking.
+
+## Permissions
+
+For this to work, Mumbli needs **Accessibility** permission in macOS:
+
+**System Settings > Privacy & Security > Accessibility > Mumbli**
+
+This gives Mumbli write-only access to text fields. It doesn't read your screen or monitor what you type — it only injects the text you dictated.
+
+<Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+  Free and open source. Works in every app on macOS 13.0+.
+</Card>

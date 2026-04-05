@@ -1,0 +1,103 @@
+---
+title: "Benchmarks — Mumbli Performance"
+description: "Real latency benchmarks for Mumbli's speech-to-text pipeline. ElevenLabs vs OpenAI Whisper, polishing model comparison, end-to-end results."
+"og:title": "Benchmarks — Mumbli Performance"
+"og:description": "Tested STT and polishing latency across providers. Best pipeline: 1.5s end-to-end."
+---
+
+# Benchmarks
+
+Mumbli's speed depends on two things: how fast the speech-to-text (STT) engine transcribes, and how fast the LLM polishes. We benchmarked both.
+
+*Last updated: March 31, 2026*
+
+## Best pipeline: 1.5 seconds end-to-end
+
+The fastest tested configuration is **ElevenLabs Chunked + GPT-5.4 Mini**, achieving 54-59% faster end-to-end latency compared to the baseline.
+
+| STT | Polish | Total | vs Baseline |
+|-----|--------|-------|-------------|
+| ElevenLabs Chunked (24.7s audio) | GPT-5.4 Mini | **1,491ms** | -54% |
+| ElevenLabs Chunked (40.9s audio) | GPT-5.4 Mini | **1,760ms** | -55% |
+| ElevenLabs Chunked (61.2s audio) | GPT-5.4 Mini | **1,676ms** | -59% |
+| **Baseline** (61.2s audio) | GPT-5.4 Nano | **4,054ms** | — |
+
+## STT provider comparison
+
+Tested across 6 recordings from 1.8s to 61.2s audio:
+
+| Recording | Duration | ElevenLabs Batch | ElevenLabs Chunked | OpenAI Whisper |
+|-----------|----------|------------------|--------------------|----------------|
+| Short phrase | 1.8s | **524ms** | — | 1,611ms |
+| Medium dictation | 24.7s | 1,434ms | **904ms** | 2,285ms |
+| Medium dictation | 29.7s | **1,697ms** | 1,822ms | 2,619ms |
+| Long dictation | 40.9s | 2,569ms | **1,173ms** | 3,937ms |
+| Long dictation | 43.2s | 2,627ms | **1,174ms** | 5,737ms |
+| Long dictation | 61.2s | 2,929ms | **1,089ms** | 3,154ms |
+
+**Key findings:**
+- ElevenLabs Chunked is **37-63% faster** for audio longer than 24 seconds
+- For short audio under 12 seconds, single batch is better
+- OpenAI Whisper is consistently slower than ElevenLabs
+
+### How chunked STT works
+
+Long audio is split into 10-second chunks with 2-second overlap. All chunks are sent in parallel. Results are stitched using word-level overlap detection (longest common run of 2+ words at boundaries).
+
+## Polishing model comparison
+
+| Model | Avg Latency | Notes |
+|-------|-------------|-------|
+| GPT-5.4 Mini | **587ms** | 48% faster than Nano |
+| GPT-5.4 Nano (short prompt) | 707ms | Slightly aggressive |
+| GPT-5.4 Nano | 1,125ms | Baseline |
+
+GPT-5.4 Mini is surprisingly faster than Nano with equivalent output quality.
+
+## Live validation
+
+Real dictation metrics with the Fast engine in the app:
+
+| Audio Duration | STT | Polish | Total |
+|---|---|---|---|
+| 37.6s | 1,143ms | 1,263ms | **2,442ms** |
+| 24.9s | 1,507ms | 1,153ms | **2,693ms** |
+| 15.4s | 1,252ms | 1,547ms | **2,838ms** |
+| 15.2s | 1,726ms | 1,241ms | **3,009ms** |
+
+In-app latency is slightly higher than synthetic benchmarks due to real-world network conditions.
+
+## Engine configurations
+
+| Engine | STT | Polish | Typical Latency |
+|--------|-----|--------|-----------------|
+| **Standard** | ElevenLabs Scribe v1 | GPT-5.4 Nano | ~3-5s |
+| **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
+
+## Future optimizations
+
+| Optimization | Expected Impact |
+|---|---|
+| Groq Whisper STT (~200ms for 43s audio) | ~90% STT latency reduction |
+| Groq LLM polishing (~200ms) | ~82% polishing reduction |
+| ElevenLabs Scribe v2 streaming | Near-zero post-stop latency |
+| Connection pre-warming | -150ms on first call |
+| Audio compression (Opus) | -100-700ms on slow connections |
+
+## Methodology
+
+- Python benchmark harness (`benchmarks/bench.py`) using `httpx` async HTTP client
+- WAV recordings captured via Mumbli's debug mode
+- Each configuration tested with 2 iterations, averaged
+- Raw data available in `benchmarks/results/`
+- All benchmarks are [reproducible from source](https://github.com/fireharp/mumbli/tree/main/benchmarks)
+
+## Custom vocabulary accuracy
+
+Tested 11 commonly mistranscribed words (proper nouns, technical terms):
+
+| Metric | Without vocabulary | With vocabulary |
+|--------|-------------------|-----------------|
+| Exact match accuracy | 36% | **100%** |
+
+See [Custom Vocabulary](/custom-vocabulary-for-dictation) for details.
