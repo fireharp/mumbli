@@ -77,6 +77,3 @@ jobs:
               \"urlList\": ${{ steps.urls.outputs.urls }}
             }"
 
-      - name: Ping Google sitemap
-        run: |
-          curl -s "https://www.google.com/ping?sitemap=https://mumbli.fireharp.com/sitemap.xml"
