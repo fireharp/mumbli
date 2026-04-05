@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/fireharp/mumbli/compare/v0.1.2...v0.2.0) (2026-04-05)
+
+
+### Features
+
+* Add Mintlify documentation site with SEO pages ([#11](https://github.com/fireharp/mumbli/issues/11)) ([4770cf1](https://github.com/fireharp/mumbli/commit/4770cf1842ef63d9145251087453cc0a389eb6c1))
+
 ## [0.1.2](https://github.com/fireharp/mumbli/compare/v0.1.1...v0.1.2) (2026-04-03)
 
 
