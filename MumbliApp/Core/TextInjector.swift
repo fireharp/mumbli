@@ -20,9 +20,10 @@ final class TextInjector {
         let element: AXUIElement
         let appBundleID: String?
         let appPID: pid_t?
+        let selectedTextSettable: Bool
 
         var description: String {
-            "CapturedTarget(app=\(appBundleID ?? "nil"), pid=\(appPID.map(String.init) ?? "nil"))"
+            "CapturedTarget(app=\(appBundleID ?? "nil"), pid=\(appPID.map(String.init) ?? "nil"), settable=\(selectedTextSettable))"
         }
     }
 
@@ -61,7 +62,7 @@ final class TextInjector {
         let pid = frontApp?.processIdentifier
         FileLogger.shared.log("[TextInjector] captureFocusedTarget: frontApp = \(bundleID ?? "nil") (pid \(pid ?? -1))")
 
-        return CapturedTarget(element: axElement, appBundleID: bundleID, appPID: pid)
+        return CapturedTarget(element: axElement, appBundleID: bundleID, appPID: pid, selectedTextSettable: isSettable.boolValue)
     }
 
     /// Inject text into a previously captured target element. Returns which method was used.
@@ -71,12 +72,16 @@ final class TextInjector {
 
         // Try the captured element first
         if let target = target {
-            log.log("[TextInjector] Attempting AX injection with captured target")
-            if injectViaAccessibility(text: text, element: target.element) {
-                log.log("[TextInjector] SUCCESS via Accessibility API (captured target)")
-                return .accessibilityAPI
+            if target.selectedTextSettable {
+                log.log("[TextInjector] Attempting AX injection with captured target")
+                if injectViaAccessibility(text: text, element: target.element) {
+                    log.log("[TextInjector] SUCCESS via Accessibility API (captured target)")
+                    return .accessibilityAPI
+                }
+                log.log("[TextInjector] Captured target AX injection failed, trying clipboard with app reactivation")
+            } else {
+                log.log("[TextInjector] Skipping AX injection — selectedText not settable, going straight to clipboard")
             }
-            log.log("[TextInjector] Captured target AX injection failed, trying clipboard with app reactivation")
             if injectViaClipboard(text: text, target: target) {
                 log.log("[TextInjector] SUCCESS via clipboard fallback (captured target)")
                 return .clipboardFallback
@@ -155,10 +160,21 @@ final class TextInjector {
                 text as CFTypeRef
             )
             if setResult == .success {
-                log.log("[TextInjector] AX: Set selected text succeeded")
-                return true
+                // Verify the write actually took effect — some apps report success but ignore the write
+                var verifyValue: AnyObject?
+                let verifyResult = AXUIElementCopyAttributeValue(
+                    axElement,
+                    kAXValueAttribute as CFString,
+                    &verifyValue
+                )
+                if verifyResult == .success, let currentValue = verifyValue as? String, currentValue.contains(text) {
+                    log.log("[TextInjector] AX: Set selected text succeeded (verified)")
+                    return true
+                }
+                log.log("[TextInjector] AX: Set selected text returned success but verification failed — text not found in element value, falling through")
+            } else {
+                log.log("[TextInjector] AX: Set selected text failed (error: \(setResult.rawValue))")
             }
-            log.log("[TextInjector] AX: Set selected text failed (error: \(setResult.rawValue))")
         } else {
             log.log("[TextInjector] AX: No selected text range (error: \(rangeResult.rawValue))")
         }
@@ -180,11 +196,22 @@ final class TextInjector {
                 newValue as CFTypeRef
             )
             if setResult == .success {
-                log.log("[TextInjector] AX: Set full value succeeded")
+                // Verify the write actually took effect
+                var verifyValue: AnyObject?
+                let verifyResult = AXUIElementCopyAttributeValue(
+                    axElement,
+                    kAXValueAttribute as CFString,
+                    &verifyValue
+                )
+                if verifyResult == .success, let verified = verifyValue as? String, verified.contains(text) {
+                    log.log("[TextInjector] AX: Set full value succeeded (verified)")
+                    return true
+                }
+                log.log("[TextInjector] AX: Set full value returned success but verification failed, falling through")
             } else {
                 log.log("[TextInjector] AX: Set full value failed (error: \(setResult.rawValue))")
             }
-            return setResult == .success
+            return false
         }
 
         log.log("[TextInjector] AX: Could not get current value (error: \(valueResult.rawValue))")
