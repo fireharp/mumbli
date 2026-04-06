@@ -1,0 +1,90 @@
+---
+title: "Accessibility Permissions & TCC"
+description: "How macOS TCC permissions work with Mumbli, why they break, and how to fix them during development."
+---
+
+# Accessibility Permissions & TCC
+
+Mumbli requires macOS Accessibility permission to:
+
+1. **Read the focused text field** via `AXUIElementCopyAttributeValue` (to inject text at the cursor)
+2. **Create CGEvent taps** to listen for the Fn/Globe key
+3. **Post CGEvent key events** for the Cmd+V clipboard fallback
+
+All three are gated by macOS TCC (Transparency, Consent, and Control).
+
+## Why permissions break after rebuilding
+
+macOS stores a `csreq` (code signing requirement) blob alongside the bundle ID in the TCC database. For **ad-hoc signed** apps (the default for local Xcode builds without a team), the Designated Requirement is based on the **exact cdhash** — which changes on every rebuild.
+
+```bash
+# Ad-hoc signed (BAD — changes every build):
+codesign -dr - /path/to/Mumbli.app
+# => designated => cdhash H"4a4abc..."
+
+# Team-signed (GOOD — stable across rebuilds):
+# => designated => identifier "com.mumbli.app" and certificate...
+```
+
+This means:
+- The toggle in System Settings stays ON (matched by bundle ID)
+- But the `csreq` verification silently fails at runtime
+- `AXUIElementCopyAttributeValue` returns error `-25211` (kAXErrorCannotComplete)
+- `CGEventTapCreate` returns nil
+- `CGEventPost` silently drops events — no error, just nothing happens
+
+## Fixing during development
+
+### Option A: Reset TCC after each rebuild
+
+```bash
+# Reset accessibility permission for Mumbli
+tccutil reset Accessibility com.mumbli.app
+
+# Quit and relaunch Mumbli, then re-grant permission when prompted
+```
+
+### Option B: Use a Development Team (recommended)
+
+Set a Development Team in Xcode (Signing & Capabilities) so the app gets a stable signing identity that persists across rebuilds.
+
+### Option C: Direct binary launch
+
+After resetting TCC, launch the binary directly instead of via Finder/`open`:
+
+```bash
+~/Library/Developer/Xcode/DerivedData/MumbliApp-*/Build/Products/Debug/Mumbli.app/Contents/MacOS/Mumbli
+```
+
+This can bypass a Launch Services TCC re-evaluation issue.
+
+## Text injection: AX vs clipboard
+
+Mumbli uses a two-tier injection strategy:
+
+| Method | How it works | When it's used |
+|--------|-------------|----------------|
+| **Accessibility API** | Sets `kAXSelectedTextAttribute` on the focused element | Most GUI apps (VS Code, browsers, text editors) |
+| **Clipboard fallback** | Copies text to pasteboard + simulates Cmd+V | Terminal emulators, apps where AX writes silently fail |
+
+### Terminal apps (Terminal.app, CMuX, iTerm2, etc.)
+
+Terminal emulators expose `AXTextArea` elements where the AX API returns `.success` but the write is silently ignored (terminals read from stdin, not the accessibility layer). Mumbli detects this by:
+
+1. Checking `AXUIElementIsAttributeSettable(kAXSelectedTextAttribute)` at capture time
+2. If not settable, skipping AX and going straight to clipboard paste
+3. If settable, verifying the write by reading the value back
+
+## Diagnostics
+
+Check the log at:
+```
+~/Library/Application Support/Mumbli/mumbli.log
+```
+
+Key log lines to look for:
+- `CGEvent tap created successfully` — permissions working
+- `CGEvent tap failed` — permissions not granted
+- `No focused element (error: -25211)` — TCC verification failed
+- `Skipping AX injection — selectedText not settable` — correct terminal behavior
+- `Set selected text returned success but verification failed` — AX false positive caught
