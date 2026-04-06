@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/fireharp/mumbli/compare/v0.2.0...v0.3.0) (2026-04-06)
+
+
+### Features
+
+* Add install script to bypass macOS Gatekeeper for unsigned app ([42d45e1](https://github.com/fireharp/mumbli/commit/42d45e1f8e37e5889761f65b0196884bdbb95d17))
+
+
+### Bug Fixes
+
+* Prevent double text injection in terminal apps ([d0d7eff](https://github.com/fireharp/mumbli/commit/d0d7effa4c3484a35c0ee3c325822e82fb319fd8))
+
 ## [0.2.0](https://github.com/fireharp/mumbli/compare/v0.1.2...v0.2.0) (2026-04-05)
 
 
