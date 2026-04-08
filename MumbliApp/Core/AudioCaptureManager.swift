@@ -238,12 +238,11 @@ final class AudioCaptureManager {
             audioEngine = nil
         }
 
-        // Create engine — use system default input device.
-        // NOTE: We intentionally do NOT switch devices here to avoid
-        // breaking the audio unit initialization (-10868 error) and
-        // triggering Bluetooth A2DP→HFP switch. The user should set
-        // their preferred mic as the system default in System Settings.
         let engine = AVAudioEngine()
+
+        // Set the user-selected input device on the engine's audio unit
+        // BEFORE accessing inputNode.outputFormat (which initializes the AU).
+        setInputDeviceOnEngine(engine: engine)
 
         let inputNode = engine.inputNode
         let nativeFormat = inputNode.outputFormat(forBus: 0)

@@ -344,6 +344,12 @@ TEST_CASES: list[dict] = [
         ),
     },
     {
+        "name": "real: URL-only hallucination (no speech)",
+        "input": "www.labs.org.au",
+        "expect": "cleaned",
+        "known_bad_output": "www.labs.org.au",
+    },
+    {
         "name": "real: filler hallucination",
         "input": (
             "Okay, first, can you already prepare PRs and proper titles? Second, can we "

@@ -566,6 +566,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let timer = PipelineTimer()
         let audioDurationSec = Double(capturedAudio.count) / (16000.0 * 2.0)
 
+        // Reject pure silence before sending to STT (prevents hallucinations)
+        if isSilence(capturedAudio) {
+            log.log("[Dictation] Audio is silence — skipping transcription")
+            overlayController.dismiss(afterDelay: 0.3)
+            return
+        }
+
         Task {
             do {
                 // Step 1: Transcribe audio
@@ -702,6 +709,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Dismiss overlay after successful processing
             overlayController.dismiss(afterDelay: 0.3)
         }
+    }
+
+    /// Check if PCM 16-bit audio data is effectively silence (>99% zero samples).
+    /// Prevents sending silent audio to STT APIs which causes URL hallucinations.
+    private func isSilence(_ pcmData: Data) -> Bool {
+        let sampleCount = pcmData.count / 2
+        guard sampleCount > 0 else { return true }
+        var zeroSamples = 0
+        pcmData.withUnsafeBytes { rawBuffer in
+            let samples = rawBuffer.bindMemory(to: Int16.self)
+            for i in 0..<min(sampleCount, samples.count) {
+                if samples[i] == 0 { zeroSamples += 1 }
+            }
+        }
+        let zeroPercent = Double(zeroSamples) / Double(sampleCount) * 100.0
+        if zeroPercent > 99.0 {
+            log.log("[Dictation] Audio silence check: \(zeroPercent)% zero samples")
+            return true
+        }
+        return false
     }
 }
 
