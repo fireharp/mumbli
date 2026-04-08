@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/fireharp/mumbli/compare/v0.3.0...v0.3.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* Strip hallucinated URLs from STT transcription output ([68437e4](https://github.com/fireharp/mumbli/commit/68437e46ff6f88f10cb9f6f3f1444cd3efde7c24))
+
 ## [0.3.0](https://github.com/fireharp/mumbli/compare/v0.2.0...v0.3.0) (2026-04-06)
 
 
