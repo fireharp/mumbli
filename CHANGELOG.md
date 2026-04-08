@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/fireharp/mumbli/compare/v0.3.1...v0.3.2) (2026-04-08)
+
+
+### Bug Fixes
+
+* Enable mic selection and reject silence before STT ([2a449ce](https://github.com/fireharp/mumbli/commit/2a449ce61b0ef30befc3dccf30711ededaca7053))
+
 ## [0.3.1](https://github.com/fireharp/mumbli/compare/v0.3.0...v0.3.1) (2026-04-08)
 
 
