@@ -465,12 +465,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 return
             }
 
+            // Strip hallucinated URLs from raw transcription (Whisper artifact)
+            let cleanedTranscription = RepetitionGuard.stripURLs(fromRaw: transcription)
+
             // Polish
             let polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
             let finalText: String
             if polishingEnabled {
                 let prompt = OpenAIPolishingService.resolvedPrompt()
-                let wrappedInput = OpenAIPolishingService.wrapForPolishing(transcription)
+                let wrappedInput = OpenAIPolishingService.wrapForPolishing(cleanedTranscription)
                 let polished: String
                 if engine.usesGroq {
                     polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
@@ -478,19 +481,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let model = OpenAIPolishingService.resolvedModel()
                     polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
                 }
-                let guardResult = RepetitionGuard.check(polished: polished, raw: transcription)
+                let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
                 if guardResult.didIntervene {
                     log.log("[Retry] RepetitionGuard intervened: \(guardResult.reason ?? "unknown")")
                     // On retry, just fall back to raw — don't chain another retry
-                    finalText = transcription
+                    finalText = cleanedTranscription
                 } else {
-                    finalText = polished.isEmpty ? transcription : polished
+                    finalText = polished.isEmpty ? cleanedTranscription : polished
                 }
             } else {
-                finalText = transcription
+                finalText = cleanedTranscription
             }
 
-            // Save transcription file
+            // Save ground-truth transcription alongside recording (original for debugging)
             RecordingManager.shared.saveTranscription(transcription, for: fileURL)
 
             // Update the failed entry
@@ -584,9 +587,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     return
                 }
 
-                log.log("[Dictation] Transcription result: \(transcription)")
+                log.log("[Dictation] Raw transcription: \(transcription)")
 
-                // Save ground-truth transcription alongside recording
+                // Strip hallucinated URLs from raw transcription (Whisper artifact)
+                let cleanedTranscription = RepetitionGuard.stripURLs(fromRaw: transcription)
+
+                // Save ground-truth transcription alongside recording (original for debugging)
                 RecordingManager.shared.saveTranscription(transcription, for: savedURL)
 
                 // Step 2: Polish (if enabled)
@@ -595,7 +601,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let polishModel: String
                 if polishingEnabled {
                     let prompt = OpenAIPolishingService.resolvedPrompt()
-                    let wrappedInput = OpenAIPolishingService.wrapForPolishing(transcription)
+                    let wrappedInput = OpenAIPolishingService.wrapForPolishing(cleanedTranscription)
                     timer.mark("polish_start")
                     let polished: String
                     if engine.usesGroq {
@@ -612,7 +618,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     log.log("[Dictation] Polished result: \(polished)")
 
                     // Safety guard: detect hallucination, length explosion, tag leakage
-                    let guardResult = RepetitionGuard.check(polished: polished, raw: transcription)
+                    let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
                     if guardResult.didIntervene && engine.usesGroq {
                         // Groq failed — retry with GPT-5.4 Nano as fallback
                         log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — retrying with gpt-5.4-nano")
@@ -624,25 +630,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         )
                         timer.mark("polish_retry_end")
                         log.log("[Dictation] Retry polished result: \(retryPolished)")
-                        let retryGuard = RepetitionGuard.check(polished: retryPolished, raw: transcription)
+                        let retryGuard = RepetitionGuard.check(polished: retryPolished, raw: cleanedTranscription)
                         if retryGuard.didIntervene {
                             log.log("[Dictation] Retry also failed (\(retryGuard.reason ?? "unknown")) — falling back to raw transcription")
-                            finalText = transcription
+                            finalText = cleanedTranscription
                         } else {
-                            finalText = retryPolished.isEmpty ? transcription : retryPolished
+                            finalText = retryPolished.isEmpty ? cleanedTranscription : retryPolished
                         }
                     } else if guardResult.didIntervene {
                         log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — falling back to raw transcription")
-                        finalText = guardResult.text.isEmpty ? transcription : guardResult.text
+                        finalText = guardResult.text.isEmpty ? cleanedTranscription : guardResult.text
                     } else {
-                        finalText = polished.isEmpty ? transcription : polished
+                        finalText = polished.isEmpty ? cleanedTranscription : polished
                     }
                 } else {
                     log.log("[Dictation] Polishing disabled, using raw transcription")
                     polishModel = "none"
                     timer.mark("polish_start")
                     timer.mark("polish_end")
-                    finalText = transcription
+                    finalText = cleanedTranscription
                 }
                 log.log("[Dictation] Final text to inject: \(finalText)")
 

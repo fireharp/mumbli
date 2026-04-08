@@ -331,6 +331,19 @@ TEST_CASES: list[dict] = [
         ),
     },
     {
+        "name": "real: URL hallucination in transcription",
+        "input": (
+            "Screen page number 9, it's obviously missing CTA and the logo on the "
+            "bottom left is incorrect, CTA should have the link similar to the way it "
+            "is on the other pages and the disclaimer should be a little bigger, right "
+            "now it's a little smaller than on the Figma version www.labs.org.au."
+        ),
+        "expect": "cleaned",
+        "known_bad_output": (
+            "...the Figma version www.labs.org.au."
+        ),
+    },
+    {
         "name": "real: filler hallucination",
         "input": (
             "Okay, first, can you already prepare PRs and proper titles? Second, can we "

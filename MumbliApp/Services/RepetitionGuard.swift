@@ -53,7 +53,26 @@ enum RepetitionGuard {
             return Result(text: rawTrimmed, didIntervene: true, reason: reason)
         }
 
+        // Guard 4: URL stripping — spoken dictation should never contain URLs.
+        // STT models (especially Whisper) hallucinate URLs like "www.labs.org.au"
+        // during low-confidence segments. Strip them from the output.
+        let cleaned = stripURLs(polishedTrimmed)
+        if cleaned != polishedTrimmed {
+            NSLog("[RepetitionGuard] stripped hallucinated URL(s) from output")
+            return Result(text: cleaned, didIntervene: true, reason: "stripped hallucinated URL(s)")
+        }
+
         return Result(text: polishedTrimmed, didIntervene: false, reason: nil)
+    }
+
+    /// Strip raw transcription of hallucinated URLs before polishing.
+    /// Call this on the raw STT output before sending to the polishing LLM.
+    static func stripURLs(fromRaw text: String) -> String {
+        let cleaned = stripURLs(text)
+        if cleaned != text {
+            NSLog("[RepetitionGuard] stripped hallucinated URL(s) from raw transcription")
+        }
+        return cleaned
     }
 
     // MARK: - Private helpers
@@ -75,5 +94,25 @@ enum RepetitionGuard {
         // Check for common system prompt tags
         let tagPatterns = ["<dictation>", "</dictation>", "<terms>", "</terms>", "<vocab"]
         return tagPatterns.contains { text.contains($0) }
+    }
+
+    /// Strip URLs from text. Matches common URL patterns that STT models hallucinate.
+    /// Handles: http(s)://..., www.something.tld, and bare domain.tld patterns.
+    private static func stripURLs(_ text: String) -> String {
+        // Match http(s) URLs and www. prefixed domains
+        let urlPattern = #"https?://\S+|www\.\S+"#
+        guard let regex = try? NSRegularExpression(pattern: urlPattern, options: .caseInsensitive) else {
+            return text
+        }
+        let result = regex.stringByReplacingMatches(
+            in: text,
+            range: NSRange(text.startIndex..., in: text),
+            withTemplate: ""
+        )
+        // Collapse multiple spaces left by removal and trim
+        return result.replacingOccurrences(
+            of: #"\s{2,}"#, with: " ",
+            options: .regularExpression
+        ).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
