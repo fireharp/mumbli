@@ -238,12 +238,11 @@ final class AudioCaptureManager {
             audioEngine = nil
         }
 
+        // Temporarily switch system default input to the user-selected mic.
+        // Restored in stopCapture() via restorePreviousInputDevice().
+        selectPreferredMicrophone()
+
         let engine = AVAudioEngine()
-
-        // Set the user-selected input device on the engine's audio unit
-        // BEFORE accessing inputNode.outputFormat (which initializes the AU).
-        setInputDeviceOnEngine(engine: engine)
-
         let inputNode = engine.inputNode
         let nativeFormat = inputNode.outputFormat(forBus: 0)
 
