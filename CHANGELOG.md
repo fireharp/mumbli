@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/fireharp/mumbli/compare/v0.3.2...v0.3.3) (2026-04-08)
+
+
+### Bug Fixes
+
+* Use system default input switch instead of audio unit device set ([177f79b](https://github.com/fireharp/mumbli/commit/177f79b173e4bbfe181c13beda1afc80d999132a))
+
 ## [0.3.2](https://github.com/fireharp/mumbli/compare/v0.3.1...v0.3.2) (2026-04-08)
 
 
