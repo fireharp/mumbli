@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122 32" role="img" aria-label="Mumbli">
-  <g fill="none" stroke="#1F1B16" stroke-linecap="round" stroke-width="2.7" transform="translate(2 2)">
-    <path d="M4 12v4"/>
-    <path d="M9 8v12"/>
-    <path d="M14 4v20"/>
-    <path d="M19 8v12"/>
-    <path d="M24 12v4"/>
+  <g fill="#1F1B16">
+    <rect x="5.7" y="12.8" width="2" height="6.5" rx="1"/>
+    <rect x="9.4" y="8.5" width="2" height="15" rx="1"/>
+    <rect x="13.1" y="4.5" width="2" height="23" rx="1"/>
+    <rect x="16.8" y="10" width="2" height="12.1" rx="1"/>
+    <rect x="20.6" y="6.8" width="2" height="18.4" rx="1"/>
+    <rect x="24.3" y="12" width="2" height="8" rx="1"/>
   </g>
   <text x="38" y="23" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif" font-size="21" font-weight="600" fill="#1F1B16">Mumbli</text>
 </svg>
