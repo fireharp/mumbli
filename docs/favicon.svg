@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#F6F1E8"/>
-  <g fill="#C8643C" transform="translate(5 5)">
-    <rect x="0" y="13" width="3" height="7" rx="1.5"/>
-    <rect x="5" y="7" width="3" height="14" rx="1.5"/>
-    <rect x="10" y="2" width="3" height="20" rx="1.5"/>
-    <rect x="15" y="10" width="3" height="12" rx="1.5"/>
-    <rect x="20" y="15" width="3" height="5" rx="1.5"/>
+  <style>
+    path { stroke: #1f1b16; }
+    @media (prefers-color-scheme: dark) { path { stroke: #f6f1e8; } }
+  </style>
+  <g fill="none" stroke-linecap="round" stroke-width="2.8">
+    <path d="M6 14v4"/>
+    <path d="M11 9v14"/>
+    <path d="M16 5v22"/>
+    <path d="M21 9v14"/>
+    <path d="M26 14v4"/>
   </g>
 </svg>

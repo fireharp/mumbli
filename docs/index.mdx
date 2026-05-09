@@ -1,103 +1,59 @@
 ---
-title: "Mumbli - Voice to Text for Mac"
-description: "A small Mac app for voice transcription. Hold Fn, speak, get clean text in any app. Bring your own models, vocabulary, and polishing prompts."
-"og:title": "Mumbli - Voice to Text for Mac"
-"og:description": "Talk. Get text. Nothing else. Free, open source macOS dictation."
-mode: "custom"
+title: "Documentation Index"
+description: "Start here for Mumbli documentation: setup, usage, privacy, developer notes, benchmarks, and comparisons."
+"og:title": "Mumbli Documentation"
+"og:description": "Setup, usage, privacy, developer notes, benchmarks, and comparisons for Mumbli."
 ---
 
-<script type="application/ld+json">
-{JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Mumbli",
-  "operatingSystem": "macOS 13.0+",
-  "applicationCategory": "UtilitiesApplication",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "downloadUrl": "https://github.com/fireharp/mumbli/releases/latest",
-  "softwareVersion": "0.2.0",
-  "description": "Voice-to-text dictation for macOS. Hold Fn to speak into any text field.",
-  "author": { "@type": "Organization", "name": "fireharp", "url": "https://github.com/fireharp" },
-  "license": "https://www.apache.org/licenses/LICENSE-2.0"
-})}
-</script>
+This is the docs home for Mumbli. The product homepage lives separately; this page points to the documentation you need to install, use, inspect, or contribute to the app.
 
-<div className="mb-landing">
-  <div className="mb-page-header">
-    <a className="mb-wordmark" href="/">
-      <span className="mb-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
-      <span>Mumbli</span>
-    </a>
-    <div className="mb-page-links">
-      <a className="mb-link" href="https://github.com/fireharp/mumbli">GitHub</a>
-      <a className="mb-link" href="https://github.com/fireharp/mumbli/releases/latest">Download</a>
-    </div>
-  </div>
-
-  <div className="mb-hero">
-    <p className="mb-kicker">A small, plain Mac app for voice transcription.</p>
-    <h1>
-      Talk. <em>Get text.</em>
-      <br />
-      Nothing else.
-    </h1>
-    <div className="mb-lede">
-      Hold Fn, speak, and get polished text wherever your cursor is. Bring your own models, vocabulary, and prompts. No accounts, no backend, no nonsense.
-    </div>
-
-    <div className="mb-install-wrap">
-      <div
-        className="mb-install"
-        data-command="curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash"
-      >
-        <span className="mb-prompt">$</span>
-        <code>curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash</code>
-        <button className="mb-copy" type="button" data-copy-command="curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash">copy</button>
-      </div>
-      <div className="mb-footnote">
-        Or build it yourself from <a className="mb-link" href="https://github.com/fireharp/mumbli">github.com/fireharp/mumbli</a>. Unsigned app: open the first launch with right-click &gt; Open.
-      </div>
-    </div>
-  </div>
-
-  <div className="mb-cols" aria-label="Mumbli overview">
-    <div>
-      <h2>Why does this exist?</h2>
-      <div className="mb-text">
-        Other transcription apps tend to want an account, a subscription, or a cloud. Mumbli is a menu-bar app that listens, transcribes, injects the text, and gets out of the way.
-      </div>
-    </div>
-    <div>
-      <h2>What's in it</h2>
-      <ul>
-        <li>Hold or double-tap Fn to dictate.</li>
-        <li>Choose Standard or Fast transcription engines.</li>
-        <li>Tune polishing prompts and custom vocabulary.</li>
-        <li>Keep history, shortcuts, and debug controls local.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div className="mb-notes" aria-label="Install details">
-    <div>
-      <span className="mb-note-label">license</span>
-      <div className="mb-note-title">Apache-2.0</div>
-      <div className="mb-text">Fork it, inspect it, or build your own variant.</div>
-    </div>
-    <div>
-      <span className="mb-note-label">macOS</span>
-      <div className="mb-note-title">13.0+</div>
-      <div className="mb-text">Uses Apple system frameworks, Accessibility, and Microphone access.</div>
-    </div>
-    <div>
-      <span className="mb-note-label">models</span>
-      <div className="mb-note-title">Bring your own keys</div>
-      <div className="mb-text">ElevenLabs, Groq, and OpenAI keys live in your local settings.</div>
-    </div>
-  </div>
-
-  <div className="mb-bottom">
-    <span>Apache-2.0 - macOS 13+</span>
-    <a className="mb-link" href="https://github.com/fireharp/mumbli">GitHub</a>
-  </div>
+<div className="docs-index-lede">
+  <span>macOS 13+</span>
+  <span>Apache-2.0</span>
+  <span>Bring your own API keys</span>
 </div>
+
+## Start here
+
+<CardGroup cols={2}>
+  <Card title="Voice to text for Mac" icon="microphone" href="/voice-to-text-for-mac">
+    How Mumbli turns spoken input into polished text in any Mac app.
+  </Card>
+  <Card title="Works in any app" icon="keyboard" href="/works-in-any-app">
+    Where dictation works and how cursor injection behaves across macOS.
+  </Card>
+  <Card title="Menu bar dictation" icon="window-maximize" href="/menu-bar-dictation-app">
+    How the menu-bar app, overlay, hotkeys, and hands-free mode fit together.
+  </Card>
+  <Card title="Custom vocabulary" icon="list" href="/custom-vocabulary-for-dictation">
+    Add names, jargon, product terms, and other words speech engines miss.
+  </Card>
+</CardGroup>
+
+## Trust and setup
+
+<CardGroup cols={2}>
+  <Card title="Privacy" icon="shield" href="/privacy">
+    What stays local, what goes to your configured providers, and what Mumbli does not collect.
+  </Card>
+  <Card title="Download" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
+    Get the latest release from GitHub. macOS 13.0 or later is required.
+  </Card>
+</CardGroup>
+
+## Developer docs
+
+<CardGroup cols={2}>
+  <Card title="For developers" icon="code" href="/for-developers">
+    Architecture, local build steps, release flow, safety guards, and contribution notes.
+  </Card>
+  <Card title="Accessibility permissions" icon="universal-access" href="/for-developers/accessibility-permissions">
+    Details for macOS Accessibility access and text injection behavior.
+  </Card>
+  <Card title="Benchmarks" icon="gauge" href="/benchmarks">
+    Latency, vocabulary accuracy, and provider comparison notes.
+  </Card>
+  <Card title="Apple Dictation comparison" icon="scale-balanced" href="/compare/apple-dictation">
+    Where Mumbli differs from the built-in macOS dictation feature.
+  </Card>
+</CardGroup>

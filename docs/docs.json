@@ -43,15 +43,20 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Product",
+        "tab": "Documentation",
         "pages": [
           "index",
-          "voice-to-text-for-mac",
-          "dictation-app-for-mac",
-          "works-in-any-app",
-          "menu-bar-dictation-app",
-          "custom-vocabulary-for-dictation",
-          "privacy"
+          {
+            "group": "Using Mumbli",
+            "pages": [
+              "voice-to-text-for-mac",
+              "dictation-app-for-mac",
+              "works-in-any-app",
+              "menu-bar-dictation-app",
+              "custom-vocabulary-for-dictation",
+              "privacy"
+            ]
+          }
         ]
       },
       {
