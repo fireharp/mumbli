@@ -1,8 +1,9 @@
 ---
-title: "Mumbli — Voice to Text for Mac"
-description: "Dictate into any Mac app with a single key. Hold Fn to speak, get clean text. AI transcription with custom vocabulary. Free and open source."
-"og:title": "Mumbli — Voice to Text for Mac"
-"og:description": "Hold Fn to speak, get polished text in any app. Free macOS dictation."
+title: "Mumbli - Voice to Text for Mac"
+description: "A small Mac app for voice transcription. Hold Fn, speak, get clean text in any app. Bring your own models, vocabulary, and polishing prompts."
+"og:title": "Mumbli - Voice to Text for Mac"
+"og:description": "Talk. Get text. Nothing else. Free, open source macOS dictation."
+mode: "custom"
 ---
 
 <script type="application/ld+json">
@@ -14,72 +15,89 @@ description: "Dictate into any Mac app with a single key. Hold Fn to speak, get 
   "applicationCategory": "UtilitiesApplication",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "downloadUrl": "https://github.com/fireharp/mumbli/releases/latest",
-  "softwareVersion": "0.1.1",
+  "softwareVersion": "0.2.0",
   "description": "Voice-to-text dictation for macOS. Hold Fn to speak into any text field.",
-  "author": { "@type": "Organization", "name": "fireharp", "url": "https://github.com/fireharp" }
+  "author": { "@type": "Organization", "name": "fireharp", "url": "https://github.com/fireharp" },
+  "license": "https://www.apache.org/licenses/LICENSE-2.0"
 })}
 </script>
 
-# Voice to text, the way it should work
+<div className="mb-landing">
+  <div className="mb-page-header">
+    <a className="mb-wordmark" href="/">
+      <span className="mb-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+      <span>Mumbli</span>
+    </a>
+    <div className="mb-page-links">
+      <a className="mb-link" href="https://github.com/fireharp/mumbli">GitHub</a>
+      <a className="mb-link" href="https://github.com/fireharp/mumbli/releases/latest">Download</a>
+    </div>
+  </div>
 
-Hold **Fn** to speak. Release to get clean, polished text — right where your cursor is.
+  <div className="mb-hero">
+    <p className="mb-kicker">A small, plain Mac app for voice transcription.</p>
+    <h1>
+      Talk. <em>Get text.</em>
+      <br />
+      Nothing else.
+    </h1>
+    <div className="mb-lede">
+      Hold Fn, speak, and get polished text wherever your cursor is. Bring your own models, vocabulary, and prompts. No accounts, no backend, no nonsense.
+    </div>
 
-Mumbli is a macOS menu bar app that turns speech into text in any application. No app-specific setup. No integrations. If there's a text cursor, Mumbli works there.
+    <div className="mb-install-wrap">
+      <div
+        className="mb-install"
+        data-command="curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash"
+      >
+        <span className="mb-prompt">$</span>
+        <code>curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash</code>
+        <button className="mb-copy" type="button" data-copy-command="curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash">copy</button>
+      </div>
+      <div className="mb-footnote">
+        Or build it yourself from <a className="mb-link" href="https://github.com/fireharp/mumbli">github.com/fireharp/mumbli</a>. Unsigned app: open the first launch with right-click &gt; Open.
+      </div>
+    </div>
+  </div>
 
-<CardGroup cols={2}>
-  <Card title="Works Everywhere" icon="display">
-    Dictate into any text field — browser, email, Slack, IDE, terminal. Mumbli uses the Accessibility API to inject text at your cursor.
-  </Card>
-  <Card title="Hold or Hands-Free" icon="microphone">
-    Hold Fn to dictate while you press, or double-tap to go hands-free. Both modes are always available.
-  </Card>
-  <Card title="AI Polishing" icon="wand-magic-sparkles">
-    Filler words removed, grammar fixed, self-corrections handled. Your voice, cleaned up — not rewritten.
-  </Card>
-  <Card title="Custom Vocabulary" icon="book">
-    Add proper nouns and technical terms that get mistranscribed. Benchmarked at 36% to 100% accuracy improvement.
-  </Card>
-</CardGroup>
+  <div className="mb-cols" aria-label="Mumbli overview">
+    <div>
+      <h2>Why does this exist?</h2>
+      <div className="mb-text">
+        Other transcription apps tend to want an account, a subscription, or a cloud. Mumbli is a menu-bar app that listens, transcribes, injects the text, and gets out of the way.
+      </div>
+    </div>
+    <div>
+      <h2>What's in it</h2>
+      <ul>
+        <li>Hold or double-tap Fn to dictate.</li>
+        <li>Choose Standard or Fast transcription engines.</li>
+        <li>Tune polishing prompts and custom vocabulary.</li>
+        <li>Keep history, shortcuts, and debug controls local.</li>
+      </ul>
+    </div>
+  </div>
 
-## How it works
+  <div className="mb-notes" aria-label="Install details">
+    <div>
+      <span className="mb-note-label">license</span>
+      <div className="mb-note-title">Apache-2.0</div>
+      <div className="mb-text">Fork it, inspect it, or build your own variant.</div>
+    </div>
+    <div>
+      <span className="mb-note-label">macOS</span>
+      <div className="mb-note-title">13.0+</div>
+      <div className="mb-text">Uses Apple system frameworks, Accessibility, and Microphone access.</div>
+    </div>
+    <div>
+      <span className="mb-note-label">models</span>
+      <div className="mb-note-title">Bring your own keys</div>
+      <div className="mb-text">ElevenLabs, Groq, and OpenAI keys live in your local settings.</div>
+    </div>
+  </div>
 
-<Steps>
-  <Step title="Activate">
-    Press and hold **Fn** (or double-tap for hands-free mode). A small overlay appears near your cursor.
-  </Step>
-  <Step title="Speak">
-    Audio is captured at 16 kHz and sent to an AI transcription service (ElevenLabs or Groq Whisper).
-  </Step>
-  <Step title="Get text">
-    Transcription is polished by a lightweight LLM, then injected at your cursor. The whole process takes under 2 seconds with the Fast engine.
-  </Step>
-</Steps>
-
-## Two engines, your choice
-
-| Engine | Transcription | Polishing | Typical Latency |
-|--------|--------------|-----------|-----------------|
-| **Standard** | ElevenLabs Scribe v1 | OpenAI GPT-5.4 Nano | ~3-5s |
-| **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
-
-Switch between engines in Settings anytime.
-
-## Built for safety
-
-LLMs can hallucinate, especially smaller ones. Mumbli has three layers of defense:
-
-1. **XML boundaries** — Dictation is wrapped in tags, separating it from system instructions
-2. **Injection-hardened prompts** — The LLM is explicitly forbidden from inventing content
-3. **RepetitionGuard** — Catches sentence explosion, length explosion, and tag leakage. Falls back to raw transcription if polishing goes wrong.
-
-## Free and open source
-
-Mumbli is MIT-licensed. Bring your own API keys for the transcription and polishing services.
-
-### Install
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash
-```
-
-Or [download the DMG](https://github.com/fireharp/mumbli/releases/latest) manually and run `xattr -cr /Applications/Mumbli.app` after installing (the app is not code-signed).
+  <div className="mb-bottom">
+    <span>Apache-2.0 - macOS 13+</span>
+    <a className="mb-link" href="https://github.com/fireharp/mumbli">GitHub</a>
+  </div>
+</div>

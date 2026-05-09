@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#6366F1"/>
-  <text x="16" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="white">M</text>
+  <rect width="32" height="32" rx="8" fill="#F6F1E8"/>
+  <g fill="#C8643C" transform="translate(5 5)">
+    <rect x="0" y="13" width="3" height="7" rx="1.5"/>
+    <rect x="5" y="7" width="3" height="14" rx="1.5"/>
+    <rect x="10" y="2" width="3" height="20" rx="1.5"/>
+    <rect x="15" y="10" width="3" height="12" rx="1.5"/>
+    <rect x="20" y="15" width="3" height="5" rx="1.5"/>
+  </g>
 </svg>

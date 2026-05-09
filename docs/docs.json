@@ -3,9 +3,29 @@
   "name": "Mumbli",
   "theme": "maple",
   "colors": {
-    "primary": "#6366F1",
-    "light": "#818CF8",
-    "dark": "#4F46E5"
+    "primary": "#C8643C",
+    "light": "#F2DDD0",
+    "dark": "#8A3E20"
+  },
+  "appearance": {
+    "default": "light"
+  },
+  "fonts": {
+    "family": "Inter",
+    "heading": {
+      "family": "Newsreader",
+      "weight": 400
+    },
+    "body": {
+      "family": "Inter",
+      "weight": 400
+    }
+  },
+  "background": {
+    "color": {
+      "light": "#F6F1E8",
+      "dark": "#1F1B16"
+    }
   },
   "favicon": "/favicon.svg",
   "logo": {
