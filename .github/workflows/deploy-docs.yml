@@ -27,10 +27,8 @@ jobs:
           description: "Release history for Mumbli — voice to text for macOS."
           ---
 
-          # Changelog
-
           FRONTMATTER
-          cat CHANGELOG.md >> docs/changelog.mdx
+          awk 'NR <= 2 { next } blank && /^$/ { next } { blank = /^$/; print }' CHANGELOG.md >> docs/changelog.mdx
 
       - name: Commit updated changelog
         run: |
@@ -76,4 +74,3 @@ jobs:
               \"key\": \"${{ vars.INDEXNOW_KEY }}\",
               \"urlList\": ${{ steps.urls.outputs.urls }}
             }"
-
