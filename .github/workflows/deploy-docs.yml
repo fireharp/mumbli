@@ -54,9 +54,9 @@ jobs:
           for f in $CHANGED_FILES; do
             SLUG=$(echo "$f" | sed 's|^docs/||;s|\.mdx$||;s|/index$||;s|^index$||')
             if [ -n "$SLUG" ]; then
-              URLS="${URLS}\"https://mumbli.fireharp.com/${SLUG}\","
+              URLS="${URLS}\"https://docs.mumbli.app/${SLUG}\","
             else
-              URLS="${URLS}\"https://mumbli.fireharp.com/\","
+              URLS="${URLS}\"https://docs.mumbli.app/\","
             fi
           done
           # Remove trailing comma
@@ -70,7 +70,7 @@ jobs:
           curl -s -X POST "https://api.indexnow.org/IndexNow" \
             -H "Content-Type: application/json" \
             -d "{
-              \"host\": \"mumbli.fireharp.com\",
+              \"host\": \"docs.mumbli.app\",
               \"key\": \"${{ vars.INDEXNOW_KEY }}\",
               \"urlList\": ${{ steps.urls.outputs.urls }}
             }"
