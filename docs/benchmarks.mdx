@@ -11,6 +11,17 @@ Mumbli's speed depends on two things: how fast the speech-to-text (STT) engine t
 
 *Last updated: June 3, 2026*
 
+## TL;DR
+
+| Need | Pick | Why |
+|---|---|---|
+| **Best quality** | **Standard**: ElevenLabs Scribe + GPT-5.4 Nano | ElevenLabs had the most audio-judge wins: 16/50, versus 4 for Deepgram and 3 for Groq. |
+| **Fastest** | **Fast**: Groq Whisper + Groq Llama 3.1 8B | Groq had the lowest median STT latency: 1,048ms, with the best p95 at 3,037ms. |
+| **Cheapest STT** | **Groq Whisper large-v3-turbo** | Current listed STT price is $0.04/hour transcribed, lower than ElevenLabs Scribe at $0.22/hour and Deepgram Nova-3 at roughly $0.29/hour. |
+| **Best middle option** | **Deepgram**: Nova-3 + GPT-5.4 Nano | Reliable 50/50 success, often faster than ElevenLabs, but weaker than ElevenLabs on judged quality. |
+
+Pricing was checked on June 3, 2026 from the official [Groq pricing](https://groq.com/pricing), [ElevenLabs API pricing](https://elevenlabs.io/pricing/api?price.section=speech_to_text), and [Deepgram pricing](https://deepgram.com/pricing) pages. Provider pricing changes; use the latency and quality results below as the durable part of the benchmark.
+
 ## Current STT conclusion
 
 We benchmarked the latest 50 saved Mumbli recordings: 896 seconds of real dictation, ranging from 0.9s to 90.7s per clip.
