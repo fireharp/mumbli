@@ -1,30 +1,32 @@
 ---
 title: "Benchmarks — Mumbli Performance"
-description: "Real latency and quality benchmarks for Mumbli's speech-to-text pipeline. ElevenLabs, Groq, Interfaze, polishing model comparison, and end-to-end results."
+description: "Real latency and quality benchmarks for Mumbli's speech-to-text pipeline. ElevenLabs, Groq, Deepgram, Interfaze, polishing model comparison, and end-to-end results."
 "og:title": "Benchmarks — Mumbli Performance"
-"og:description": "Tested STT latency and quality across providers. ElevenLabs wins quality; Groq wins latency."
+"og:description": "Tested STT latency and quality across providers. ElevenLabs wins quality; Groq wins latency; Deepgram is a reliable middle option."
 ---
 
 # Benchmarks
 
 Mumbli's speed depends on two things: how fast the speech-to-text (STT) engine transcribes, and how fast the LLM polishes. We benchmarked both.
 
-*Last updated: May 12, 2026*
+*Last updated: June 3, 2026*
 
 ## Current STT conclusion
 
-We benchmarked the latest 50 saved Mumbli recordings: 2,021 seconds of real dictation, ranging from 0.3s to 293.8s per clip.
+We benchmarked the latest 50 saved Mumbli recordings: 896 seconds of real dictation, ranging from 0.9s to 90.7s per clip.
 
 | Provider | Model | Success | Median STT latency | p95 latency | Judge wins |
 |---|---|---:|---:|---:|---:|
-| Groq Whisper | `whisper-large-v3-turbo` | 50/50 | **534ms** | **1,098ms** | 2 |
-| ElevenLabs Scribe | `scribe_v1` | 50/50 | 2,386ms | 7,472ms | **25** |
-| Interfaze STT | `interfaze-beta` | 50/50 | 8,383ms | 13,584ms | 6 |
-| Tie / skipped | — | — | — | — | 16 ties, 1 skipped |
+| Groq Whisper | `whisper-large-v3-turbo` | 50/50 | **1,048ms** | **3,037ms** | 3 |
+| Deepgram Nova-3 | `nova-3` | 50/50 | 1,928ms | 6,831ms | 4 |
+| ElevenLabs Scribe | `scribe_v1` | 50/50 | 2,538ms | 8,570ms | **16** |
+| Interfaze Run Task | `interfaze-beta` | 50/50 | 22,206ms | 54,628ms | 2 |
+| Interfaze STT | `interfaze-beta` | 50/50 | 22,371ms | 36,445ms | 3 |
+| Tie / skipped | — | — | — | — | 19 ties, 3 skipped |
 
-**Conclusion:** ElevenLabs is the best default transcription engine for quality. It won the audio-judge comparison by a large margin while staying within a practical latency range for dictation. Groq is still the fastest option by far and remains the right engine when low latency matters more than exact wording. Interfaze worked reliably, but it was slower than ElevenLabs and did not beat it on judged quality, so it is not a strong candidate for the current app pipeline.
+**Conclusion:** ElevenLabs remains the best default transcription engine for quality. Deepgram Nova-3 is reliable and often faster than ElevenLabs, especially on longer clips, but it did not beat ElevenLabs on judged quality and sometimes returned empty text on very short clips. Groq is still the fastest option by far and remains the right engine when low latency matters more than exact wording. Interfaze worked reliably, but it is too slow for the current app pipeline.
 
-Quality judging used the original WAV audio when possible: 48 files used audio judging, 1 fell back to text-reference judging, and 1 very short 0.3s clip was skipped because one provider returned empty text. Saved `.txt` files were treated only as historical app transcripts, not ground truth.
+Quality judging used the original WAV audio when possible: 45 files used audio judging, 2 fell back to text-reference judging, and 3 very short clips were skipped because one provider returned empty text. Saved `.txt` files were treated only as historical app transcripts, not ground truth.
 
 Raw data is retained locally in `benchmarks/results/raw.json` for rejudging. It is not published because it contains recording-derived transcripts.
 
@@ -90,12 +92,14 @@ In-app latency is slightly higher than synthetic benchmarks due to real-world ne
 |--------|-----|--------|-----------------|
 | **Standard** | ElevenLabs Scribe v1 | GPT-5.4 Nano | ~3-5s |
 | **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
+| **Deepgram** | Deepgram Nova-3 | GPT-5.4 Nano | ~2-4s |
 
 ## Future optimizations
 
 | Optimization | Expected Impact |
 |---|---|
 | Provider selection by mode: ElevenLabs for quality, Groq for speed | Better default behavior without new infrastructure |
+| Deepgram Nova-3 fallback or experimental mode | Faster-than-ElevenLabs STT in some medium/long dictations |
 | Groq LLM polishing (~200ms) | ~82% polishing reduction |
 | ElevenLabs Scribe v2 streaming | Near-zero post-stop latency |
 | Connection pre-warming | -150ms on first call |
@@ -105,7 +109,7 @@ In-app latency is slightly higher than synthetic benchmarks due to real-world ne
 
 - Python benchmark harnesses (`benchmarks/bench.py`, `benchmarks/interfaze_groq_bench.py`) using `httpx` async HTTP client
 - WAV recordings captured via Mumbli's debug mode
-- May 2026 STT comparison used 50 real recordings, 1 STT call per provider per file, and an audio-aware judge
+- June 2026 STT comparison used 50 real recordings, 1 STT call per provider per file, and an audio-aware judge
 - March 2026 historical benchmark used 2 iterations per configuration, averaged
 - Benchmark harness output is written to `benchmarks/results/`; recording-derived raw JSON is kept local
 - All benchmarks are [reproducible from source](https://github.com/fireharp/mumbli/tree/main/benchmarks)

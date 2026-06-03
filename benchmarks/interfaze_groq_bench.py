@@ -8,11 +8,11 @@
 # ]
 # ///
 """
-Interfaze, Groq, and ElevenLabs STT benchmark for Mumbli recordings.
+Interfaze, Groq, ElevenLabs, and Deepgram STT benchmark for Mumbli recordings.
 
-Compares Interfaze task-mode speech-to-text against the app's current Groq
-Whisper variant and ElevenLabs Scribe, then optionally asks an audio-aware
-OpenAI judge to compare transcripts against the original WAV.
+Compares Interfaze speech-to-text modes against the app's current Groq Whisper
+variant, ElevenLabs Scribe, and Deepgram Nova-3, then optionally asks an
+audio-aware OpenAI judge to compare transcripts against the original WAV.
 
 Usage:
     uv run benchmarks/interfaze_groq_bench.py --last 50 --judge audio
@@ -53,11 +53,20 @@ DEFAULT_REPORTS_DIR = REPO_ROOT / "reports"
 INTERFAZE_MODEL = "interfaze-beta"
 GROQ_MODEL = "whisper-large-v3-turbo"
 ELEVENLABS_MODEL = "scribe_v1"
+DEEPGRAM_MODEL = "nova-3"
 
 PROVIDER_INTERFAZE = "Interfaze STT"
+PROVIDER_INTERFAZE_RUN_TASK = "Interfaze Run Task"
 PROVIDER_GROQ = "Groq Whisper"
 PROVIDER_ELEVENLABS = "ElevenLabs Scribe"
-PROVIDERS = [PROVIDER_INTERFAZE, PROVIDER_GROQ, PROVIDER_ELEVENLABS]
+PROVIDER_DEEPGRAM = "Deepgram Nova-3"
+PROVIDERS = [
+    PROVIDER_INTERFAZE,
+    PROVIDER_INTERFAZE_RUN_TASK,
+    PROVIDER_GROQ,
+    PROVIDER_ELEVENLABS,
+    PROVIDER_DEEPGRAM,
+]
 
 MAX_INTERFAZE_BASE64_CHARS = 20 * 1024 * 1024
 
@@ -73,6 +82,7 @@ load_env()
 INTERFAZE_KEY = os.getenv("INTERFAZE_API_KEY", "")
 GROQ_KEY = os.getenv("GROQ_API_KEY", "")
 ELEVENLABS_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+DEEPGRAM_KEY = os.getenv("DEEPGRAM_API_KEY", "")
 OPENAI_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_AUDIO_JUDGE_MODEL = os.getenv("OPENAI_AUDIO_JUDGE_MODEL", "gpt-audio")
 OPENAI_TEXT_JUDGE_MODEL = os.getenv("OPENAI_TEXT_JUDGE_MODEL", "gpt-5.4-nano")
@@ -168,10 +178,14 @@ def find_text_field(value: Any) -> str | None:
 def provider_model(provider: str) -> str:
     if provider == PROVIDER_INTERFAZE:
         return INTERFAZE_MODEL
+    if provider == PROVIDER_INTERFAZE_RUN_TASK:
+        return f"{INTERFAZE_MODEL} <task>speech_to_text</task> no schema"
     if provider == PROVIDER_GROQ:
         return GROQ_MODEL
     if provider == PROVIDER_ELEVENLABS:
         return ELEVENLABS_MODEL
+    if provider == PROVIDER_DEEPGRAM:
+        return DEEPGRAM_MODEL
     return "unknown"
 
 
@@ -240,6 +254,55 @@ async def stt_interfaze(
     return text, elapsed, {"response_id": raw.get("id")}
 
 
+async def stt_interfaze_run_task(
+    client: httpx.AsyncClient, wav_data: bytes, filename: str
+) -> tuple[str, float, dict[str, Any]]:
+    if not INTERFAZE_KEY:
+        return "[no key]", -1.0, {"error": "INTERFAZE_API_KEY missing"}
+
+    file_data = encode_wav_data_url(wav_data)
+    payload: dict[str, Any] = {
+        "model": INTERFAZE_MODEL,
+        "messages": [
+            {"role": "system", "content": "<task>speech_to_text</task>"},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Transcribe this audio file."},
+                    {
+                        "type": "file",
+                        "file": {
+                            "filename": filename,
+                            "file_data": file_data,
+                        },
+                    },
+                ],
+            },
+        ],
+    }
+
+    start = time.perf_counter()
+    resp = await client.post(
+        "https://api.interfaze.ai/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {INTERFAZE_KEY}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=180,
+    )
+    elapsed = (time.perf_counter() - start) * 1000
+    resp.raise_for_status()
+    raw = resp.json()
+
+    message = raw.get("choices", [{}])[0].get("message", {})
+    text = find_text_field(message.get("content")) or find_text_field(raw)
+    if not text:
+        raise RuntimeError(f"Interfaze response did not contain transcript: {str(raw)[:500]}")
+
+    return text, elapsed, {"response_id": raw.get("id"), "request_mode": "run_task_no_schema"}
+
+
 async def stt_groq(
     client: httpx.AsyncClient, wav_data: bytes, filename: str
 ) -> tuple[str, float, dict[str, Any]]:
@@ -280,6 +343,32 @@ async def stt_elevenlabs(
     return data.get("text", ""), elapsed, {"response_id": data.get("id")}
 
 
+async def stt_deepgram(
+    client: httpx.AsyncClient, wav_data: bytes, filename: str
+) -> tuple[str, float, dict[str, Any]]:
+    if not DEEPGRAM_KEY:
+        return "[no key]", -1.0, {"error": "DEEPGRAM_API_KEY missing"}
+
+    start = time.perf_counter()
+    resp = await client.post(
+        f"https://api.deepgram.com/v1/listen?model={DEEPGRAM_MODEL}&smart_format=true",
+        headers={
+            "Authorization": f"Token {DEEPGRAM_KEY}",
+            "Content-Type": "audio/wav",
+        },
+        content=wav_data,
+        timeout=120,
+    )
+    elapsed = (time.perf_counter() - start) * 1000
+    resp.raise_for_status()
+    data = resp.json()
+    channels = data.get("results", {}).get("channels", [])
+    alternatives = channels[0].get("alternatives", []) if channels else []
+    text = alternatives[0].get("transcript", "") if alternatives else ""
+    metadata = data.get("metadata", {})
+    return text, elapsed, {"response_id": metadata.get("request_id")}
+
+
 async def run_provider(
     client: httpx.AsyncClient,
     provider: str,
@@ -289,8 +378,10 @@ async def run_provider(
 ) -> dict[str, Any]:
     funcs = {
         PROVIDER_INTERFAZE: stt_interfaze,
+        PROVIDER_INTERFAZE_RUN_TASK: stt_interfaze_run_task,
         PROVIDER_GROQ: stt_groq,
         PROVIDER_ELEVENLABS: stt_elevenlabs,
+        PROVIDER_DEEPGRAM: stt_deepgram,
     }
     func = funcs[provider]
     attempts: list[dict[str, Any]] = []
@@ -684,6 +775,7 @@ async def rejudge_result(
     run_seed: str,
 ) -> dict[str, Any]:
     if judge_mode == "none":
+        result["judge"] = None
         return result
 
     wav_path = Path(result["path"]).expanduser()
@@ -808,7 +900,7 @@ def write_report(
     judge_mode: str,
 ) -> Path:
     reports_dir.mkdir(parents=True, exist_ok=True)
-    report_path = reports_dir / f"interfaze-groq-elevenlabs-benchmark-{datetime.now().date()}.md"
+    report_path = reports_dir / f"stt-provider-benchmark-{datetime.now().date()}.md"
 
     provider_rows = []
     for provider in PROVIDERS:
@@ -855,7 +947,7 @@ def write_report(
             ]
         )
 
-    report = f"""# Interfaze vs Groq vs ElevenLabs STT Benchmark
+    report = f"""# STT Provider Benchmark
 
 Generated: {datetime.now().isoformat(timespec="seconds")}
 
@@ -868,7 +960,7 @@ Generated: {datetime.now().isoformat(timespec="seconds")}
 - Judge modes observed: `{summary["judge_modes"]}`
 - Raw JSON: `{json_path}`
 
-Saved `.txt` files are included as historical app transcripts only. The current app preference is `fast`, which maps to Groq Whisper, so those files should not be treated as unbiased ground truth.
+Saved `.txt` files are included as historical app transcripts only. They should not be treated as unbiased ground truth.
 
 ## Latency
 
@@ -945,7 +1037,10 @@ async def run_from_json(args: argparse.Namespace) -> int:
 
     console.print("[bold]API Keys:[/bold]")
     for name, key in [
+        ("Interfaze", INTERFAZE_KEY),
+        ("Groq", GROQ_KEY),
         ("ElevenLabs", ELEVENLABS_KEY),
+        ("Deepgram", DEEPGRAM_KEY),
         ("OpenAI", OPENAI_KEY),
     ]:
         status = "[green]configured[/green]" if key else "[red]missing[/red]"
@@ -976,7 +1071,7 @@ async def run_from_json(args: argparse.Namespace) -> int:
     json_path, raw_path, report_path = write_result_files(
         payload,
         args.output.expanduser(),
-        "interfaze_groq_elevenlabs",
+        "stt_providers",
         DEFAULT_REPORTS_DIR,
         args.judge,
     )
@@ -1002,6 +1097,7 @@ async def run(args: argparse.Namespace) -> int:
         ("Interfaze", INTERFAZE_KEY),
         ("Groq", GROQ_KEY),
         ("ElevenLabs", ELEVENLABS_KEY),
+        ("Deepgram", DEEPGRAM_KEY),
         ("OpenAI", OPENAI_KEY),
     ]:
         status = "[green]configured[/green]" if key else "[red]missing[/red]"
@@ -1033,7 +1129,7 @@ async def run(args: argparse.Namespace) -> int:
     json_path, raw_path, report_path = write_result_files(
         payload,
         args.output.expanduser(),
-        "interfaze_groq_elevenlabs",
+        "stt_providers",
         DEFAULT_REPORTS_DIR,
         args.judge,
     )
@@ -1046,7 +1142,7 @@ async def run(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Interfaze vs Groq vs ElevenLabs STT benchmark")
+    parser = argparse.ArgumentParser(description="STT provider benchmark")
     parser.add_argument(
         "--from-json",
         type=Path,

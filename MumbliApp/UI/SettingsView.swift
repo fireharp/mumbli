@@ -20,6 +20,11 @@ struct SettingsView: View {
     @State private var groqMasked: String = ""
     @State private var groqSavedConfirm: Bool = false
     @State private var groqIsEditing: Bool = false
+    @State private var deepgramKey: String = ""
+    @State private var hasDeepgramKey: Bool = false
+    @State private var deepgramMasked: String = ""
+    @State private var deepgramSavedConfirm: Bool = false
+    @State private var deepgramIsEditing: Bool = false
 
     // Polishing settings
     @State private var polishingEnabled: Bool = true
@@ -192,12 +197,29 @@ struct SettingsView: View {
                             )
                             .accessibilityLabel("Groq API Key, \(hasGroqKey ? "configured" : "not set")")
 
-                            if !hasElevenLabsKey || !hasOpenAIKey {
+                            Divider().opacity(0.1)
+
+                            // Deepgram row
+                            APIKeyRow(
+                                serviceName: "Deepgram",
+                                iconName: "waveform.path.ecg",
+                                placeholder: "dg_...paste key",
+                                keyText: $deepgramKey,
+                                isSet: hasDeepgramKey,
+                                maskedValue: deepgramMasked,
+                                isEditing: $deepgramIsEditing,
+                                savedConfirm: deepgramSavedConfirm,
+                                accessibilityID: "mumbli-deepgram-key",
+                                onCommit: { commitDeepgramKey() }
+                            )
+                            .accessibilityLabel("Deepgram API Key, \(hasDeepgramKey ? "configured" : "not set")")
+
+                            if selectedEngineMissingRequirements {
                                 HStack(spacing: 4) {
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .font(.system(size: 11))
                                         .foregroundColor(Color(nsColor: .systemOrange))
-                                    Text("Required for dictation")
+                                    Text("Required for selected engine")
                                         .font(.system(size: 11))
                                         .foregroundColor(.secondary)
                                 }
@@ -524,6 +546,10 @@ struct SettingsView: View {
             hasGroqKey = true
             groqMasked = Self.maskKey(key)
         }
+        if let key = KeychainManager.shared.get(key: KeychainManager.deepgramAPIKeyKey) {
+            hasDeepgramKey = true
+            deepgramMasked = Self.maskKey(key)
+        }
     }
 
     private func commitElevenLabsKey() {
@@ -580,6 +606,39 @@ struct SettingsView: View {
             groqIsEditing = false
             groqSavedConfirm = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { groqSavedConfirm = false }
+        }
+    }
+
+    private func commitDeepgramKey() {
+        let trimmed = deepgramKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            if hasDeepgramKey {
+                KeychainManager.shared.delete(key: KeychainManager.deepgramAPIKeyKey)
+                hasDeepgramKey = false
+                deepgramMasked = ""
+            }
+        } else {
+            try? KeychainManager.shared.save(key: KeychainManager.deepgramAPIKeyKey, value: trimmed)
+            hasDeepgramKey = true
+            deepgramMasked = Self.maskKey(trimmed)
+            deepgramKey = ""
+            deepgramIsEditing = false
+            deepgramSavedConfirm = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { deepgramSavedConfirm = false }
+        }
+    }
+
+    private var selectedEngineMissingRequirements: Bool {
+        let engine = DictationEngine(rawValue: dictationEngine) ?? .standard
+        let needsOpenAI = polishingEnabled && !engine.usesGroq
+
+        switch engine {
+        case .standard:
+            return !hasElevenLabsKey || (needsOpenAI && !hasOpenAIKey)
+        case .fast:
+            return !hasGroqKey
+        case .deepgram:
+            return !hasDeepgramKey || (needsOpenAI && !hasOpenAIKey)
         }
     }
 

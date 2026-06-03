@@ -5,6 +5,7 @@ import Foundation
 enum DictationEngine: String, CaseIterable, Identifiable {
     case standard = "standard"
     case fast = "fast"
+    case deepgram = "deepgram"
 
     var id: String { rawValue }
 
@@ -12,6 +13,7 @@ enum DictationEngine: String, CaseIterable, Identifiable {
         switch self {
         case .standard: return "Standard"
         case .fast: return "Fast"
+        case .deepgram: return "Deepgram"
         }
     }
 
@@ -19,14 +21,31 @@ enum DictationEngine: String, CaseIterable, Identifiable {
         switch self {
         case .standard: return "ElevenLabs Scribe + GPT-5.4 Nano"
         case .fast: return "Groq Whisper + Groq Llama 3.1 8B"
+        case .deepgram: return "Deepgram Nova-3 + GPT-5.4 Nano"
         }
     }
 
-    /// Whether this engine uses Groq APIs (STT + polish)
+    /// Whether this engine uses Groq APIs (STT + polish).
     var usesGroq: Bool {
         switch self {
         case .standard: return false
         case .fast: return true
+        case .deepgram: return false
+        }
+    }
+
+    var usesDeepgram: Bool {
+        switch self {
+        case .standard, .fast: return false
+        case .deepgram: return true
+        }
+    }
+
+    var sttProviderLabel: String {
+        switch self {
+        case .standard: return "ElevenLabs"
+        case .fast: return "Groq-Whisper"
+        case .deepgram: return "Deepgram"
         }
     }
 
@@ -34,6 +53,7 @@ enum DictationEngine: String, CaseIterable, Identifiable {
         switch self {
         case .standard: return PolishingModel.gpt5_4_nano.rawValue
         case .fast: return "groq-llama-3.1-8b"
+        case .deepgram: return PolishingModel.gpt5_4_nano.rawValue
         }
     }
 }

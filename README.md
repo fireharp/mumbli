@@ -1,6 +1,6 @@
 # Mumbli
 
-A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn key** to dictate into any text field. Audio is transcribed via [ElevenLabs STT](https://elevenlabs.io/) or [Groq Whisper](https://groq.com/) and optionally polished with [OpenAI](https://openai.com/) or [Groq LLM](https://groq.com/).
+A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn key** to dictate into any text field. Audio is transcribed via [ElevenLabs STT](https://elevenlabs.io/), [Groq Whisper](https://groq.com/), or [Deepgram](https://deepgram.com/) and optionally polished with [OpenAI](https://openai.com/) or [Groq LLM](https://groq.com/).
 
 ## Install
 
@@ -39,6 +39,7 @@ Requires **macOS 13.0+** (Ventura or later). API keys can be configured in the a
    ELEVENLABS_API_KEY=your_elevenlabs_key
    OPENAI_API_KEY=your_openai_key
    GROQ_API_KEY=your_groq_key          # optional, for Fast engine
+   DEEPGRAM_API_KEY=your_deepgram_key  # optional, for Deepgram engine/benchmarks
    ```
 
    Alternatively, you can enter API keys in the app's Settings view after first launch.
@@ -88,7 +89,7 @@ Grant all three for full functionality.
 
 1. Press and hold **Fn** (or double-tap, configurable in Settings) to start recording
 2. Speak — audio is captured via `AVAudioEngine` (PCM 16-bit, 16 kHz mono)
-3. Release Fn — audio is sent to STT API (ElevenLabs or Groq Whisper)
+3. Release Fn — audio is sent to STT API (ElevenLabs, Groq Whisper, or Deepgram)
 4. Transcribed text is optionally polished by LLM (OpenAI or Groq), then injected at the cursor
 5. Dictation history is accessible from the menu bar icon
 
@@ -111,6 +112,7 @@ Switch between engines in **Settings > Debug > Engine**:
 |--------|-----|--------|-----------------|
 | **Standard** | ElevenLabs Scribe v1 | OpenAI GPT-5.4 Nano | ~3-5s |
 | **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
+| **Deepgram** | Deepgram Nova-3 | OpenAI GPT-5.4 Nano | ~2-4s |
 
 ## Project Structure
 
@@ -128,6 +130,7 @@ MumbliApp/
 ├── Services/
 │   ├── ElevenLabsSTTService.swift    # ElevenLabs STT (standard engine)
 │   ├── GroqWhisperSTTService.swift   # Groq Whisper STT (fast engine)
+│   ├── DeepgramSTTService.swift      # Deepgram STT (Deepgram engine)
 │   ├── OpenAIPolishingService.swift  # OpenAI polishing + engine/preset enums
 │   ├── GroqPolishingService.swift    # Groq LLM polishing (fast engine)
 │   ├── VocabularyStore.swift         # Custom vocabulary persistence & formatting

@@ -3,7 +3,7 @@ import SwiftUI
 import AVFoundation
 
 /// App delegate that wires together all core and UI components.
-/// Connects: HotkeyManager -> AudioCapture -> ElevenLabs STT -> OpenAI Polish -> TextInjector + HistoryManager
+/// Connects: HotkeyManager -> AudioCapture -> STT -> Polish -> TextInjector + HistoryManager
 /// Handles first-launch flow, menu bar setup, and UI test launch arguments.
 @MainActor
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -16,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Services (direct API)
     private let sttService = ElevenLabsSTTService()
     private let groqSTTService = GroqWhisperSTTService()
+    private let deepgramSTTService = DeepgramSTTService()
     private let polishingService = OpenAIPolishingService()
     private let groqPolishingService = GroqPolishingService()
 
@@ -453,12 +454,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // Transcribe
             let engineRaw = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
             let engine = DictationEngine(rawValue: engineRaw) ?? .standard
-            let transcription: String
-            if engine.usesGroq {
-                transcription = try await groqSTTService.transcribe(audioData: Data(pcmData))
-            } else {
-                transcription = try await sttService.transcribe(audioData: Data(pcmData))
-            }
+            let transcription = try await transcribe(audioData: Data(pcmData), engine: engine)
 
             guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 log.log("[Retry] Empty transcription for \(recordingFilename)")
@@ -508,6 +504,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Dictation Flow
 
     private let log = FileLogger.shared
+
+    private func transcribe(audioData: Data, engine: DictationEngine) async throws -> String {
+        if engine.usesGroq {
+            return try await groqSTTService.transcribe(audioData: audioData)
+        }
+        if engine.usesDeepgram {
+            return try await deepgramSTTService.transcribe(audioData: audioData)
+        }
+        return try await sttService.transcribe(audioData: audioData)
+    }
 
     private func startDictation(mode: ActivationMode) {
         currentMode = mode
@@ -580,12 +586,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let engine = DictationEngine(rawValue: engineRaw) ?? .standard
                 log.log("[Dictation] Engine: \(engine.displayName) — Sending \(capturedAudio.count) bytes")
                 timer.mark("stt_start")
-                let transcription: String
-                if engine.usesGroq {
-                    transcription = try await groqSTTService.transcribe(audioData: capturedAudio)
-                } else {
-                    transcription = try await sttService.transcribe(audioData: capturedAudio)
-                }
+                let transcription = try await transcribe(audioData: capturedAudio, engine: engine)
                 timer.mark("stt_end")
 
                 guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -677,7 +678,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let metrics = timer.buildMetrics(
                     audioBytes: capturedAudio.count,
                     audioDurationSec: audioDurationSec,
-                    sttProvider: engine.usesGroq ? "Groq-Whisper" : "ElevenLabs",
+                    sttProvider: engine.sttProviderLabel,
                     polishModel: polishModel
                 )
                 log.log(metrics.jsonLine)
