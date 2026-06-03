@@ -1,13 +1,13 @@
 ---
-title: "Benchmarks — Mumbli Performance"
-description: "Real latency and quality benchmarks for Mumbli's speech-to-text pipeline. ElevenLabs, Groq, Deepgram, Interfaze, polishing model comparison, and end-to-end results."
-"og:title": "Benchmarks — Mumbli Performance"
+title: "Benchmarks — Mumbli STT Providers"
+description: "Current latency, quality, and cost benchmarks for Mumbli's speech-to-text providers: ElevenLabs, Groq, and Deepgram."
+"og:title": "Benchmarks — Mumbli STT Providers"
 "og:description": "Tested STT latency and quality across providers. ElevenLabs wins quality; Groq wins latency; Deepgram is a reliable middle option."
 ---
 
 # Benchmarks
 
-Mumbli's speed depends on two things: how fast the speech-to-text (STT) engine transcribes, and how fast the LLM polishes. We benchmarked both.
+Current provider results for Mumbli's speech-to-text engines.
 
 *Last updated: June 3, 2026*
 
@@ -22,7 +22,7 @@ Mumbli's speed depends on two things: how fast the speech-to-text (STT) engine t
 
 Pricing was checked on June 3, 2026 from the official [Groq pricing](https://groq.com/pricing), [ElevenLabs API pricing](https://elevenlabs.io/pricing/api?price.section=speech_to_text), and [Deepgram pricing](https://deepgram.com/pricing) pages. Provider pricing changes; use the latency and quality results below as the durable part of the benchmark.
 
-## Current STT conclusion
+## Current STT benchmark
 
 We benchmarked the latest 50 saved Mumbli recordings: 896 seconds of real dictation, ranging from 0.9s to 90.7s per clip.
 
@@ -41,62 +41,6 @@ Quality judging used the original WAV audio when possible: 45 files used audio j
 
 Raw data is retained locally in `benchmarks/results/raw.json` for rejudging. It is not published because it contains recording-derived transcripts.
 
-## Historical end-to-end benchmark
-
-The fastest March 2026 end-to-end configuration was **ElevenLabs Chunked + GPT-5.4 Mini**, achieving 54-59% faster end-to-end latency compared to the older baseline.
-
-| STT | Polish | Total | vs Baseline |
-|-----|--------|-------|-------------|
-| ElevenLabs Chunked (24.7s audio) | GPT-5.4 Mini | **1,491ms** | -54% |
-| ElevenLabs Chunked (40.9s audio) | GPT-5.4 Mini | **1,760ms** | -55% |
-| ElevenLabs Chunked (61.2s audio) | GPT-5.4 Mini | **1,676ms** | -59% |
-| **Baseline** (61.2s audio) | GPT-5.4 Nano | **4,054ms** | — |
-
-## Historical STT chunking benchmark
-
-Tested across 6 recordings from 1.8s to 61.2s audio:
-
-| Recording | Duration | ElevenLabs Batch | ElevenLabs Chunked | OpenAI Whisper |
-|-----------|----------|------------------|--------------------|----------------|
-| Short phrase | 1.8s | **524ms** | — | 1,611ms |
-| Medium dictation | 24.7s | 1,434ms | **904ms** | 2,285ms |
-| Medium dictation | 29.7s | **1,697ms** | 1,822ms | 2,619ms |
-| Long dictation | 40.9s | 2,569ms | **1,173ms** | 3,937ms |
-| Long dictation | 43.2s | 2,627ms | **1,174ms** | 5,737ms |
-| Long dictation | 61.2s | 2,929ms | **1,089ms** | 3,154ms |
-
-**Key findings:**
-- ElevenLabs Chunked is **37-63% faster** for audio longer than 24 seconds
-- For short audio under 12 seconds, single batch is better
-- OpenAI Whisper is consistently slower than ElevenLabs
-
-### How chunked STT works
-
-Long audio is split into 10-second chunks with 2-second overlap. All chunks are sent in parallel. Results are stitched using word-level overlap detection (longest common run of 2+ words at boundaries).
-
-## Polishing model comparison
-
-| Model | Avg Latency | Notes |
-|-------|-------------|-------|
-| GPT-5.4 Mini | **587ms** | 48% faster than Nano |
-| GPT-5.4 Nano (short prompt) | 707ms | Slightly aggressive |
-| GPT-5.4 Nano | 1,125ms | Baseline |
-
-GPT-5.4 Mini is surprisingly faster than Nano with equivalent output quality.
-
-## Live validation
-
-Real dictation metrics with the Fast engine in the app:
-
-| Audio Duration | STT | Polish | Total |
-|---|---|---|---|
-| 37.6s | 1,143ms | 1,263ms | **2,442ms** |
-| 24.9s | 1,507ms | 1,153ms | **2,693ms** |
-| 15.4s | 1,252ms | 1,547ms | **2,838ms** |
-| 15.2s | 1,726ms | 1,241ms | **3,009ms** |
-
-In-app latency is slightly higher than synthetic benchmarks due to real-world network conditions.
-
 ## Engine configurations
 
 | Engine | STT | Polish | Typical Latency |
@@ -109,7 +53,6 @@ In-app latency is slightly higher than synthetic benchmarks due to real-world ne
 
 | Optimization | Expected Impact |
 |---|---|
-| Provider selection by mode: ElevenLabs for quality, Groq for speed | Better default behavior without new infrastructure |
 | Deepgram Nova-3 fallback or experimental mode | Faster-than-ElevenLabs STT in some medium/long dictations |
 | Groq LLM polishing (~200ms) | ~82% polishing reduction |
 | ElevenLabs Scribe v2 streaming | Near-zero post-stop latency |
@@ -121,7 +64,6 @@ In-app latency is slightly higher than synthetic benchmarks due to real-world ne
 - Python benchmark harnesses (`benchmarks/bench.py`, `benchmarks/interfaze_groq_bench.py`) using `httpx` async HTTP client
 - WAV recordings captured via Mumbli's debug mode
 - June 2026 STT comparison used 50 real recordings, 1 STT call per provider per file, and an audio-aware judge
-- March 2026 historical benchmark used 2 iterations per configuration, averaged
 - Benchmark harness output is written to `benchmarks/results/`; recording-derived raw JSON is kept local
 - All benchmarks are [reproducible from source](https://github.com/fireharp/mumbli/tree/main/benchmarks)
 
@@ -134,3 +76,7 @@ Tested 11 commonly mistranscribed words (proper nouns, technical terms):
 | Exact match accuracy | 36% | **100%** |
 
 See [Custom Vocabulary](/custom-vocabulary-for-dictation) for details.
+
+## Archived local experiments
+
+Older chunking, polishing-model, and end-to-end experiments are kept in the repository under `reports/` and `benchmarks/results/`. They are useful for implementation history, but this page reflects the current provider choice.
