@@ -56,6 +56,12 @@
               "custom-vocabulary-for-dictation",
               "privacy"
             ]
+          },
+          {
+            "group": "Benchmarks",
+            "pages": [
+              "benchmarks"
+            ]
           }
         ]
       },
@@ -63,7 +69,6 @@
         "tab": "Developers",
         "pages": [
           "for-developers",
-          "benchmarks",
           {
             "group": "Compare",
             "pages": ["compare/apple-dictation"]
