@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/fireharp/mumbli/compare/v0.3.3...v0.4.0) (2026-06-03)
+
+
+### Features
+
+* add Deepgram STT engine ([99550cf](https://github.com/fireharp/mumbli/commit/99550cf9158ddf2152154e30d007d60a0c646835))
+
 ## [0.3.3](https://github.com/fireharp/mumbli/compare/v0.3.2...v0.3.3) (2026-04-08)
 
 
