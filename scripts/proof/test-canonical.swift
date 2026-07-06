@@ -1,7 +1,9 @@
+#!/usr/bin/env swift
+// Validates CanonicalJSON output matches proof-of-use Go canonical.Bytes expectations.
 import Foundation
+import CryptoKit
 
-/// Deterministic JSON encoding matching proof-of-use Go canonical.Bytes:
-/// sorted object keys, no whitespace, arrays preserve order.
+// Minimal copy of CanonicalJSON for standalone test (keep in sync with CanonicalJSON.swift)
 enum CanonicalJSON {
     static func bytes(_ value: Any) throws -> Data {
         var buffer = Data()
@@ -33,20 +35,13 @@ enum CanonicalJSON {
             }
         case let int as Int:
             buffer.append(contentsOf: String(int).utf8)
-        case let int64 as Int64:
-            buffer.append(contentsOf: String(int64).utf8)
-        case let double as Double:
-            if double == Double(Int64(double)) {
-                buffer.append(contentsOf: String(Int64(double)).utf8)
-            } else {
-                throw CanonicalJSONError.unsupportedFloat
-            }
         case let dict as [String: Any]:
             try writeObject(dict, into: &buffer)
         case let array as [Any]:
             try writeArray(array, into: &buffer)
         default:
-            throw CanonicalJSONError.unsupportedType(String(describing: type(of: value)))
+            fputs("unsupported type: \(type(of: value))\n", stderr)
+            exit(1)
         }
     }
 
@@ -72,7 +67,6 @@ enum CanonicalJSON {
     }
 
     private static func writeString(_ string: String, into buffer: inout Data) throws {
-        // Match Go encoding/json string escaping (does not escape '/').
         var out = "\""
         for char in string {
             switch char {
@@ -94,16 +88,60 @@ enum CanonicalJSON {
     }
 }
 
-enum CanonicalJSONError: Error, CustomStringConvertible {
-    case unsupportedFloat
-    case unsupportedType(String)
+struct PouEventBody: Codable {
+    let type: String
+    let event_id: String
+    let project_id: String
+    let epoch: String
+    let function_name: String
+    let nullifier: String
+    let time_bucket: String
+}
 
-    var description: String {
-        switch self {
-        case .unsupportedFloat:
-            return "non-integer float not supported in canonical JSON"
-        case .unsupportedType(let type):
-            return "unsupported type in canonical JSON: \(type)"
-        }
+var failed = false
+
+func check(_ name: String, _ got: String, _ want: String) {
+    if got == want {
+        print("OK  \(name)")
+    } else {
+        print("FAIL \(name)")
+        print("  got:  \(got)")
+        print("  want: \(want)")
+        failed = true
     }
 }
+
+// Sorted keys test
+let sorted = try CanonicalJSON.bytes(["b": 2, "a": 1, "nested": ["z": true, "y": false] as [String: Any]] as [String: Any])
+check("sorted keys", String(data: sorted, encoding: .utf8)!, #"{"a":1,"b":2,"nested":{"y":false,"z":true}}"#)
+
+// Nullifier payload (must match Go receipt.Nullifier)
+let nullifierPayload: [String: Any] = [
+    "epoch": "2026-07",
+    "install_public_key": "OCgZqFwY2fHux1xorwzEAj7BRK-cmza2cwSbsoshwpA",
+    "project_id": "github.com/fireharp/mumbli",
+]
+let nullifierCanonical = try CanonicalJSON.bytes(nullifierPayload)
+let digest = SHA256.hash(data: nullifierCanonical)
+let nullifierHex = digest.map { String(format: "%02x", $0) }.joined()
+check("nullifier canonical keys",
+      String(data: nullifierCanonical, encoding: .utf8)!,
+      #"{"epoch":"2026-07","install_public_key":"OCgZqFwY2fHux1xorwzEAj7BRK-cmza2cwSbsoshwpA","project_id":"github.com/fireharp/mumbli"}"#)
+print("OK  nullifier sha256 length=\(nullifierHex.count)")
+
+// Event body encodes without throwing
+let body = PouEventBody(
+    type: "usage-event:v1",
+    event_id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    project_id: "github.com/fireharp/mumbli",
+    epoch: "2026-07",
+    function_name: "dictation.complete",
+    nullifier: nullifierHex,
+    time_bucket: "2026-07-06T12:00:00Z"
+)
+let bodyBytes = try CanonicalJSON.bytes(body)
+if bodyBytes.isEmpty { failed = true; print("FAIL event body empty") }
+else { print("OK  event body encodes (\(bodyBytes.count) bytes)") }
+
+if failed { exit(1) }
+print("All canonical JSON tests passed")

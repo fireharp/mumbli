@@ -150,6 +150,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     NSLog("[AppDelegate] --test-full: inject result = %@", "\(result)")
                     self.historyManager.addEntry(text: testText)
                     NSLog("[AppDelegate] --test-full: saved to history")
+                    ProofOfUseFacade.shared.recordDictation(.init(
+                        engine: "test",
+                        mode: "hold",
+                        audioDurationSec: 1.0,
+                        polished: false
+                    ))
+                    NSLog("[AppDelegate] --test-full: proof receipt queued")
                     self.overlayController.dismiss(afterDelay: 0.3)
                 }
             }

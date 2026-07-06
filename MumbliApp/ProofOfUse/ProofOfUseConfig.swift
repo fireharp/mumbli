@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// Configuration for the optional Proof-of-Use module.
 /// All proof-of-use code lives under `ProofOfUse/` and can be removed independently.
@@ -7,6 +10,33 @@ enum ProofOfUseConfig {
     static let epoch = "2026-07"
     static let functionName = "dictation.complete"
     static let verificationURL = "https://github.com/fireharp/mumbli/blob/main/docs/proof/README.md"
+
+    /// Opens a local verification guide in ~/Library/Application Support/Mumbli/proof/README.md
+    static func openVerificationGuide() {
+        let readme = proofDirectory.appendingPathComponent("README.md")
+        if !FileManager.default.fileExists(atPath: readme.path) {
+            try? FileManager.default.createDirectory(at: proofDirectory, withIntermediateDirectories: true)
+            try? localVerificationGuideMarkdown.write(to: readme, atomically: true, encoding: .utf8)
+        }
+        NSWorkspace.shared.open(readme)
+    }
+
+    private static let localVerificationGuideMarkdown = """
+    # Mumbli Usage Proof — Local Guide
+
+    Signed receipts are stored in `receipts.jsonl` in this folder.
+
+    ## Verify with pou CLI
+
+    ```bash
+    cd mac-app
+    ./scripts/proof/publish-proof.sh
+    pou verify-public docs/proof/2026-07/public-proof.json \\
+      --trusted-keys docs/proof/trusted-keys.json
+    ```
+
+    See the Mumbli repo `docs/proof/README.md` for full documentation.
+    """
 
     /// Trusted issuer public key (base64url). Must match docs/proof/trusted-keys.json.
     static let issuerPublicKey = "EXg1RwYqPuMTRMQTwpVzXd79NnnM4ycmtMIHltcVkUM"

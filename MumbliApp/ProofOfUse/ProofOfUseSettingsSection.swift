@@ -14,6 +14,7 @@ struct ProofOfUseSettingsSection: View {
             VStack(alignment: .leading, spacing: 10) {
                 Toggle("Sign dictation usage receipts", isOn: $enabled)
                     .toggleStyle(.switch)
+                    .accessibilityIdentifier("mumbli-proof-toggle")
                     .onChange(of: enabled) { newValue in
                         ProofOfUseConfig.isEnabled = newValue
                         refreshState()
@@ -61,11 +62,10 @@ struct ProofOfUseSettingsSection: View {
                     }
 
                     Button("Verification guide") {
-                        if let url = URL(string: ProofOfUseConfig.verificationURL) {
-                            NSWorkspace.shared.open(url)
-                        }
+                        ProofOfUseConfig.openVerificationGuide()
                     }
                     .controlSize(.small)
+                    .accessibilityIdentifier("mumbli-proof-verify-guide")
                 }
             }
         }
