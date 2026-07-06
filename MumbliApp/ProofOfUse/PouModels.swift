@@ -9,11 +9,41 @@ struct PouCredentialBody: Codable {
     let epoch: String
     let install_public_key: String
     let issued_at: String
+    let app_identity: String?
+    let grant_id: String?
 }
 
 struct PouCredential: Codable {
     let body: PouCredentialBody
+    let issuer_signature: String?
+    let grant: PouProjectGrant?
+}
+
+struct PouAuthorizedApp: Codable {
+    let bundle_id: String
+    let team_id: String
+    let cdhash: String?
+}
+
+struct PouProjectGrant: Codable {
+    let type: String
+    let grant_id: String
+    let project_id: String
+    let epoch: String
+    let release: String
+    let authorized_app: PouAuthorizedApp
+    let issued_at: String
     let issuer_signature: String
+}
+
+struct PouGrantSignBody: Codable {
+    let type: String
+    let grant_id: String
+    let project_id: String
+    let epoch: String
+    let release: String
+    let authorized_app: PouAuthorizedApp
+    let issued_at: String
 }
 
 struct PouEventBody: Codable {
@@ -24,6 +54,7 @@ struct PouEventBody: Codable {
     let function_name: String
     let nullifier: String
     let time_bucket: String
+    let app_identity: String?
 }
 
 struct PouReceipt: Codable {

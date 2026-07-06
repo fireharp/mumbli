@@ -6,7 +6,8 @@ enum UsageReceiptSigner {
     static func signDictation(
         event: ProofDictationEvent,
         credential: PouCredential,
-        installPublicKey: String
+        installPublicKey: String,
+        appIdentity: String?
     ) throws -> PouReceiptWithCommitment {
         let nullifier = try computeNullifier(
             projectID: ProofOfUseConfig.projectID,
@@ -22,7 +23,8 @@ enum UsageReceiptSigner {
             epoch: ProofOfUseConfig.epoch,
             function_name: ProofOfUseConfig.functionName,
             nullifier: nullifier,
-            time_bucket: timeBucket
+            time_bucket: timeBucket,
+            app_identity: appIdentity
         )
 
         let bodyBytes = try CanonicalJSON.bytes(eventBody)
@@ -80,8 +82,7 @@ enum UsageReceiptSigner {
     }
 
     private static func newEventID() -> String {
-        let uuid = UUID().uuidString.lowercased()
-        return uuid
+        UUID().uuidString.lowercased()
     }
 }
 
@@ -91,7 +92,7 @@ enum UsageReceiptSignerError: Error, CustomStringConvertible {
     var description: String {
         switch self {
         case .missingCredential:
-            return "Proof-of-use credential not found. Run enrollment (see Settings > Usage proof)."
+            return "Proof-of-use credential not found. Enable Usage Proof to auto-enroll from embedded grant."
         }
     }
 }

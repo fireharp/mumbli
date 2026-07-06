@@ -10,29 +10,49 @@ With [pinned trusted keys](trusted-keys.json), a published `public-proof.json` s
 - Distinct anonymous installs (epoch-scoped nullifiers)
 - A Merkle root committing to the exact receipt set
 - An attestor signature over the aggregate statement
+- (When using grant-backed credentials) receipts bound to an embedded project grant and app identity
 
 ## What it does not prove
 
 - Transcript content or audio quality
 - That every dictation was included before publish (honest publisher assumption)
-- Sybil resistance beyond issuer enrollment policy
+- Sybil resistance beyond issuer grant policy
 - Dictations before proof signing was enabled
 
 ## Enable in Mumbli
 
 1. Open **Settings → Usage Proof**
 2. Turn on **Sign dictation usage receipts**
-3. Run enrollment once (issues an install credential):
+3. Dictate normally — the app auto-enrolls from the embedded `project-grant.json` on first signed receipt
+
+Receipts append to:
+
+```
+~/Library/Application Support/Mumbli/proof/receipts.jsonl
+```
+
+### Dev fallback (legacy manual credential)
+
+For unsigned local builds without a valid embedded grant:
 
 ```bash
 cd mac-app
 ./scripts/proof/enroll-install.sh
 ```
 
-4. Dictate normally — receipts append to:
+## Build release grant (maintainer)
 
+Embed a fresh grant before archiving:
+
+```bash
+cd mac-app
+POU_REPO=$HOME/Prog/Stuff/proof-of-use ./scripts/proof/embed-grant.sh 0.5.0 /path/to/Mumbli.app
 ```
-~/Library/Application Support/Mumbli/proof/receipts.jsonl
+
+Async package review (placeholder):
+
+```bash
+$POU_REPO/ProofOfUseLocal/scripts/verify-build.sh /path/to/Mumbli.app grant-id grant-file.json
 ```
 
 ## Publish (maintainer)
@@ -42,41 +62,46 @@ cd mac-app
 ./scripts/proof/publish-proof.sh
 ```
 
-This aggregates receipts, verifies locally, and writes epoch artifacts under `docs/proof/`.
+This verifies receipts against the grant registry, aggregates, verifies locally, and writes epoch artifacts under `docs/proof/`.
 
 ## Verify (anyone)
 
 Requires [proof-of-use](https://github.com/proof-of-use/proof-of-use) `pou` CLI:
 
 ```bash
-git clone https://github.com/fireharp/mumbli.git
-cd mumbli/mac-app
+POU_REPO=$HOME/Prog/Stuff/proof-of-use
+$POU_REPO/ProofOfUseLocal/scripts/verify-local.sh
+```
 
-# Build pou from proof-of-use repo, or use a release binary
+Or manually:
+
+```bash
 pou verify-public docs/proof/2026-07/public-proof.json \
   --trusted-keys docs/proof/trusted-keys.json
 ```
 
-Optional full audit (includes individual redacted receipts):
+Optional full audit with grant registry:
 
 ```bash
 pou verify-audit \
   docs/proof/2026-07/public-proof.json \
   docs/proof/2026-07/audit-pack.json \
-  --trusted-keys docs/proof/trusted-keys.json
+  --trusted-keys docs/proof/trusted-keys.json \
+  --grant-registry $POU_REPO/ProofOfUseLocal/registry/grant-registry.json \
+  --grant-policy optimistic
 ```
-
-On success, `pou` prints the public statement (counts + Merkle root).
 
 ## Trust model
 
-| Role | Key in trusted-keys.json |
-|------|--------------------------|
-| Issuer | Signs install credentials (one per device per epoch) |
-| Attestor | Signs the published aggregate statement |
+| Role | Responsibility |
+|------|----------------|
+| Issuer | Signs project grants at build; optional per-install credentials (dev) |
+| Grant registry | Tracks pending / verified / revoked grants (ProofOfUseLocal) |
+| Install | Signs usage events locally from Keychain identity |
+| Attestor | Signs published aggregate statement |
 
 Private keys stay offline. Only public keys are pinned in this repo.
 
 ## Removing the module
 
-Delete `MumbliApp/ProofOfUse/`, remove the single hook in `AppDelegate.swift`, and drop the two UI insertions in `SettingsView` / `MenuBarController`.
+Delete `MumbliApp/ProofOfUse/` and remove references from `AppDelegate.swift`, `SettingsView.swift`, and `MenuBarController.swift`.

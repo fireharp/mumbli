@@ -7,7 +7,9 @@ struct ProofOfUseSettingsSection: View {
     @State private var installPublicKey: String = ""
     @State private var hasCredential = ProofOfUseFacade.shared.hasCredential
     @State private var receiptCount = ProofOfUseFacade.shared.localReceiptCount
+    @State private var grantID = ProofOfUseFacade.shared.grantID ?? ""
     @State private var copiedInstallKey = false
+    @State private var attestationStatus = "Unknown"
 
     var body: some View {
         SettingsSection(title: "Usage Proof", icon: "checkmark.seal") {
@@ -20,14 +22,18 @@ struct ProofOfUseSettingsSection: View {
                         refreshState()
                     }
 
-                Text("Creates anonymous, signed receipts locally. No transcript text is included. Publish and verify with the proof-of-use CLI.")
+                Text("Creates anonymous, signed receipts locally from the embedded project grant. No transcript text is included.")
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if enabled {
                     statusRow(label: "Receipts signed", value: "\(receiptCount)")
-                    statusRow(label: "Credential", value: hasCredential ? "Enrolled" : "Missing")
+                    statusRow(label: "Credential", value: hasCredential ? "Ready" : "Pending auto-enroll")
+                    statusRow(label: "Package", value: attestationStatus)
+                    if !grantID.isEmpty {
+                        statusRow(label: "Grant", value: grantID)
+                    }
 
                     if !installPublicKey.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
@@ -55,9 +61,9 @@ struct ProofOfUseSettingsSection: View {
                     }
 
                     if !hasCredential {
-                        Text("Run enrollment once: scripts/proof/enroll-install.sh (see docs/proof/README.md)")
+                        Text("Credential auto-enrolls on first dictation from the embedded project grant. Grant verification status is checked when publishing proof.")
                             .font(.system(size: 11))
-                            .foregroundColor(.orange)
+                            .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
@@ -76,6 +82,8 @@ struct ProofOfUseSettingsSection: View {
         installPublicKey = ProofOfUseFacade.shared.installPublicKey ?? ""
         hasCredential = ProofOfUseFacade.shared.hasCredential
         receiptCount = ProofOfUseFacade.shared.localReceiptCount
+        grantID = ProofOfUseFacade.shared.grantID ?? ""
+        attestationStatus = (try? AppAttestation.verifyRunningApp()) != nil ? "Signed" : "Unsigned / invalid"
     }
 
     private func statusRow(label: String, value: String) -> some View {
@@ -86,6 +94,7 @@ struct ProofOfUseSettingsSection: View {
             Spacer()
             Text(value)
                 .font(.system(size: 12, weight: .medium, design: .rounded))
+                .lineLimit(1)
         }
     }
 }

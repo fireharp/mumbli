@@ -30,9 +30,8 @@ enum ProofOfUseConfig {
 
     ```bash
     cd mac-app
-    ./scripts/proof/publish-proof.sh
-    pou verify-public docs/proof/2026-07/public-proof.json \\
-      --trusted-keys docs/proof/trusted-keys.json
+    POU_REPO=$HOME/Prog/Stuff/proof-of-use
+    $POU_REPO/ProofOfUseLocal/scripts/verify-local.sh
     ```
 
     See the Mumbli repo `docs/proof/README.md` for full documentation.

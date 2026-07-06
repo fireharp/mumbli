@@ -41,9 +41,7 @@ struct ProofOfUseMenuBarLink: View {
                 label: "Verify usage proof",
                 accessibilityID: "mumbli-proof-verify-link",
                 action: {
-                    if let url = URL(string: ProofOfUseConfig.verificationURL) {
-                        NSWorkspace.shared.open(url)
-                    }
+                    ProofOfUseConfig.openVerificationGuide()
                 }
             )
         }

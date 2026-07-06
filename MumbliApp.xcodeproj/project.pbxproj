@@ -49,6 +49,10 @@
 		P0F00001A1B2C3D4E5F60008 /* ProofOfUseSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F60108 /* ProofOfUseSettingsSection.swift */; };
 		P0F00001A1B2C3D4E5F60009 /* UsageReceiptSigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F60109 /* UsageReceiptSigner.swift */; };
 		P0F00001A1B2C3D4E5F6000A /* UsageReceiptStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F6010A /* UsageReceiptStore.swift */; };
+		P0F00001A1B2C3D4E5F6000B /* AppAttestation.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F6010B /* AppAttestation.swift */; };
+		P0F00001A1B2C3D4E5F6000C /* ProjectGrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F6010C /* ProjectGrant.swift */; };
+		P0F00001A1B2C3D4E5F6000D /* AutoEnrollment.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F6010D /* AutoEnrollment.swift */; };
+		P0F00001A1B2C3D4E5F6000E /* project-grant.json in Resources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F6010E /* project-grant.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +107,10 @@
 		P0F00001A1B2C3D4E5F60108 /* ProofOfUseSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofOfUseSettingsSection.swift; sourceTree = "<group>"; };
 		P0F00001A1B2C3D4E5F60109 /* UsageReceiptSigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageReceiptSigner.swift; sourceTree = "<group>"; };
 		P0F00001A1B2C3D4E5F6010A /* UsageReceiptStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageReceiptStore.swift; sourceTree = "<group>"; };
+		P0F00001A1B2C3D4E5F6010B /* AppAttestation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAttestation.swift; sourceTree = "<group>"; };
+		P0F00001A1B2C3D4E5F6010C /* ProjectGrant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectGrant.swift; sourceTree = "<group>"; };
+		P0F00001A1B2C3D4E5F6010D /* AutoEnrollment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoEnrollment.swift; sourceTree = "<group>"; };
+		P0F00001A1B2C3D4E5F6010E /* project-grant.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = project-grant.json; sourceTree = "<group>"; };
 		P0F00001A1B2C3D4E5F61101 /* ProofOfUseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofOfUseUITests.swift; sourceTree = "<group>"; };
 		FC9822CD3335D6FBEF8AEA24 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		FF63C2F63AFC0941BA7D34D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -137,10 +145,14 @@
 		P0F00001A1B2C3D4E5F60200 /* ProofOfUse */ = {
 			isa = PBXGroup;
 			children = (
+				P0F00001A1B2C3D4E5F6010B /* AppAttestation.swift */,
+				P0F00001A1B2C3D4E5F6010D /* AutoEnrollment.swift */,
 				P0F00001A1B2C3D4E5F60101 /* Base64URL.swift */,
 				P0F00001A1B2C3D4E5F60102 /* CanonicalJSON.swift */,
 				P0F00001A1B2C3D4E5F60103 /* InstallIdentity.swift */,
 				P0F00001A1B2C3D4E5F60104 /* PouModels.swift */,
+				P0F00001A1B2C3D4E5F6010C /* ProjectGrant.swift */,
+				P0F00001A1B2C3D4E5F6010E /* project-grant.json */,
 				P0F00001A1B2C3D4E5F60105 /* ProofOfUseBadge.swift */,
 				P0F00001A1B2C3D4E5F60106 /* ProofOfUseConfig.swift */,
 				P0F00001A1B2C3D4E5F60107 /* ProofOfUseFacade.swift */,
@@ -257,6 +269,7 @@
 			buildConfigurationList = AFE63E54C298B1E9949B7A95 /* Build configuration list for PBXNativeTarget "MumbliApp" */;
 			buildPhases = (
 				6274DC3B787C426A200DB8D7 /* Sources */,
+				P0F00001A1B2C3D4E5F60300 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -302,6 +315,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		P0F00001A1B2C3D4E5F60300 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				P0F00001A1B2C3D4E5F6000E /* project-grant.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6274DC3B787C426A200DB8D7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -335,6 +359,9 @@
 				P0F00001A1B2C3D4E5F60008 /* ProofOfUseSettingsSection.swift in Sources */,
 				P0F00001A1B2C3D4E5F60009 /* UsageReceiptSigner.swift in Sources */,
 				P0F00001A1B2C3D4E5F6000A /* UsageReceiptStore.swift in Sources */,
+				P0F00001A1B2C3D4E5F6000B /* AppAttestation.swift in Sources */,
+				P0F00001A1B2C3D4E5F6000C /* ProjectGrant.swift in Sources */,
+				P0F00001A1B2C3D4E5F6000D /* AutoEnrollment.swift in Sources */,
 				34A4C2F16C44D235BBF1EAC9 /* RecordingManager.swift in Sources */,
 				62CB3770743656960D3407B1 /* RepetitionGuard.swift in Sources */,
 				B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */,

@@ -8,6 +8,8 @@ MAC_APP_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 POU_REPO="${POU_REPO:-$HOME/Prog/Stuff/proof-of-use}"
 ATTESTOR_KEY="${ATTESTOR_KEY:-$POU_REPO/keys/mumbli/attestor.json}"
 TRUSTED_KEYS="$MAC_APP_DIR/docs/proof/trusted-keys.json"
+REGISTRY="${REGISTRY:-$POU_REPO/ProofOfUseLocal/registry/grant-registry.json}"
+ALLOWLIST="${ALLOWLIST:-$POU_REPO/ProofOfUseLocal/allowlist/mumbli.json}"
 RECEIPTS="${RECEIPTS:-$HOME/Library/Application Support/Mumbli/proof/receipts.jsonl}"
 PROJECT="github.com/fireharp/mumbli"
 EPOCH="2026-07"
@@ -33,8 +35,18 @@ fi
 
 ISSUER_PUB="$(python3 -c "import json; print(json.load(open('$TRUSTED_KEYS'))['issuer_public_key'])")"
 
+VERIFY_FLAGS=(--trusted-keys "$TRUSTED_KEYS" --grant-policy optimistic)
+if [[ -f "$REGISTRY" ]]; then
+  VERIFY_FLAGS+=(--grant-registry "$REGISTRY")
+fi
+if [[ -f "$ALLOWLIST" ]]; then
+  VERIFY_FLAGS+=(--allowlist "$ALLOWLIST")
+fi
+
 rm -rf "$STAGING"
 mkdir -p "$STAGING" "$OUT_DIR"
+
+"$POU" verify-receipts --receipts "$RECEIPTS" "${VERIFY_FLAGS[@]}"
 
 "$POU" aggregate \
   --receipts "$RECEIPTS" \
@@ -45,7 +57,11 @@ mkdir -p "$STAGING" "$OUT_DIR"
   --out "$STAGING"
 
 "$POU" verify-public "$STAGING/public-proof.json" --trusted-keys "$STAGING/trusted-keys.json"
-"$POU" verify-audit "$STAGING/public-proof.json" "$STAGING/audit-pack.json" --trusted-keys "$STAGING/trusted-keys.json"
+"$POU" verify-audit "$STAGING/public-proof.json" "$STAGING/audit-pack.json" \
+  --trusted-keys "$STAGING/trusted-keys.json" \
+  --grant-policy optimistic \
+  $([[ -f "$REGISTRY" ]] && echo --grant-registry "$REGISTRY") \
+  $([[ -f "$ALLOWLIST" ]] && echo --allowlist "$ALLOWLIST")
 
 cp "$STAGING/public-proof.json" "$OUT_DIR/public-proof.json"
 cp "$STAGING/audit-pack.json" "$OUT_DIR/audit-pack.json"

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Issue a usage credential for this Mac's Mumbli install.
+# DEV FALLBACK: Issue a legacy usage credential for this Mac's Mumbli install.
+# Normal flow uses embedded project-grant auto-enrollment in the app.
 # Requires: pou CLI built from proof-of-use repo, issuer private key.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
