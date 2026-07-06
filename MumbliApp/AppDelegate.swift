@@ -79,6 +79,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             UserDefaults.standard.set(true, forKey: "debugSaveRecordings")
             NSLog("[AppDelegate] --save-recordings: will save audio to ~/Library/Application Support/Mumbli/recordings/")
         }
+
+        if args.contains("--enable-proof-of-use") {
+            ProofOfUseConfig.isEnabled = true
+            NSLog("[AppDelegate] --enable-proof-of-use: proof signing enabled")
+        }
     }
 
     private func handleTestSimulations() {
@@ -544,6 +549,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let capturedAudio = audioBuffer
         audioBuffer = Data()
+        let capturedMode = currentMode
         currentMode = nil
 
         guard !capturedAudio.isEmpty else {
@@ -673,6 +679,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 log.log("[Dictation] TextInjector result: \(result)")
                 historyManager.addEntry(text: finalText, recordingFilename: recordingFilename)
                 log.log("[Dictation] Saved to history")
+
+                ProofOfUseFacade.shared.recordDictation(.init(
+                    engine: engine.sttProviderLabel,
+                    mode: capturedMode?.proofLabel ?? "hold",
+                    audioDurationSec: audioDurationSec,
+                    polished: polishingEnabled
+                ))
 
                 // Log pipeline metrics
                 let metrics = timer.buildMetrics(

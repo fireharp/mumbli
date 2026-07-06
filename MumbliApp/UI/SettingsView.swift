@@ -398,6 +398,8 @@ struct SettingsView: View {
                         }
                     }
 
+                    ProofOfUseSettingsSection()
+
                     // Debug section
                     SettingsSection(title: "Debug", icon: "ant.fill") {
                         VStack(alignment: .leading, spacing: 12) {

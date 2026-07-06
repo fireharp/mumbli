@@ -39,3 +39,8 @@ reports/screenshots
 
 # Benchmark results
 benchmarks/results/
+
+# Proof-of-use publish staging
+.proof-staging/
+repomix*.*
+
