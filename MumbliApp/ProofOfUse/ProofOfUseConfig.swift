@@ -7,8 +7,19 @@ import AppKit
 /// All proof-of-use code lives under `ProofOfUse/` and can be removed independently.
 enum ProofOfUseConfig {
     static let projectID = "github.com/fireharp/mumbli"
-    static let epoch = "2026-07"
     static let functionName = "dictation.complete"
+
+    /// Current epoch as UTC `YYYY-MM`. Nullifiers are epoch-scoped, so this rolling
+    /// value is what makes an install counted once per month rather than once forever.
+    /// The verifier requires the credential body and every event body to carry the
+    /// statement's epoch, so a credential minted in a previous epoch must be re-minted
+    /// (see `AutoEnrollment.ensureCredential`). Grants are epoch-independent.
+    static var epoch: String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let components = calendar.dateComponents([.year, .month], from: Date())
+        return String(format: "%04d-%02d", components.year ?? 1970, components.month ?? 1)
+    }
     static let verificationURL = "https://github.com/fireharp/mumbli/blob/main/docs/proof/README.md"
 
     /// Opens a local verification guide in ~/Library/Application Support/Mumbli/proof/README.md

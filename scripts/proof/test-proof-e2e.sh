@@ -11,6 +11,31 @@ echo "== Canonical JSON (Swift) =="
 swift "$SCRIPT_DIR/test-canonical.swift"
 
 echo ""
+echo "== Epoch is UTC and matches the shell (Swift) =="
+# Compiles the real ProofOfUseConfig so this catches a regression to a hardcoded
+# constant or to local time. Local time would shift epoch boundaries per user and
+# desync clients from the publish scripts, which derive the epoch with `date -u`.
+EPOCH_TMP=$(mktemp -d)
+trap 'rm -rf "$EPOCH_TMP"' EXIT
+printf 'import Foundation\nprint(ProofOfUseConfig.epoch)\n' > "$EPOCH_TMP/main.swift"
+swiftc -O "$MAC_APP_DIR/MumbliApp/ProofOfUse/ProofOfUseConfig.swift" \
+  "$EPOCH_TMP/main.swift" -o "$EPOCH_TMP/epochcheck"
+swift_epoch="$("$EPOCH_TMP/epochcheck")"
+shell_epoch="$(date -u +%Y-%m)"
+if [[ "$swift_epoch" != "$shell_epoch" ]]; then
+  echo "FAIL  Swift epoch '$swift_epoch' != shell '$shell_epoch'"
+  exit 1
+fi
+for tz in Pacific/Kiritimati Pacific/Midway; do
+  tz_epoch="$(TZ="$tz" "$EPOCH_TMP/epochcheck")"
+  if [[ "$tz_epoch" != "$shell_epoch" ]]; then
+    echo "FAIL  epoch is local-time dependent: $tz gave '$tz_epoch', expected '$shell_epoch'"
+    exit 1
+  fi
+done
+echo "OK  epoch $swift_epoch (UTC-stable across TZ ±14h)"
+
+echo ""
 echo "== proof-of-use Go tests =="
 (cd "$POU_REPO" && make smoke)
 
@@ -35,10 +60,19 @@ if [[ -f "$RECEIPTS" ]]; then
     "$POU" verify-receipts --receipts "$RECEIPTS" "${VERIFY_FLAGS[@]}"
     STAGING=$(mktemp -d)
     ISSUER_PUB=$(python3 -c "import json; print(json.load(open('$MAC_APP_DIR/docs/proof/trusted-keys.json'))['issuer_public_key'])")
+    # Aggregate the newest epoch actually present rather than the current month:
+    # a dev machine's receipts file is append-only and often has nothing for the
+    # month you happen to run this in.
+    agg_epoch="${EPOCH:-$(python3 -c "
+import json,sys
+epochs={json.loads(l)['receipt']['body']['epoch'] for l in open(sys.argv[1]) if l.strip()}
+print(max(epochs))
+" "$RECEIPTS")}"
+    echo "Aggregating epoch $agg_epoch"
     "$POU" aggregate \
       --receipts "$RECEIPTS" \
       --project github.com/fireharp/mumbli \
-      --epoch 2026-07 \
+      --epoch "$agg_epoch" \
       --attestor-key-file "$POU_REPO/keys/mumbli/attestor.json" \
       --issuer-public-key "$ISSUER_PUB" \
       --out "$STAGING"

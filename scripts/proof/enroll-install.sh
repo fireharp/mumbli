@@ -10,7 +10,7 @@ MAC_APP_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 POU_REPO="${POU_REPO:-$HOME/Prog/Stuff/proof-of-use}"
 ISSUER_KEY="${ISSUER_KEY:-$POU_REPO/keys/mumbli/issuer.json}"
 PROJECT="github.com/fireharp/mumbli"
-EPOCH="2026-07"
+EPOCH="${EPOCH:-$(date -u +%Y-%m)}"
 PROOF_DIR="$HOME/Library/Application Support/Mumbli/proof"
 CREDENTIAL_OUT="$PROOF_DIR/credential.json"
 

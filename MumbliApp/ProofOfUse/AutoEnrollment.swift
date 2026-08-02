@@ -4,8 +4,17 @@ import Foundation
 enum AutoEnrollment {
     static func ensureCredential() throws {
         if FileManager.default.fileExists(atPath: ProofOfUseConfig.credentialFile.path) {
-            if (try? UsageReceiptSigner.loadCredential()) != nil {
-                return
+            if let existing = try? UsageReceiptSigner.loadCredential() {
+                // A credential is only usable within the epoch it was minted for; the
+                // verifier rejects receipts whose credential epoch differs from the
+                // statement epoch. Re-mint instead of signing receipts that cannot verify.
+                if existing.body.epoch == ProofOfUseConfig.epoch {
+                    return
+                }
+                NSLog(
+                    "[ProofOfUse] Credential epoch %@ is stale (now %@); re-enrolling",
+                    existing.body.epoch, ProofOfUseConfig.epoch
+                )
             }
         }
 
@@ -40,7 +49,7 @@ enum AutoEnrollment {
             type: "usage-credential:v1",
             credential_id: newCredentialID(),
             project_id: grant.project_id,
-            epoch: grant.epoch,
+            epoch: ProofOfUseConfig.epoch,
             install_public_key: installPublicKey,
             issued_at: iso8601Now(),
             app_identity: appIdentity,

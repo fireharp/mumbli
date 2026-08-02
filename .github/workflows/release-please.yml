@@ -26,8 +26,13 @@ jobs:
     needs: release-please
     if: needs.release-please.outputs.release_created
     runs-on: macos-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      KEYCHAIN_PATH: ${{ runner.temp }}/build.keychain-db
     steps:
       - uses: actions/checkout@v6
 
@@ -37,6 +42,55 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      # Signing mode is decided by whether MACOS_CERTIFICATE is configured.
+      # Without it the build still produces a valid code signature (ad-hoc), which
+      # is what the proof-of-use module needs to enroll — it just isn't Gatekeeper-clean.
+      - name: Determine signing mode
+        id: signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        run: |
+          if [ -n "$MACOS_CERTIFICATE" ]; then
+            echo "mode=developer-id" >> "$GITHUB_OUTPUT"
+            echo "::notice::Signing mode: Developer ID (signed + notarized)"
+          else
+            echo "mode=adhoc" >> "$GITHUB_OUTPUT"
+            echo "::warning::MACOS_CERTIFICATE not set — falling back to ad-hoc signing. The DMG will not be notarized and Gatekeeper will block it on first open. See docs/for-developers/release-signing.mdx"
+          fi
+
+      - name: Import Developer ID certificate
+        if: steps.signing.outputs.mode == 'developer-id'
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          KEYCHAIN_PWD: ${{ secrets.KEYCHAIN_PWD }}
+        run: |
+          set -euo pipefail
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+          echo -n "$MACOS_CERTIFICATE" | base64 --decode -o "$CERT_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$MACOS_CERTIFICATE_PWD" \
+            -k "$KEYCHAIN_PATH" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PWD" "$KEYCHAIN_PATH" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          rm -f "$CERT_PATH"
+
+          IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" \
+            | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.*)"/\1/')
+          if [ -z "$IDENTITY" ]; then
+            echo "::error::No 'Developer ID Application' identity found in the imported certificate."
+            security find-identity -v -p codesigning "$KEYCHAIN_PATH" || true
+            exit 1
+          fi
+          echo "Using identity: $IDENTITY"
+          echo "SIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      # The archive is built unsigned; signing happens explicitly below so that the
+      # hardened-runtime flags and entitlements are applied exactly once, under our control.
       - name: Build Release archive
         run: |
           xcodebuild archive \
@@ -52,6 +106,26 @@ jobs:
           mkdir -p build/dmg-contents
           cp -R build/Mumbli.xcarchive/Products/Applications/Mumbli.app build/dmg-contents/
           ln -s /Applications build/dmg-contents/Applications
+
+      - name: Sign app
+        env:
+          MODE: ${{ steps.signing.outputs.mode }}
+        run: |
+          set -euo pipefail
+          APP=build/dmg-contents/Mumbli.app
+          if [ "$MODE" = "developer-id" ]; then
+            codesign --force --timestamp --options runtime \
+              --entitlements MumbliApp/MumbliApp.entitlements \
+              --sign "$SIGN_IDENTITY" "$APP"
+          else
+            codesign --force \
+              --entitlements MumbliApp/MumbliApp.entitlements \
+              --sign - "$APP"
+          fi
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          # The cdhash printed here is what proof-of-use binds receipts to.
+          # -dvvv is required: lower verbosity does not emit the CDHash line at all.
+          codesign -dvvv "$APP" 2>&1 | grep -E 'Identifier|TeamIdentifier|CDHash|flags' || true
 
       - name: Get version from tag
         id: version
@@ -69,10 +143,83 @@ jobs:
             -format UDZO \
             "Mumbli-${{ steps.version.outputs.version }}.dmg"
 
-      - name: Upload DMG to release
+      - name: Sign DMG
+        if: steps.signing.outputs.mode == 'developer-id'
+        run: |
+          codesign --force --timestamp --sign "$SIGN_IDENTITY" \
+            "Mumbli-${{ steps.version.outputs.version }}.dmg"
+
+      - name: Notarize and staple DMG
+        if: steps.signing.outputs.mode == 'developer-id'
+        env:
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          set -euo pipefail
+          DMG="Mumbli-${{ steps.version.outputs.version }}.dmg"
+          KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
+          echo -n "$APPLE_API_KEY" | base64 --decode -o "$KEY_PATH"
+
+          xcrun notarytool submit "$DMG" \
+            --key "$KEY_PATH" \
+            --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_ISSUER" \
+            --wait --timeout 30m
+          rm -f "$KEY_PATH"
+
+          # Stapling rewrites the DMG, so every digest below must be computed after this.
+          xcrun stapler staple "$DMG"
+          xcrun stapler validate "$DMG"
+          spctl -a -t open --context context:primary-signature -vv "$DMG"
+
+      - name: Compute checksums
+        id: checksums
+        run: |
+          set -euo pipefail
+          DMG="Mumbli-${{ steps.version.outputs.version }}.dmg"
+          shasum -a 256 "$DMG" | tee checksums.txt
+          echo "dmg_sha256=$(shasum -a 256 "$DMG" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: Mumbli-${{ steps.version.outputs.version }}.dmg
+
+      - name: Upload release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release upload "${{ needs.release-please.outputs.tag_name }}" \
             "Mumbli-${{ steps.version.outputs.version }}.dmg" \
+            checksums.txt \
             --clobber
+
+      - name: Print release binding inputs
+        env:
+          MODE: ${{ steps.signing.outputs.mode }}
+        run: |
+          APP=build/dmg-contents/Mumbli.app
+          INFO=$(codesign -dvvv "$APP" 2>&1)
+          CDHASH=$(printf '%s\n' "$INFO" | sed -nE 's/^CDHash=([0-9a-f]+)$/\1/p')
+          # Ad-hoc signatures report the literal string "not set" here.
+          TEAM=$(printf '%s\n' "$INFO" | sed -nE 's/^TeamIdentifier=(.*)$/\1/p')
+          if [ "$TEAM" = "not set" ]; then TEAM=""; fi
+          {
+            echo "## Release binding inputs"
+            echo ""
+            echo "Run \`scripts/proof/issue-release-binding.sh ${{ needs.release-please.outputs.tag_name }}\` to sign the release binding for this build."
+            echo ""
+            echo '| field | value |'
+            echo '|---|---|'
+            echo "| signing mode | \`$MODE\` |"
+            echo "| cdhash | \`$CDHASH\` |"
+            echo "| team_id | \`${TEAM:-<none>}\` |"
+            echo "| dmg_sha256 | \`${{ steps.checksums.outputs.dmg_sha256 }}\` |"
+            echo "| commit | \`$GITHUB_SHA\` |"
+            echo "| run | $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Clean up keychain
+        if: always() && steps.signing.outputs.mode == 'developer-id'
+        run: security delete-keychain "$KEYCHAIN_PATH" || true

@@ -1,0 +1,48 @@
+name: Attest Usage Proof
+
+# GitHub Releases are editable by whoever owns the repo, so anchoring an epoch
+# proof to a release is not by itself tamper-evident. This signs a provenance
+# statement over the published proof's digest via Sigstore. The attestation log
+# is append-only and not editable by the repo owner, so a later silent rewrite
+# of an epoch's numbers becomes detectable.
+
+on:
+  workflow_dispatch:
+    inputs:
+      epoch:
+        description: "Epoch to attest, e.g. 2026-08"
+        required: true
+        type: string
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check proof exists
+        run: |
+          set -euo pipefail
+          PROOF="docs/proof/${{ inputs.epoch }}/public-proof.json"
+          if [ ! -f "$PROOF" ]; then
+            echo "::error::No published proof at $PROOF. Run scripts/proof/publish-proof.sh and commit it first."
+            exit 1
+          fi
+          echo "Attesting $PROOF"
+          shasum -a 256 "$PROOF"
+          python3 -c "
+          import json
+          s = json.load(open('$PROOF'))['statement']
+          print('epoch:      ', s.get('epoch'))
+          print('merkle_root:', s.get('merkle_root'))
+          print('events:     ', s.get('total_events'))
+          "
+
+      - name: Attest published proof
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: docs/proof/${{ inputs.epoch }}/public-proof.json

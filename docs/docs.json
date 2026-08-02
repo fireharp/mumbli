@@ -70,6 +70,13 @@
         "pages": [
           "for-developers",
           {
+            "group": "Guides",
+            "pages": [
+              "for-developers/accessibility-permissions",
+              "for-developers/release-signing"
+            ]
+          },
+          {
             "group": "Compare",
             "pages": ["compare/apple-dictation"]
           }
