@@ -19,7 +19,17 @@ set -euo pipefail
 #
 # See docs/for-developers/release-signing.mdx for where each value comes from.
 #
-# usage: scripts/release/setup-signing-secrets.sh
+# usage:
+#   scripts/release/setup-signing-secrets.sh          # prompts for each value
+#
+#   # or supply any of them up front and only the rest is prompted for:
+#   P12_PATH=~/Downloads/Certificates.p12 P12_PASSWORD=... \
+#   ASC_KEY_PATH=~/Downloads/AuthKey_XXXXXXXXXX.p8 \
+#   ASC_KEY_ID=XXXXXXXXXX ASC_ISSUER_ID=<uuid> \
+#     scripts/release/setup-signing-secrets.sh
+#
+# The environment form takes the same variable names as build-signed-dmg.sh, so
+# one exported set of values drives both.
 
 REPO="${REPO:-fireharp/mumbli}"
 WORK_DIR="$(mktemp -d)"
@@ -45,20 +55,28 @@ echo "==> Repository: $REPO"
 
 echo
 echo "==> Developer ID certificate"
-echo "    Identities currently in your keychain:"
-security find-identity -v -p codesigning | sed 's/^/    /'
-echo
-echo "    Export the 'Developer ID Application' one from Keychain Access"
-echo "    (right-click the certificate -> Export -> .p12, set a password),"
-echo "    or point this at a .p12 you exported earlier."
-echo
 
-read -r -p "    Path to .p12: " P12_PATH
+if [[ -z "${P12_PATH:-}" ]]; then
+  echo "    Identities currently in your keychain:"
+  security find-identity -v -p codesigning | sed 's/^/    /'
+  echo
+  echo "    Export the 'Developer ID Application' one from Keychain Access"
+  echo "    (right-click the certificate -> Export -> .p12, set a password),"
+  echo "    or point this at a .p12 you exported earlier."
+  echo
+  read -r -p "    Path to .p12: " P12_PATH
+fi
 P12_PATH="${P12_PATH/#\~/$HOME}"
 [[ -f "$P12_PATH" ]] || fail "no such file: $P12_PATH"
+echo "    Using $P12_PATH"
 
-read -r -s -p "    Password for that .p12: " P12_PWD
-echo
+# P12_PASSWORD is the documented input name; P12_PWD is what the openssl calls
+# below read from the environment.
+P12_PWD="${P12_PASSWORD:-}"
+if [[ -z "$P12_PWD" ]]; then
+  read -r -s -p "    Password for that .p12: " P12_PWD
+  echo
+fi
 [[ -n "$P12_PWD" ]] || fail "the .p12 password cannot be empty"
 # Passed to openssl through the environment rather than argv, so it never shows
 # up in ps output.
@@ -114,25 +132,36 @@ fi
 
 echo
 echo "==> App Store Connect API key (for notarization)"
-echo "    Create one at appstoreconnect.apple.com/access/integrations/api with"
-echo "    the Developer role. The issuer id is the UUID above the key list."
-echo
 
-read -r -p "    Path to AuthKey_XXXXXXXXXX.p8: " P8_PATH
+P8_PATH="${ASC_KEY_PATH:-}"
+if [[ -z "$P8_PATH" ]]; then
+  echo "    Create one at appstoreconnect.apple.com/access/integrations/api with"
+  echo "    the Developer role. The issuer id is the UUID above the key list."
+  echo
+  read -r -p "    Path to AuthKey_XXXXXXXXXX.p8: " P8_PATH
+fi
 P8_PATH="${P8_PATH/#\~/$HOME}"
 [[ -f "$P8_PATH" ]] || fail "no such file: $P8_PATH"
 
+# The key id is in the filename Apple gives you, so it rarely needs typing.
 DEFAULT_KEY_ID="$(basename "$P8_PATH" | sed -nE 's/^AuthKey_([A-Z0-9]+)\.p8$/\1/p')"
-if [[ -n "$DEFAULT_KEY_ID" ]]; then
-  read -r -p "    Key ID [$DEFAULT_KEY_ID]: " KEY_ID
-  KEY_ID="${KEY_ID:-$DEFAULT_KEY_ID}"
-else
-  read -r -p "    Key ID: " KEY_ID
+KEY_ID="${ASC_KEY_ID:-}"
+if [[ -z "$KEY_ID" ]]; then
+  if [[ -n "$DEFAULT_KEY_ID" ]]; then
+    read -r -p "    Key ID [$DEFAULT_KEY_ID]: " KEY_ID
+    KEY_ID="${KEY_ID:-$DEFAULT_KEY_ID}"
+  else
+    read -r -p "    Key ID: " KEY_ID
+  fi
 fi
 [[ -n "$KEY_ID" ]] || fail "the key id cannot be empty"
 
-read -r -p "    Issuer ID (UUID): " ISSUER_ID
+ISSUER_ID="${ASC_ISSUER_ID:-}"
+if [[ -z "$ISSUER_ID" ]]; then
+  read -r -p "    Issuer ID (UUID): " ISSUER_ID
+fi
 [[ "$ISSUER_ID" =~ ^[0-9a-fA-F-]{36}$ ]] || fail "the issuer id should be a 36-character UUID"
+echo "    Using key $KEY_ID"
 
 echo "    Checking the credentials against Apple ..."
 if xcrun notarytool history --key "$P8_PATH" --key-id "$KEY_ID" --issuer "$ISSUER_ID" \

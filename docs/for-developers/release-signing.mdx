@@ -31,7 +31,18 @@ Ad-hoc releases still show the "Mumbli can't be opened because Apple cannot chec
 scripts/release/setup-signing-secrets.sh
 ```
 
-Run it yourself — it touches your signing certificate and your App Store Connect key, and asks for both interactively rather than reading them from anywhere. It checks that the `.p12` really holds a **Developer ID Application** identity with its private key, verifies the notarization credentials against Apple with `notarytool history`, generates `KEYCHAIN_PWD` itself, and only then sets the six secrets. A bad value fails here in seconds instead of ten minutes into a release that already has a tag.
+Run it yourself — it handles your signing certificate and your App Store Connect key, and neither should pass through anything but your own shell. It checks that the `.p12` really holds a **Developer ID Application** identity with its private key, verifies the notarization credentials against Apple with `notarytool history`, generates `KEYCHAIN_PWD` itself, and only then sets the six secrets. `MACOS_CERTIFICATE` is set last, since the workflow reads its presence as "use Developer ID mode" — so a failure partway through can't leave the next release trying to notarize with credentials that never arrived. A bad value fails here in seconds instead of ten minutes into a release that already has a tag.
+
+Any value can be supplied up front, and only the rest is prompted for:
+
+```bash
+P12_PATH=~/Downloads/Certificates.p12 P12_PASSWORD='…' \
+ASC_KEY_PATH=~/Downloads/AuthKey_XXXXXXXXXX.p8 \
+ASC_KEY_ID=XXXXXXXXXX ASC_ISSUER_ID=<uuid> \
+  scripts/release/setup-signing-secrets.sh
+```
+
+`ASC_KEY_PATH` / `ASC_KEY_ID` / `ASC_ISSUER_ID` are the same names `build-signed-dmg.sh` reads, so one exported set drives both.
 
 The values it needs, and where each comes from, are below.
 
