@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/fireharp/mumbli/compare/v0.4.0...v0.5.0) (2026-08-17)
+
+
+### Features
+
+* add verifiable usage proof for dictation ([#18](https://github.com/fireharp/mumbli/issues/18)) ([dd5736b](https://github.com/fireharp/mumbli/commit/dd5736b257beb619ec6e354497e3475f37a8260b))
+
 ## [0.4.0](https://github.com/fireharp/mumbli/compare/v0.3.3...v0.4.0) (2026-06-03)
 
 
