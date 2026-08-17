@@ -120,6 +120,8 @@ struct MenuBarDropdownView: View {
                                 )
                         )
                 }
+
+                ProofOfUseMenuBarBadge()
             }
             .padding(.horizontal, 18)
             .padding(.top, 16)
@@ -154,6 +156,8 @@ struct MenuBarDropdownView: View {
 
             // Footer actions
             VStack(spacing: 2) {
+                ProofOfUseMenuBarLink()
+
                 MenuBarActionButton(
                     icon: "gear",
                     label: "Settings",

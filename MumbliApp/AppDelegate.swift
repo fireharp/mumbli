@@ -79,6 +79,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             UserDefaults.standard.set(true, forKey: "debugSaveRecordings")
             NSLog("[AppDelegate] --save-recordings: will save audio to ~/Library/Application Support/Mumbli/recordings/")
         }
+
+        if args.contains("--enable-proof-of-use") {
+            ProofOfUseConfig.isEnabled = true
+            NSLog("[AppDelegate] --enable-proof-of-use: proof signing enabled")
+        }
     }
 
     private func handleTestSimulations() {
@@ -145,6 +150,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     NSLog("[AppDelegate] --test-full: inject result = %@", "\(result)")
                     self.historyManager.addEntry(text: testText)
                     NSLog("[AppDelegate] --test-full: saved to history")
+                    ProofOfUseFacade.shared.recordDictation(.init(
+                        engine: "test",
+                        mode: "hold",
+                        audioDurationSec: 1.0,
+                        polished: false
+                    ))
+                    NSLog("[AppDelegate] --test-full: proof receipt queued")
                     self.overlayController.dismiss(afterDelay: 0.3)
                 }
             }
@@ -544,6 +556,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let capturedAudio = audioBuffer
         audioBuffer = Data()
+        let capturedMode = currentMode
         currentMode = nil
 
         guard !capturedAudio.isEmpty else {
@@ -673,6 +686,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 log.log("[Dictation] TextInjector result: \(result)")
                 historyManager.addEntry(text: finalText, recordingFilename: recordingFilename)
                 log.log("[Dictation] Saved to history")
+
+                ProofOfUseFacade.shared.recordDictation(.init(
+                    engine: engine.sttProviderLabel,
+                    mode: capturedMode?.proofLabel ?? "hold",
+                    audioDurationSec: audioDurationSec,
+                    polished: polishingEnabled
+                ))
 
                 // Log pipeline metrics
                 let metrics = timer.buildMetrics(

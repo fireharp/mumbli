@@ -12,6 +12,7 @@ You are guiding the user through Mumbli's automated release pipeline. Follow eac
 - `gh` CLI authenticated
 - On a feature branch (not `main` directly — main is protected)
 - Conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`, etc.)
+- For a signed, notarized release: the six signing secrets set via `scripts/release/setup-signing-secrets.sh`. Without them the release still succeeds, but ad-hoc signed — see [release-signing.mdx](../../../docs/for-developers/release-signing.mdx)
 
 ## Step 1: Check current state
 
@@ -106,8 +107,28 @@ Confirm:
 - [ ] Tag exists (e.g., `v0.2.0`)
 - [ ] GitHub Release created with changelog
 - [ ] `Mumbli-X.Y.Z.dmg` attached as asset
+- [ ] `checksums.txt` attached
 
 Report the release URL: `https://github.com/fireharp/mumbli/releases/tag/vX.Y.Z`
+
+## Step 8: Verify the DMG is signed and notarized
+
+The workflow falls back to ad-hoc signing when `MACOS_CERTIFICATE` is unset, and that fallback is quiet by design — a release never fails just for missing secrets. So check the published artifact rather than assuming:
+
+```bash
+gh release download vX.Y.Z --repo fireharp/mumbli --pattern '*.dmg' --dir /tmp/rel
+spctl -a -t open --context context:primary-signature -vv /tmp/rel/Mumbli-X.Y.Z.dmg
+gh attestation verify /tmp/rel/Mumbli-X.Y.Z.dmg --repo fireharp/mumbli
+```
+
+Read the `spctl` result carefully:
+- `accepted` + `source=Notarized Developer ID` → fully signed and notarized
+- `rejected` + `source=Unnotarized Developer ID` → signed, notarization failed or was skipped
+- `rejected` + no Developer ID origin → ad-hoc fallback; the signing secrets are missing or wrong
+
+For the last two, check the `build-dmg` job log for the `Determine signing mode` warning, and see [release-signing.mdx](../../../docs/for-developers/release-signing.mdx).
+
+If this is the **first** Developer ID release, the app's code signature identity changes, so existing users must re-grant Accessibility permission once. Make sure the release notes say so.
 
 ## Versioning reference
 
