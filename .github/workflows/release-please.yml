@@ -32,7 +32,6 @@ jobs:
       attestations: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      KEYCHAIN_PATH: ${{ runner.temp }}/build.keychain-db
     steps:
       - uses: actions/checkout@v6
 
@@ -50,6 +49,11 @@ jobs:
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
         run: |
+          # The keychain path is exported here rather than in the job's env block:
+          # the `runner` context is not available at job level, and referencing it
+          # there makes the whole workflow file invalid.
+          echo "KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain-db" >> "$GITHUB_ENV"
+
           if [ -n "$MACOS_CERTIFICATE" ]; then
             echo "mode=developer-id" >> "$GITHUB_OUTPUT"
             echo "::notice::Signing mode: Developer ID (signed + notarized)"
