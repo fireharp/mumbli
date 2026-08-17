@@ -25,9 +25,19 @@ The fallback exists so a release never fails just because signing secrets are mi
 
 Ad-hoc releases still show the "Mumbli can't be opened because Apple cannot check it for malicious software" dialog, and users must clear the quarantine attribute manually (`install.sh` does this).
 
+## Setting it up
+
+```bash
+scripts/release/setup-signing-secrets.sh
+```
+
+Run it yourself — it touches your signing certificate and your App Store Connect key, and asks for both interactively rather than reading them from anywhere. It checks that the `.p12` really holds a **Developer ID Application** identity with its private key, verifies the notarization credentials against Apple with `notarytool history`, generates `KEYCHAIN_PWD` itself, and only then sets the six secrets. A bad value fails here in seconds instead of ten minutes into a release that already has a tag.
+
+The values it needs, and where each comes from, are below.
+
 ## Required GitHub secrets
 
-Add these under **Settings → Secrets and variables → Actions** in the repository.
+The script sets these. To do it by hand instead, add them under **Settings → Secrets and variables → Actions**.
 
 ### Signing certificate
 
@@ -56,6 +66,21 @@ base64 -i AuthKey_XXXXXXXXXX.p8 | pbcopy
 | `APPLE_API_KEY` | The base64 blob above |
 | `APPLE_API_KEY_ID` | The key ID, e.g. `XXXXXXXXXX` (also in the `.p8` filename) |
 | `APPLE_API_ISSUER` | The Issuer ID (UUID) shown above the key list |
+
+## Testing it before a release
+
+```bash
+ASC_KEY_PATH=~/path/AuthKey_XXXXXXXXXX.p8 \
+ASC_KEY_ID=XXXXXXXXXX \
+ASC_ISSUER_ID=<uuid> \
+  scripts/release/build-signed-dmg.sh
+```
+
+This runs the same sequence as CI — archive, sign with hardened runtime, DMG, notarize, staple, assess — on your own machine, and ends with the `spctl` verdict. Notarization is the only step that needs Apple to agree, and a release is a bad place to discover it doesn't. Omit the credentials and it still builds and signs, then reports `Unnotarized Developer ID`, which is the expected rejection for a signed-but-not-notarized DMG.
+
+Two things this deliberately does not reproduce: release-please's tagging, and the provenance attestation (only GitHub can sign that).
+
+The script uses the checked-in `MumbliApp.xcodeproj` rather than running `xcodegen`. XcodeGen 2.45 writes `objectVersion = 77`, which needs Xcode 16+ to open, while the checked-in project is `56`. CI's `macos-latest` runner is new enough that its `xcodegen generate` step is fine; an Xcode 15 machine is not. Pass `REGENERATE=1` to run `xcodegen` anyway.
 
 ## Build provenance
 
