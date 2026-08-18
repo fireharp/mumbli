@@ -130,7 +130,7 @@ Releases are automated:
 3. Merge the Release PR → version bumped, tag created, DMG built and attached
 
 <Note>
-The app is not code-signed. Users installing from the DMG need to run `xattr -cr /Applications/Mumbli.app` or use the install script: `curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash`
+Releases are signed with a Developer ID certificate and notarized by Apple, so the DMG opens with no Gatekeeper warning and no `xattr` workaround. The install script (`curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash`) just automates mounting the DMG and copying the app across. See [Release Signing & Provenance](/for-developers/release-signing).
 </Note>
 
 The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen).
