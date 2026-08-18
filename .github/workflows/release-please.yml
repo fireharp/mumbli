@@ -182,18 +182,33 @@ jobs:
           xcrun stapler validate "$DMG"
           spctl -a -t open --context context:primary-signature -vv "$DMG"
 
+      # A second copy under a version-free name, so the download link on
+      # mumbli.app survives every release:
+      #   github.com/fireharp/mumbli/releases/latest/download/Mumbli.dmg
+      # Made after stapling, since stapling rewrites the file and the copy must
+      # be the bytes users actually get.
+      - name: Stage stable-named copy
+        run: cp "Mumbli-${{ steps.version.outputs.version }}.dmg" Mumbli.dmg
+
       - name: Compute checksums
         id: checksums
         run: |
           set -euo pipefail
           DMG="Mumbli-${{ steps.version.outputs.version }}.dmg"
-          shasum -a 256 "$DMG" | tee checksums.txt
+          # Both names are listed, so `shasum -a 256 -c checksums.txt` works
+          # whichever file someone downloaded. The digests are identical.
+          shasum -a 256 "$DMG" Mumbli.dmg | tee checksums.txt
           echo "dmg_sha256=$(shasum -a 256 "$DMG" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
+      # Both names are attested. Provenance binds a digest rather than a
+      # filename, so this is one subject either way — naming both just means
+      # `gh attestation verify` reports the file the user actually has.
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v4
         with:
-          subject-path: Mumbli-${{ steps.version.outputs.version }}.dmg
+          subject-path: |
+            Mumbli-${{ steps.version.outputs.version }}.dmg
+            Mumbli.dmg
 
       - name: Upload release assets
         env:
@@ -201,6 +216,7 @@ jobs:
         run: |
           gh release upload "${{ needs.release-please.outputs.tag_name }}" \
             "Mumbli-${{ steps.version.outputs.version }}.dmg" \
+            Mumbli.dmg \
             checksums.txt \
             --clobber
 
