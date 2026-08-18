@@ -4,7 +4,15 @@ import Foundation
 /// Extremely fast inference (~250ms) via Groq LPU hardware.
 final class GroqPolishingService {
     private let endpoint = "https://api.groq.com/openai/v1/chat/completions"
-    private let model = "llama-3.1-8b-instant"
+    /// Groq retired the entire Llama instruct lineup (`llama-3.1-8b-instant` began
+    /// returning 404 model_not_found on 2026-08-17). gpt-oss-20b is the fastest
+    /// remaining model that preserves the speaker's wording and resists the
+    /// prompt-injection probes in the polishing prompt's CRITICAL RULES.
+    static let model = "openai/gpt-oss-20b"
+    /// gpt-oss is a reasoning model; "low" is the floor Groq accepts (none/off are
+    /// rejected). Low keeps reasoning to ~15 chars and roughly halves p50 latency
+    /// vs. the default (391ms vs 459ms) — and it never appears in `content`.
+    private let reasoningEffort = "low"
     private let temperature = 0.3
     private let maxTokens = 2048
 
@@ -25,13 +33,14 @@ final class GroqPolishingService {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         let body: [String: Any] = [
-            "model": model,
+            "model": Self.model,
             "messages": [
                 ["role": "system", "content": effectivePrompt],
                 ["role": "user", "content": text],
             ],
             "temperature": temperature,
             "max_tokens": maxTokens,
+            "reasoning_effort": reasoningEffort,
         ]
 
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -50,12 +59,15 @@ final class GroqPolishingService {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
               let firstChoice = choices.first,
-              let message = firstChoice["message"] as? [String: Any],
-              let content = message["content"] as? String else {
+              let message = firstChoice["message"] as? [String: Any] else {
             throw GroqPolishError.invalidResponse
         }
 
-        return content
+        // gpt-oss returns its chain-of-thought in a separate `reasoning` field and
+        // occasionally returns null `content` on very long inputs (~1 in 5 above
+        // 3k chars). Treat that as empty so the caller falls back to the raw
+        // transcription rather than surfacing an error.
+        return message["content"] as? String ?? ""
     }
 }
 

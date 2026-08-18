@@ -8,7 +8,11 @@ final class ProofOfUseFacade {
     private init() {}
 
     /// Record a successful dictation. No-op when proof-of-use is disabled.
-    func recordDictation(_ event: ProofDictationEvent) {
+    ///
+    /// `onRecorded` receives the receipt's commitment hash on success, so a caller can
+    /// link the signed receipt back to the history entry it covers. It is invoked on
+    /// the main actor and never called when proof-of-use is disabled or signing fails.
+    func recordDictation(_ event: ProofDictationEvent, onRecorded: (@MainActor (String) -> Void)? = nil) {
         guard ProofOfUseConfig.isEnabled else { return }
 
         Task.detached(priority: .utility) {
@@ -25,6 +29,9 @@ final class ProofOfUseFacade {
                 )
                 try UsageReceiptStore.shared.append(receipt)
                 NSLog("[ProofOfUse] Recorded receipt (total=%d)", UsageReceiptStore.shared.receiptCount())
+                if let onRecorded {
+                    await MainActor.run { onRecorded(receipt.commitment) }
+                }
             } catch {
                 NSLog("[ProofOfUse] Failed to record receipt: %@", error.localizedDescription)
             }
