@@ -36,7 +36,7 @@
     "links": [
       {
         "name": "Download",
-        "url": "https://github.com/fireharp/mumbli/releases/latest"
+        "url": "https://github.com/fireharp/mumbli/releases/latest/download/Mumbli.dmg"
       }
     ]
   },
@@ -73,7 +73,8 @@
             "group": "Guides",
             "pages": [
               "for-developers/accessibility-permissions",
-              "for-developers/release-signing"
+              "for-developers/release-signing",
+              "for-developers/usage-proof"
             ]
           },
           {

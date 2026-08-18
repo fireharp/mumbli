@@ -22,15 +22,16 @@ Then **Product > Run** (`Cmd+R`) in Xcode.
 
 ### API keys
 
-Create a `.env` file in the project root:
+Enter your keys in the app's Settings view after first launch. Keys are stored in the macOS Keychain — the app never reads a `.env` file.
+
+A `.env` file is used only by the Python benchmark harness in `benchmarks/`:
 
 ```
 ELEVENLABS_API_KEY=your_elevenlabs_key
 OPENAI_API_KEY=your_openai_key
-GROQ_API_KEY=your_groq_key          # optional, for Fast engine
+GROQ_API_KEY=your_groq_key          # Fast engine
+DEEPGRAM_API_KEY=your_deepgram_key  # Deepgram engine
 ```
-
-Or enter keys in the app's Settings view after first launch. Keys are stored in macOS Keychain.
 
 ## Requirements
 
@@ -42,12 +43,16 @@ Or enter keys in the app's Settings view after first launch. Keys are stored in 
 
 ```
 MumbliApp/
+├── Assets.xcassets                   # App icon
 ├── Core/
-│   ├── HotkeyManager.swift          # Fn key detection (Carbon)
+│   ├── HotkeyManager.swift          # Fn key detection (NSEvent + CGEvent tap)
 │   ├── AudioCaptureManager.swift     # Microphone (AVAudioEngine, 16kHz mono)
 │   ├── TextInjector.swift            # Cursor injection (Accessibility API)
 │   ├── PipelineTimer.swift           # Latency measurement
+│   ├── AppVersion.swift              # Real version & commit for Settings > About
 │   └── RecordingManager.swift        # Save WAVs for benchmarking
+├── Protocols/
+│   └── DictationServiceProtocol.swift # STT / polishing protocols
 ├── Services/
 │   ├── ElevenLabsSTTService.swift    # ElevenLabs STT
 │   ├── GroqWhisperSTTService.swift   # Groq Whisper STT
@@ -57,6 +62,7 @@ MumbliApp/
 │   ├── VocabularyStore.swift         # Custom vocabulary
 │   ├── RepetitionGuard.swift         # Post-polish safety
 │   └── KeychainManager.swift         # Credential storage
+├── ProofOfUse/                       # Opt-in, local-only signed usage receipts
 ├── Models/
 │   └── HistoryManager.swift          # Dictation history
 └── UI/
@@ -69,7 +75,7 @@ MumbliApp/
 
 ### Key design decisions
 
-- **Carbon for Fn key** — AppKit doesn't expose the Fn key. `HotkeyManager` uses the Carbon framework to detect it.
+- **NSEvent + CGEvent tap for the Fn key** — AppKit has no hotkey API for Fn. `HotkeyManager` uses global/local NSEvent monitors plus a CGEvent tap (both run under the Accessibility permission) to detect it.
 - **Accessibility API for text injection** — `TextInjector` uses `AXUIElement` to write text at the cursor. Falls back to clipboard paste.
 - **No WebSocket** — The app calls STT and LLM APIs directly via `URLSession`. No backend server needed.
 - **Protocol-based services** — STT and polishing services conform to protocols, making engine switching trivial.
@@ -83,9 +89,11 @@ xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Debug b
 # Release build
 xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Release build
 
-# Run UI tests
-xcodebuild test -project MumbliApp.xcodeproj -scheme MumbliAppUITests -destination 'platform=macOS'
+# Run UI tests (MumbliApp is the only shared scheme)
+xcodebuild test -project MumbliApp.xcodeproj -scheme MumbliApp -destination 'platform=macOS'
 ```
+
+Build products land in Xcode's DerivedData directory, not a local `./build` folder.
 
 ## Safety guards
 
@@ -93,7 +101,7 @@ Polishing LLMs can hallucinate. Mumbli has three layers of defense:
 
 1. **XML boundary** — Raw transcription wrapped in `<dictation>` tags
 2. **Injection-hardened prompts** — LLM forbidden from adding content beyond what was spoken
-3. **RepetitionGuard** — Catches sentence explosion, length explosion, and tag leakage. Auto-retries with a better model, then falls back to raw transcription.
+3. **RepetitionGuard** — Five deterministic post-polish checks: tag leakage, invention (word novelty >0.4), length explosion (>2x), truncation (<60% word retention), and hallucinated-URL stripping. Auto-retries with a better model, then falls back to raw transcription. (An earlier sentence-count rule was removed on purpose — calibrated against real dictation pairs it flagged 7% of dictations and caught zero real failures.)
 
 ## Benchmarking
 
@@ -127,10 +135,11 @@ Releases are automated:
 
 1. Push to `main` (directly or via PR merge)
 2. `release-please` opens a Release PR with generated changelog
-3. Merge the Release PR → version bumped, tag created, DMG built and attached
+3. Merge the Release PR → version bumped, tag created
+4. CI builds and signs the app (Developer ID), notarizes and staples the DMG, computes `checksums.txt` **after** stapling, attests build provenance, and uploads two byte-identical assets: `Mumbli-X.Y.Z.dmg` and the stable-named `Mumbli.dmg` (behind `releases/latest/download/Mumbli.dmg`)
 
 <Note>
 Releases are signed with a Developer ID certificate and notarized by Apple, so the DMG opens with no Gatekeeper warning and no `xattr` workaround. The install script (`curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash`) just automates mounting the DMG and copying the app across. See [Release Signing & Provenance](/for-developers/release-signing).
 </Note>
 
-The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen). Caveat: XcodeGen 2.45 ignores `options.objectVersion` and always writes `objectVersion = 77`, which needs Xcode 16+ to open — the checked-in project is `objectVersion = 56`. The release scripts regenerate only when you pass `REGENERATE=1`.

@@ -1,0 +1,30 @@
+---
+title: "Usage Proof"
+description: "Opt-in, local-only signed usage receipts: what they prove, what they don't, and how to verify them."
+---
+
+# Usage Proof
+
+Mumbli can produce cryptographically verifiable, privacy-preserving evidence that dictations happened — without publishing transcript text or user identity.
+
+It is **off by default**. Turn it on in **Settings > Usage Proof**.
+
+## What it does
+
+When enabled, each dictation appends a signed, content-free receipt to a local file:
+
+```
+~/Library/Application Support/Mumbli/proof/receipts.jsonl
+```
+
+- Receipts contain no transcript text, no audio, and no user identity
+- Receipts are signed with a per-device key stored in the macOS Keychain
+- The feature performs no network I/O — receipts stay on your machine
+
+## What it proves — and doesn't
+
+A published epoch proof shows a verifiable **lower bound** on signed dictation events and distinct anonymous installs, and a release binding plus GitHub build provenance tie those receipts to the exact released binary. It does not prove completeness (receipts are voluntary), that all usage came from the official build, or anything about transcript content.
+
+## Full documentation
+
+The complete trust model, verification chain, and `pou` CLI commands live in the repository: [docs/proof/README.md](https://github.com/fireharp/mumbli/blob/main/docs/proof/README.md).
