@@ -48,7 +48,7 @@ final class PipelineTimer {
     }
 }
 
-struct PipelineMetrics {
+struct PipelineMetrics: Codable {
     let audioBytes: Int
     let audioDurationSec: Double
     let sttMs: Double
@@ -58,6 +58,16 @@ struct PipelineMetrics {
     let sttProvider: String
     let polishModel: String
     let timestamp: Date
+
+    /// Short label for the polishing model, stripped of provider prefix and vendor
+    /// namespace: "groq-openai/gpt-oss-20b" -> "gpt-oss-20b". "none" when disabled.
+    var shortPolishModel: String {
+        guard let last = polishModel.split(separator: "/").last else { return polishModel }
+        return String(last)
+    }
+
+    /// Dictations slower than this read as sluggish and are worth flagging in the UI.
+    static let slowThresholdMs: Double = 2000
 
     var jsonLine: String {
         let iso = ISO8601DateFormatter().string(from: timestamp)

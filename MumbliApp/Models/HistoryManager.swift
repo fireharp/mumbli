@@ -10,13 +10,25 @@ struct DictationEntry: Codable, Identifiable {
     var recordingFilename: String?
     /// True when STT failed and the entry is a placeholder awaiting reprocessing.
     var isFailed: Bool
+    /// Per-stage pipeline telemetry for this dictation. Nil for entries recorded
+    /// before telemetry was persisted, and for failed entries.
+    var metrics: PipelineMetrics?
+    /// Commitment hash of the signed proof-of-use receipt covering this dictation,
+    /// i.e. the local pointer into receipts.jsonl. Nil when proof-of-use is off.
+    ///
+    /// Only the hash is stored here — the receipt body itself stays deliberately
+    /// content-free so it reveals nothing about what was dictated.
+    var receiptCommitment: String?
 
-    init(text: String, timestamp: Date = Date(), recordingFilename: String? = nil, isFailed: Bool = false) {
+    init(text: String, timestamp: Date = Date(), recordingFilename: String? = nil, isFailed: Bool = false,
+         metrics: PipelineMetrics? = nil, receiptCommitment: String? = nil) {
         self.id = UUID()
         self.text = text
         self.timestamp = timestamp
         self.recordingFilename = recordingFilename
         self.isFailed = isFailed
+        self.metrics = metrics
+        self.receiptCommitment = receiptCommitment
     }
 
     // Backwards-compatible decoding: missing keys get defaults.
@@ -27,6 +39,8 @@ struct DictationEntry: Codable, Identifiable {
         timestamp = try c.decode(Date.self, forKey: .timestamp)
         recordingFilename = try c.decodeIfPresent(String.self, forKey: .recordingFilename)
         isFailed = try c.decodeIfPresent(Bool.self, forKey: .isFailed) ?? false
+        metrics = try c.decodeIfPresent(PipelineMetrics.self, forKey: .metrics)
+        receiptCommitment = try c.decodeIfPresent(String.self, forKey: .receiptCommitment)
     }
 }
 
@@ -45,10 +59,20 @@ final class HistoryManager: ObservableObject {
         loadEntries()
     }
 
-    /// Add a new dictation entry and persist.
-    func addEntry(text: String, recordingFilename: String? = nil) {
-        let entry = DictationEntry(text: text, recordingFilename: recordingFilename)
+    /// Add a new dictation entry and persist. Returns the new entry's id so callers
+    /// can attach a proof-of-use receipt once signing completes asynchronously.
+    @discardableResult
+    func addEntry(text: String, recordingFilename: String? = nil, metrics: PipelineMetrics? = nil) -> UUID {
+        let entry = DictationEntry(text: text, recordingFilename: recordingFilename, metrics: metrics)
         entries.insert(entry, at: 0)
+        saveEntries()
+        return entry.id
+    }
+
+    /// Attach a signed receipt's commitment hash to an existing entry.
+    func attachReceipt(id: UUID, commitment: String) {
+        guard let idx = entries.firstIndex(where: { $0.id == id }) else { return }
+        entries[idx].receiptCommitment = commitment
         saveEntries()
     }
 

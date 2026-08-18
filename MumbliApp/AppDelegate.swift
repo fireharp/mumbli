@@ -484,20 +484,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if polishingEnabled {
                 let prompt = OpenAIPolishingService.resolvedPrompt()
                 let wrappedInput = OpenAIPolishingService.wrapForPolishing(cleanedTranscription)
-                let polished: String
+                // A polish failure must not fail the retry — the transcription is what
+                // the user is trying to recover. Degrade to raw instead.
+                let polished: String?
                 if engine.usesGroq {
-                    polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
+                    polished = try? await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
                 } else {
                     let model = OpenAIPolishingService.resolvedModel()
-                    polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
+                    polished = try? await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
                 }
-                let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
-                if guardResult.didIntervene {
-                    log.log("[Retry] RepetitionGuard intervened: \(guardResult.reason ?? "unknown")")
-                    // On retry, just fall back to raw — don't chain another retry
-                    finalText = cleanedTranscription
+                if let polished {
+                    let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
+                    if guardResult.didIntervene {
+                        log.log("[Retry] RepetitionGuard intervened: \(guardResult.reason ?? "unknown")")
+                        // On retry, just fall back to raw — don't chain another retry
+                        finalText = cleanedTranscription
+                    } else {
+                        finalText = polished.isEmpty ? cleanedTranscription : polished
+                    }
                 } else {
-                    finalText = polished.isEmpty ? cleanedTranscription : polished
+                    log.log("[Retry] Polish unavailable — resolving with raw transcription")
+                    finalText = cleanedTranscription
                 }
             } else {
                 finalText = cleanedTranscription
@@ -622,49 +629,77 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let polishingEnabled = UserDefaults.standard.object(forKey: "polishingEnabled") as? Bool ?? true
                 let finalText: String
                 let polishModel: String
+                /// True when polishing was requested but unreachable, so `finalText` is
+                /// the unpolished transcription. The dictation still succeeds.
+                var polishFailed = false
                 if polishingEnabled {
                     let prompt = OpenAIPolishingService.resolvedPrompt()
                     let wrappedInput = OpenAIPolishingService.wrapForPolishing(cleanedTranscription)
                     timer.mark("polish_start")
-                    let polished: String
-                    if engine.usesGroq {
-                        polishModel = "groq-llama-3.1-8b"
-                        log.log("[Dictation] Sending transcription to Groq for polishing")
-                        polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
-                    } else {
-                        let model = OpenAIPolishingService.resolvedModel()
-                        polishModel = model
-                        log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
-                        polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
+                    // Polishing is cosmetic — a polish failure must never cost the user a
+                    // transcription that already succeeded. Degrade to the raw text instead
+                    // of throwing to the catch below, which would mark the whole dictation
+                    // failed. (A Groq model deprecation did exactly that on 2026-08-17.)
+                    let polished: String?
+                    do {
+                        if engine.usesGroq {
+                            polishModel = "groq-\(GroqPolishingService.model)"
+                            log.log("[Dictation] Sending transcription to Groq for polishing (model=\(GroqPolishingService.model))")
+                            polished = try await groqPolishingService.polish(text: wrappedInput, prompt: prompt)
+                        } else {
+                            let model = OpenAIPolishingService.resolvedModel()
+                            polishModel = model
+                            log.log("[Dictation] Sending transcription to OpenAI for polishing (model=\(model))")
+                            polished = try await polishingService.polish(text: wrappedInput, model: model, prompt: prompt)
+                        }
+                    } catch {
+                        log.log("[Dictation] Polish failed (\(error.localizedDescription)) — injecting raw transcription")
+                        polished = nil
                     }
                     timer.mark("polish_end")
-                    log.log("[Dictation] Polished result: \(polished)")
 
-                    // Safety guard: detect hallucination, length explosion, tag leakage
-                    let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
-                    if guardResult.didIntervene && engine.usesGroq {
-                        // Groq failed — retry with GPT-5.4 Nano as fallback
-                        log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — retrying with gpt-5.4-nano")
-                        timer.mark("polish_retry_start")
-                        let retryPolished = try await polishingService.polish(
-                            text: wrappedInput,
-                            model: PolishingModel.gpt5_4_nano.rawValue,
-                            prompt: prompt
-                        )
-                        timer.mark("polish_retry_end")
-                        log.log("[Dictation] Retry polished result: \(retryPolished)")
-                        let retryGuard = RepetitionGuard.check(polished: retryPolished, raw: cleanedTranscription)
-                        if retryGuard.didIntervene {
-                            log.log("[Dictation] Retry also failed (\(retryGuard.reason ?? "unknown")) — falling back to raw transcription")
-                            finalText = cleanedTranscription
+                    if let polished {
+                        log.log("[Dictation] Polished result: \(polished)")
+
+                        // Safety guard: detect hallucination, length explosion, tag leakage
+                        let guardResult = RepetitionGuard.check(polished: polished, raw: cleanedTranscription)
+                        if guardResult.didIntervene && engine.usesGroq {
+                            // Groq output rejected — retry with GPT-5.4 Nano as fallback.
+                            // Retry failures degrade to raw rather than failing the dictation.
+                            log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — retrying with gpt-5.4-nano")
+                            timer.mark("polish_retry_start")
+                            let retryPolished = try? await polishingService.polish(
+                                text: wrappedInput,
+                                model: PolishingModel.gpt5_4_nano.rawValue,
+                                prompt: prompt
+                            )
+                            timer.mark("polish_retry_end")
+                            if let retryPolished {
+                                log.log("[Dictation] Retry polished result: \(retryPolished)")
+                                let retryGuard = RepetitionGuard.check(polished: retryPolished, raw: cleanedTranscription)
+                                if retryGuard.didIntervene {
+                                    log.log("[Dictation] Retry also rejected (\(retryGuard.reason ?? "unknown")) — falling back to raw transcription")
+                                    finalText = cleanedTranscription
+                                } else {
+                                    finalText = retryPolished.isEmpty ? cleanedTranscription : retryPolished
+                                }
+                            } else {
+                                log.log("[Dictation] Retry request failed — falling back to raw transcription")
+                                finalText = cleanedTranscription
+                                polishFailed = true
+                            }
+                        } else if guardResult.didIntervene {
+                            log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — falling back to raw transcription")
+                            finalText = guardResult.text.isEmpty ? cleanedTranscription : guardResult.text
                         } else {
-                            finalText = retryPolished.isEmpty ? cleanedTranscription : retryPolished
+                            finalText = polished.isEmpty ? cleanedTranscription : polished
                         }
-                    } else if guardResult.didIntervene {
-                        log.log("[Dictation] RepetitionGuard intervened: \(guardResult.reason ?? "unknown") — falling back to raw transcription")
-                        finalText = guardResult.text.isEmpty ? cleanedTranscription : guardResult.text
                     } else {
-                        finalText = polished.isEmpty ? cleanedTranscription : polished
+                        // Polish unavailable (network, auth, model deprecation). The
+                        // transcription is good — inject it as-is. No guard, no retry:
+                        // there is nothing to validate and the retry would likely fail too.
+                        finalText = cleanedTranscription
+                        polishFailed = true
                     }
                 } else {
                     log.log("[Dictation] Polishing disabled, using raw transcription")
@@ -672,6 +707,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     timer.mark("polish_start")
                     timer.mark("polish_end")
                     finalText = cleanedTranscription
+                }
+                if polishFailed {
+                    log.log("[Dictation] NOTE: injecting unpolished transcription — polish was unavailable")
                 }
                 log.log("[Dictation] Final text to inject: \(finalText)")
 
@@ -686,23 +724,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let result = textInjector.inject(text: finalText, target: capturedTarget)
                 timer.mark("inject_end")
                 log.log("[Dictation] TextInjector result: \(result)")
-                historyManager.addEntry(text: finalText, recordingFilename: recordingFilename)
-                log.log("[Dictation] Saved to history")
 
-                ProofOfUseFacade.shared.recordDictation(.init(
-                    engine: engine.sttProviderLabel,
-                    mode: capturedMode?.proofLabel ?? "hold",
-                    audioDurationSec: audioDurationSec,
-                    polished: polishingEnabled
-                ))
-
-                // Log pipeline metrics
+                // Build metrics before persisting so the entry carries its own telemetry.
                 let metrics = timer.buildMetrics(
                     audioBytes: capturedAudio.count,
                     audioDurationSec: audioDurationSec,
                     sttProvider: engine.sttProviderLabel,
-                    polishModel: polishModel
+                    polishModel: polishFailed ? "\(polishModel) (failed)" : polishModel
                 )
+                let entryID = historyManager.addEntry(
+                    text: finalText,
+                    recordingFilename: recordingFilename,
+                    metrics: metrics
+                )
+                log.log("[Dictation] Saved to history")
+
+                // Link the signed receipt back to this entry once signing completes.
+                ProofOfUseFacade.shared.recordDictation(.init(
+                    engine: engine.sttProviderLabel,
+                    mode: capturedMode?.proofLabel ?? "hold",
+                    audioDurationSec: audioDurationSec,
+                    polished: polishingEnabled && !polishFailed
+                ), onRecorded: { [weak historyManager] commitment in
+                    historyManager?.attachReceipt(id: entryID, commitment: commitment)
+                })
+
                 log.log(metrics.jsonLine)
 
                 NotificationCenter.default.post(
