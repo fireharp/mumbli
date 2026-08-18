@@ -26,6 +26,9 @@ struct SettingsView: View {
     @State private var deepgramSavedConfirm: Bool = false
     @State private var deepgramIsEditing: Bool = false
 
+    /// Shared with HistoryEntryRow via @AppStorage so the popover updates immediately.
+    @AppStorage("showEntryTelemetry") private var showEntryTelemetry = true
+
     // Polishing settings
     @State private var polishingEnabled: Bool = true
     @State private var polishingPreset: String = PolishingPreset.light.rawValue
@@ -439,6 +442,19 @@ struct SettingsView: View {
                                     }
 
                                 Text("Saves each dictation as a WAV file for benchmarking")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Divider().opacity(0.1)
+
+                            // Per-entry telemetry toggle
+                            VStack(alignment: .leading, spacing: 4) {
+                                Toggle("Show timing details", isOn: $showEntryTelemetry)
+                                    .font(.system(size: 13))
+                                    .accessibilityIdentifier("mumbli-settings-telemetry-toggle")
+
+                                Text("Shows model, stage timings, and receipt hash under each history entry")
                                     .font(.system(size: 11))
                                     .foregroundColor(.secondary)
                             }

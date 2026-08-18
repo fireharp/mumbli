@@ -90,11 +90,55 @@ struct HistoryEntryRow: View {
     @State private var isHovered = false
     @State private var isRetrying = false
 
+    /// Mirrors the "Show timing details" setting; the popover redraws on change.
+    @AppStorage("showEntryTelemetry") private var showTelemetry = true
+
     private var hasRecording: Bool { entry.recordingFilename != nil }
+
+    /// Telemetry is only shown for successful entries that actually carry metrics —
+    /// entries dictated before telemetry was persisted simply keep the old layout.
+    private var telemetry: PipelineMetrics? {
+        guard showTelemetry, !entry.isFailed else { return nil }
+        return entry.metrics
+    }
 
     var body: some View {
         Button(action: { entry.isFailed ? retryEntry() : copyEntry() }) {
-            HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
+                mainRow
+                if let telemetry {
+                    TelemetryStrip(metrics: telemetry, receiptCommitment: entry.receiptCommitment)
+                        .padding(.top, 7)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(entry.isFailed
+                        ? Color(nsColor: .systemRed).opacity(isHovered ? 0.08 : 0.04)
+                        : (isHovered ? Color.primary.opacity(0.06) : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(
+                        entry.isFailed
+                            ? Color(nsColor: .systemRed).opacity(0.12)
+                            : (isHovered ? Color.primary.opacity(0.04) : Color.clear),
+                        lineWidth: 0.5
+                    )
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
+    }
+
+    private var mainRow: some View {
+        HStack(spacing: 8) {
                 // Recording indicator
                 if hasRecording {
                     Image(systemName: entry.isFailed ? "exclamationmark.circle.fill" : "waveform.circle")
@@ -165,31 +209,7 @@ struct HistoryEntryRow: View {
                 }
                 .frame(width: 20)
                 .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isHovered)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 9)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(entry.isFailed
-                        ? Color(nsColor: .systemRed).opacity(isHovered ? 0.08 : 0.04)
-                        : (isHovered ? Color.primary.opacity(0.06) : Color.clear))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(
-                        entry.isFailed
-                            ? Color(nsColor: .systemRed).opacity(0.12)
-                            : (isHovered ? Color.primary.opacity(0.04) : Color.clear),
-                        lineWidth: 0.5
-                    )
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
-        .buttonStyle(.plain)
-        .onHover { hovering in
-            isHovered = hovering
-        }
-        .animation(.easeInOut(duration: 0.15), value: isHovered)
     }
 
     private func copyEntry() {
@@ -208,6 +228,89 @@ struct HistoryEntryRow: View {
         guard !isRetrying else { return }
         isRetrying = true
         onRetry?(entry)
+    }
+}
+
+// MARK: - Per-entry telemetry
+
+/// Condensed pipeline telemetry for one dictation: a proportional stage bar, the
+/// per-stage timings, and provenance (model, audio length, signed receipt).
+private struct TelemetryStrip: View {
+    let metrics: PipelineMetrics
+    let receiptCommitment: String?
+
+    private static let sttColor = Color(nsColor: .systemBlue)
+    private static let polishColor = Color(nsColor: .systemPurple)
+    private static let injectColor = Color(nsColor: .systemTeal)
+
+    /// Negative values mean the stage never ran (PipelineTimer returns -1 for a
+    /// missing mark), so clamp before using them for bar widths.
+    private func stage(_ value: Double) -> Double { max(value, 0) }
+
+    private var isSlow: Bool { metrics.totalMs >= PipelineMetrics.slowThresholdMs }
+
+    private var totalLabel: String {
+        metrics.totalMs >= 1000
+            ? String(format: "%.2fs", metrics.totalMs / 1000)
+            : String(format: "%.0fms", metrics.totalMs)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            stageBar
+            HStack(spacing: 4) {
+                Text("stt \(Int(stage(metrics.sttMs)))")
+                Text("·")
+                Text("polish \(Int(stage(metrics.polishMs)))")
+                Text("·")
+                Text("inject \(Int(stage(metrics.injectMs)))")
+                Spacer(minLength: 4)
+                Text(totalLabel)
+                    .fontWeight(.medium)
+                    .foregroundColor(isSlow ? Color(nsColor: .systemOrange) : .secondary)
+            }
+            .font(.system(size: 10, weight: .regular, design: .monospaced))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
+
+            HStack(spacing: 4) {
+                Text(metrics.shortPolishModel)
+                Text("·")
+                Text(String(format: "%.1fs audio", metrics.audioDurationSec))
+                if let receiptCommitment {
+                    Text("·")
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(Color(nsColor: .systemGreen).opacity(0.8))
+                    Text(receiptCommitment.prefix(4) + "…" + receiptCommitment.suffix(4))
+                        .font(.system(size: 9.5, design: .monospaced))
+                }
+            }
+            .font(.system(size: 10))
+            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
+            .lineLimit(1)
+        }
+        .accessibilityIdentifier("mumbli-history-telemetry")
+    }
+
+    private var stageBar: some View {
+        GeometryReader { geo in
+            let stt = stage(metrics.sttMs)
+            let polish = stage(metrics.polishMs)
+            let inject = stage(metrics.injectMs)
+            let sum = max(stt + polish + inject, 1)
+            // Width is apportioned by measured stage time; gaps come out of the total
+            // so the bar never overflows its row.
+            let usable = max(geo.size.width - 4, 1)
+            HStack(spacing: 2) {
+                Capsule().fill(Self.sttColor.opacity(0.75))
+                    .frame(width: usable * stt / sum)
+                Capsule().fill(Self.polishColor.opacity(0.75))
+                    .frame(width: usable * polish / sum)
+                Capsule().fill(Self.injectColor.opacity(0.75))
+                    .frame(width: usable * inject / sum)
+                Spacer(minLength: 0)
+            }
+        }
+        .frame(height: 4)
     }
 }
 
