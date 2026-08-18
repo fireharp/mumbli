@@ -22,7 +22,7 @@ VERSION="${1:-$(sed -nE 's/^ *MARKETING_VERSION: "(.+)".*$/\1/p' project.yml | h
 [[ -n "$VERSION" ]] || { echo "could not determine version; pass one explicitly" >&2; exit 1; }
 
 BUILD_DIR="build/local-release"
-APP="$BUILD_DIR/dmg-contents/Mumbli.app"
+APP="$BUILD_DIR/Mumbli.app"
 DMG="$BUILD_DIR/Mumbli-$VERSION.dmg"
 
 IDENTITY="${SIGN_IDENTITY:-$(security find-identity -v -p codesigning \
@@ -51,7 +51,7 @@ fi
 # and entitlements are applied exactly once and in one place.
 echo "==> Building Release archive"
 rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR/dmg-contents"
+mkdir -p "$BUILD_DIR"
 xcodebuild archive \
   -project MumbliApp.xcodeproj \
   -scheme MumbliApp \
@@ -62,8 +62,7 @@ xcodebuild archive \
   > "$BUILD_DIR/xcodebuild.log" 2>&1 \
   || { tail -40 "$BUILD_DIR/xcodebuild.log" >&2; echo "build failed; full log: $BUILD_DIR/xcodebuild.log" >&2; exit 1; }
 
-cp -R "$BUILD_DIR/Mumbli.xcarchive/Products/Applications/Mumbli.app" "$BUILD_DIR/dmg-contents/"
-ln -sf /Applications "$BUILD_DIR/dmg-contents/Applications"
+cp -R "$BUILD_DIR/Mumbli.xcarchive/Products/Applications/Mumbli.app" "$BUILD_DIR/"
 
 echo "==> Signing app"
 codesign --force --timestamp --options runtime \
@@ -73,9 +72,10 @@ codesign --verify --deep --strict --verbose=2 "$APP"
 # -dvvv is required here: lower verbosity does not print CDHash at all.
 codesign -dvvv "$APP" 2>&1 | grep -E '^Identifier|^TeamIdentifier|^CDHash|^Timestamp|flags='
 
-echo "==> Creating DMG"
-hdiutil create -volname "Mumbli" -srcfolder "$BUILD_DIR/dmg-contents" \
-  -ov -format UDZO "$DMG" > /dev/null
+# The Applications alias and the window layout both come from make-dmg.sh, which
+# CI calls too — so the image opened here is laid out exactly like the published
+# one rather than approximating it.
+"$(dirname "${BASH_SOURCE[0]}")/make-dmg.sh" "$APP" "Mumbli" "$DMG"
 codesign --force --timestamp --sign "$IDENTITY" "$DMG"
 
 NOTARIZED=false
