@@ -1,7 +1,14 @@
 import Foundation
 
-/// Saves and loads PCM audio recordings for benchmarking.
-/// Recordings are stored as WAV files in ~/Library/Application Support/Mumbli/recordings/.
+/// Saves and loads PCM audio recordings.
+///
+/// Every recording is written at capture time regardless of settings, because
+/// a failed dictation needs its WAV on disk for retry-from-history
+/// (`AppDelegate.retryDictation`). Once a dictation's outcome is known, the
+/// caller decides whether to keep it: `deleteRecording` removes both the WAV
+/// and its transcript unless the user has enabled Settings > Debug > Save
+/// recordings, in which case files persist for benchmarking as before.
+/// Recordings are stored in ~/Library/Application Support/Mumbli/recordings/.
 final class RecordingManager {
     static let shared = RecordingManager()
 
@@ -31,6 +38,16 @@ final class RecordingManager {
         let txtURL = wavURL.deletingPathExtension().appendingPathExtension("txt")
         try? text.write(to: txtURL, atomically: true, encoding: .utf8)
         NSLog("[RecordingManager] Saved transcription: %@", txtURL.lastPathComponent)
+    }
+
+    /// Delete a recording and its sibling transcript, if present. Safe to call
+    /// on a filename that no longer exists.
+    func deleteRecording(named filename: String) {
+        let wavURL = recordingsDir.appendingPathComponent(filename)
+        let txtURL = wavURL.deletingPathExtension().appendingPathExtension("txt")
+        try? FileManager.default.removeItem(at: wavURL)
+        try? FileManager.default.removeItem(at: txtURL)
+        NSLog("[RecordingManager] Deleted recording: %@", filename)
     }
 
     /// List all saved recordings, newest first.
