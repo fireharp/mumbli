@@ -13,6 +13,10 @@ Mumbli requires macOS Accessibility permission to:
 
 All three are gated by macOS TCC (Transparency, Consent, and Control).
 
+<Note>
+This page describes **local development builds**. Published releases are signed with a Developer ID certificate, so their signing identity is stable and Accessibility permission survives updates. The single exception was v0.5.0 — the first signed release — where the identity changed from unsigned and every existing user had to re-grant once.
+</Note>
+
 ## Why permissions break after rebuilding
 
 macOS stores a `csreq` (code signing requirement) blob alongside the bundle ID in the TCC database. For **ad-hoc signed** apps (the default for local Xcode builds without a team), the Designated Requirement is based on the **exact cdhash** — which changes on every rebuild.

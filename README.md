@@ -193,8 +193,11 @@ Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated relea
 1. Go to [Releases](https://github.com/fireharp/mumbli/releases)
 2. Download the latest `Mumbli-x.y.z.dmg`
 3. Mount it, drag **Mumbli** to **Applications**
-4. Run `xattr -cr /Applications/Mumbli.app` (required — the app is not code-signed)
-5. Launch from Applications
+4. Launch from Applications
+
+Releases are signed with a Developer ID certificate and notarized by Apple, so
+macOS opens them without a Gatekeeper prompt. The `xattr -cr` workaround older
+instructions mention is no longer needed.
 
 ### Contributing
 

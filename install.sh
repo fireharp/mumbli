@@ -64,9 +64,15 @@ cp -R "$MOUNT_POINT/$APP_NAME" "$INSTALL_DIR/" || error "Failed to copy app. Try
 # Unmount
 hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
 
-# Strip quarantine
-info "Clearing quarantine attribute..."
-xattr -cr "$INSTALL_DIR/$APP_NAME"
+# Released DMGs are notarized, so Gatekeeper clears them unaided and stripping
+# quarantine would be theatre. The workflow can still fall back to ad-hoc signing
+# if the signing secrets go missing, so ask Gatekeeper rather than assume.
+if spctl -a -t exec "$INSTALL_DIR/$APP_NAME" > /dev/null 2>&1; then
+    info "Notarized build - no quarantine workaround needed."
+else
+    info "Build is not notarized; clearing quarantine attribute..."
+    xattr -cr "$INSTALL_DIR/$APP_NAME"
+fi
 
 success "Mumbli installed successfully!"
 echo ""
