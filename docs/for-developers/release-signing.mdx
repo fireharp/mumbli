@@ -93,6 +93,32 @@ Two things this deliberately does not reproduce: release-please's tagging, and t
 
 The script uses the checked-in `MumbliApp.xcodeproj` rather than running `xcodegen`. XcodeGen 2.45 writes `objectVersion = 77`, which needs Xcode 16+ to open, while the checked-in project is `56`. CI's `macos-latest` runner is new enough that its `xcodegen generate` step is fine; an Xcode 15 machine is not. Pass `REGENERATE=1` to run `xcodegen` anyway.
 
+## Where the version comes from
+
+`MARKETING_VERSION` in `project.yml` is the single release version, and release-please bumps it. The checked-in `MumbliApp.xcodeproj` carries its own copy of that setting, which only changes when someone runs `xcodegen` — that copy is why the About pane sat at `0.3.3` while the project said `0.5.0`. release-please now bumps both (the pbxproj lines are annotated `/* x-release-please-version */`), and a `Stamp version` build phase runs `scripts/version-stamp.sh`, which reads `project.yml` and overwrites the built `Info.plist`. Whatever the Xcode project believes, the app shows the real thing.
+
+The same script adds the commit, since a dev build is normally several commits past the last tag:
+
+| Info.plist key | Example | Meaning |
+|---|---|---|
+| `CFBundleShortVersionString` | `0.5.0` | Release version, always plain semver |
+| `CFBundleVersion` | `83` | `git rev-list --count HEAD` |
+| `MumbliVersionDisplay` | `0.5.0+7.g1a2b3c4.dirty` | One-line build identity |
+| `MumbliGitCommit` | `1a2b3c4` | Commit built from |
+| `MumbliGitDescribe` | `v0.5.0-7-g1a2b3c4` | `git describe --tags --always --dirty` |
+| `MumbliCommitsSinceTag` | `7` | Distance from the `v$MARKETING_VERSION` tag |
+| `MumbliSourceState` | `clean` / `dirty` | Working tree at build time |
+
+Settings > About shows the release version, plus a **Build** row with the commit that is hidden on a release build (exactly on the tag, clean tree) and copyable everywhere else. `AppVersion` in `MumbliApp/Core/AppVersion.swift` reads these, and the launch log line records `MumbliVersionDisplay`.
+
+To see what a build here would stamp:
+
+```bash
+scripts/version-stamp.sh --print
+```
+
+Because the phase is scheduled after Xcode writes `Info.plist`, it sometimes lands after Xcode's own code-signing step; it re-signs the bundle (same identity and entitlements) when that happens. Release builds pass `CODE_SIGNING_ALLOWED=NO` and are signed later by the script above, so the stamp is already in place before any signature exists. CI checks out the release tag with full history, which is what makes `git describe` resolve to the tag exactly.
+
 ## Build provenance
 
 After the DMG is stapled, the workflow computes `checksums.txt` and calls `actions/attest-build-provenance`, which signs a provenance statement via Sigstore binding the DMG's SHA-256 to the source commit, workflow, and runner.

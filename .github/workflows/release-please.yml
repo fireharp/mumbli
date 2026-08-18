@@ -33,7 +33,13 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
+      # Full history and tags: scripts/version-stamp.sh derives the build number
+      # and the commit provenance it stamps into Info.plist from them, and a
+      # shallow clone has neither.
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.release-please.outputs.tag_name }}
 
       - name: Install xcodegen
         run: brew install xcodegen

@@ -38,6 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSLog("[AppDelegate] applicationDidFinishLaunching")
+        // The exact build, so a log excerpt in a bug report identifies it.
+        FileLogger.shared.log("[AppDelegate] Mumbli \(AppVersion.full) (\(AppVersion.describe ?? "no git"))")
 
         if isUITesting {
             NSApp.setActivationPolicy(.regular)
