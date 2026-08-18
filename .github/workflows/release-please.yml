@@ -113,16 +113,14 @@ jobs:
 
       - name: Extract app from archive
         run: |
-          mkdir -p build/dmg-contents
-          cp -R build/Mumbli.xcarchive/Products/Applications/Mumbli.app build/dmg-contents/
-          ln -s /Applications build/dmg-contents/Applications
+          cp -R build/Mumbli.xcarchive/Products/Applications/Mumbli.app build/Mumbli.app
 
       - name: Sign app
         env:
           MODE: ${{ steps.signing.outputs.mode }}
         run: |
           set -euo pipefail
-          APP=build/dmg-contents/Mumbli.app
+          APP=build/Mumbli.app
           if [ "$MODE" = "developer-id" ]; then
             codesign --force --timestamp --options runtime \
               --entitlements MumbliApp/MumbliApp.entitlements \
@@ -144,13 +142,14 @@ jobs:
           VERSION="${TAG#v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      # make-dmg.sh is shared with scripts/release/build-signed-dmg.sh, so the
+      # window layout a maintainer sees locally is the one users get. It also
+      # creates the Applications alias.
       - name: Create DMG
         run: |
-          hdiutil create \
-            -volname "Mumbli" \
-            -srcfolder build/dmg-contents \
-            -ov \
-            -format UDZO \
+          scripts/release/make-dmg.sh \
+            build/Mumbli.app \
+            "Mumbli" \
             "Mumbli-${{ steps.version.outputs.version }}.dmg"
 
       - name: Sign DMG
@@ -209,7 +208,7 @@ jobs:
         env:
           MODE: ${{ steps.signing.outputs.mode }}
         run: |
-          APP=build/dmg-contents/Mumbli.app
+          APP=build/Mumbli.app
           INFO=$(codesign -dvvv "$APP" 2>&1)
           CDHASH=$(printf '%s\n' "$INFO" | sed -nE 's/^CDHash=([0-9a-f]+)$/\1/p')
           # Ad-hoc signatures report the literal string "not set" here.
