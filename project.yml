@@ -45,6 +45,18 @@ targets:
       - AVFoundation.framework
       - ApplicationServices.framework
       - Carbon.framework
+    # MARKETING_VERSION above is the one release-please bumps; the checked-in
+    # MumbliApp.xcodeproj carries a stale copy of it. The stamp script reads this
+    # file and overwrites the built Info.plist, so both paths agree and the About
+    # pane also gets the commit it was built from.
+    postBuildScripts:
+      # The inputFile is what schedules this after Xcode processes Info.plist —
+      # without it the stamp gets overwritten by the plist Xcode writes later.
+      - script: '"$SRCROOT/scripts/version-stamp.sh"'
+        name: Stamp version
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
 
   MumbliAppUITests:
     type: bundle.ui-testing

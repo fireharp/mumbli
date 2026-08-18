@@ -19,6 +19,7 @@
 		86B47EC991F3F963C464F3A2 /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0321570D69C58E74FE5660C /* HistoryManager.swift */; };
 		88C694EC4EC4E7E38BFAE210 /* OverlayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */; };
 		89FD1174E72A978D824A1DA3 /* OpenAIPolishingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0B36E649562284CC41677B /* OpenAIPolishingService.swift */; };
+		P0F00001A1B2C3D4E5F60402 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = P0F00001A1B2C3D4E5F60401 /* AppVersion.swift */; };
 		8C18683692AB9BC14DEC5359 /* FileLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D98D60D1EA2ECBB4013175 /* FileLogger.swift */; };
 		90B3E896F8EFB6D75E4E6E76 /* DeepgramSTTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FB9DD6ADBA8DB2658B5EC99 /* DeepgramSTTService.swift */; };
 		912315065A740F9ADAD6E3D9 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4CC9C3D4F704546BE9B379 /* MenuBarController.swift */; };
@@ -91,6 +92,7 @@
 		C0321570D69C58E74FE5660C /* HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
 		D0EDBD3C722CE08C118321FD /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		DE0B36E649562284CC41677B /* OpenAIPolishingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIPolishingService.swift; sourceTree = "<group>"; };
+		P0F00001A1B2C3D4E5F60401 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		E0D98D60D1EA2ECBB4013175 /* FileLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLogger.swift; sourceTree = "<group>"; };
 		E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		E53C3A5B127323A98F576095 /* DictationServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationServiceProtocol.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 		3EDEF5433CED0CA6EFAAF9E2 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				P0F00001A1B2C3D4E5F60401 /* AppVersion.swift */,
 				030B6065CC7F37B56089B856 /* AudioCaptureManager.swift */,
 				E0D98D60D1EA2ECBB4013175 /* FileLogger.swift */,
 				E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */,
@@ -270,6 +273,7 @@
 			buildPhases = (
 				6274DC3B787C426A200DB8D7 /* Sources */,
 				P0F00001A1B2C3D4E5F60300 /* Resources */,
+				P0F00001A1B2C3D4E5F60400 /* Stamp version */,
 			);
 			buildRules = (
 			);
@@ -326,6 +330,25 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		P0F00001A1B2C3D4E5F60400 /* Stamp version */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Stamp version";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SRCROOT/scripts/version-stamp.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6274DC3B787C426A200DB8D7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -336,6 +359,7 @@
 				90B3E896F8EFB6D75E4E6E76 /* DeepgramSTTService.swift in Sources */,
 				7233BC2EAFADAE3FB527F4DC /* DictationServiceProtocol.swift in Sources */,
 				AC9738B73F49D95782A62100 /* ElevenLabsSTTService.swift in Sources */,
+				P0F00001A1B2C3D4E5F60402 /* AppVersion.swift in Sources */,
 				8C18683692AB9BC14DEC5359 /* FileLogger.swift in Sources */,
 				C062D335C5BE7B44240B39AA /* FirstLaunchView.swift in Sources */,
 				E5665A478D5586E3EE87D358 /* GroqPolishingService.swift in Sources */,
@@ -407,7 +431,7 @@
 				INFOPLIST_FILE = MumbliApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.3.3;
+				MARKETING_VERSION = 0.5.0; /* x-release-please-version */
 				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
 				PRODUCT_NAME = Mumbli;
 				SDKROOT = macosx;
@@ -563,7 +587,7 @@
 				INFOPLIST_FILE = MumbliApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.3.3;
+				MARKETING_VERSION = 0.5.0; /* x-release-please-version */
 				PRODUCT_BUNDLE_IDENTIFIER = com.mumbli.app;
 				PRODUCT_NAME = Mumbli;
 				SDKROOT = macosx;

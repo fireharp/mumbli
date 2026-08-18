@@ -47,6 +47,7 @@ struct SettingsView: View {
     @State private var elevenLabsQuota: String?
     @State private var elevenLabsQuotaWarning: Bool = false
     @State private var isCheckingQuota: Bool = false
+    @State private var copiedVersion: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -446,23 +447,50 @@ struct SettingsView: View {
 
                     // About section
                     SettingsSection(title: "About", icon: "info.circle") {
-                        HStack {
-                            Text("Version")
-                                .font(.system(size: 13))
-                            Spacer()
-                            Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                                .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color(nsColor: .controlBackgroundColor))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
-                                )
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Text("Version")
+                                    .font(.system(size: 13))
+                                Spacer()
+                                Text(AppVersion.release)
+                                    .modifier(VersionChip())
+                                    .accessibilityIdentifier("mumbli-settings-version")
+                            }
+
+                            // A dev build is usually several commits past the last
+                            // tag, so the release version alone does not identify
+                            // it. This row is what a bug report needs.
+                            if let detail = AppVersion.buildDetail {
+                                Divider().opacity(0.1)
+
+                                HStack {
+                                    Text("Build")
+                                        .font(.system(size: 13))
+                                    Spacer()
+                                    Button {
+                                        NSPasteboard.general.clearContents()
+                                        NSPasteboard.general.setString(AppVersion.full, forType: .string)
+                                        copiedVersion = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                            copiedVersion = false
+                                        }
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Text(detail)
+                                            Image(systemName: copiedVersion ? "checkmark" : "doc.on.doc")
+                                                .font(.system(size: 9))
+                                        }
+                                    }
+                                    .buttonStyle(.plain)
+                                    // Clicks only. Keyboard focus reaching this would
+                                    // let a stray keypress replace the clipboard, and
+                                    // TextInjector's fallback path pastes from it.
+                                    .focusable(false)
+                                    .help("Copy \(AppVersion.full)")
+                                    .modifier(VersionChip())
+                                    .accessibilityIdentifier("mumbli-settings-build")
+                                }
+                            }
                         }
                     }
                 }
@@ -709,6 +737,25 @@ struct SettingsView: View {
 }
 
 /// A single API key row with service icon, name, status dot, and secure field.
+/// The bordered monospaced pill the About rows share.
+private struct VersionChip: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color(nsColor: .controlBackgroundColor))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+            )
+    }
+}
+
 struct APIKeyRow: View {
     let serviceName: String
     let iconName: String
