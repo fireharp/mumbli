@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0](https://github.com/fireharp/mumbli/compare/v0.5.0...v0.6.0) (2026-08-18)
+
+
+### Features
+
+* add an app icon built from the site waveform ([#26](https://github.com/fireharp/mumbli/issues/26)) ([15decc6](https://github.com/fireharp/mumbli/commit/15decc693e4af668e5d1f50168e2c6ed3a92671f))
+* give the DMG a designed drag-to-install window ([#24](https://github.com/fireharp/mumbli/issues/24)) ([4e48511](https://github.com/fireharp/mumbli/commit/4e48511db7dba5c2093bfa26c6803a8caa53849f))
+
+
+### Bug Fixes
+
+* keep dictations when Groq polishing fails ([#25](https://github.com/fireharp/mumbli/issues/25)) ([281b67b](https://github.com/fireharp/mumbli/commit/281b67b4b759b3d10de22e77f0305b34331f9f3e))
+* show the real version and commit in Settings &gt; About ([#21](https://github.com/fireharp/mumbli/issues/21)) ([b97196e](https://github.com/fireharp/mumbli/commit/b97196e127e298ecef9ba18fdd623984ffeb3631))
+
 ## [0.5.0](https://github.com/fireharp/mumbli/compare/v0.4.0...v0.5.0) (2026-08-17)
 
 
