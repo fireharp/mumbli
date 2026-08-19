@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/fireharp/mumbli/compare/v0.6.0...v0.6.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* store API keys in the real Keychain, delete recordings after success ([#29](https://github.com/fireharp/mumbli/issues/29)) ([a343cb9](https://github.com/fireharp/mumbli/commit/a343cb972567a98a1c1b5a412ef29bb5c198a3f6))
+
 ## [0.6.0](https://github.com/fireharp/mumbli/compare/v0.5.0...v0.6.0) (2026-08-18)
 
 
