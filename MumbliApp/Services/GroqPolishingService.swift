@@ -1,7 +1,8 @@
 import Foundation
 
 /// Groq LLM polishing service — uses Groq's OpenAI-compatible chat completions API.
-/// Extremely fast inference (~250ms) via Groq LPU hardware.
+/// Extremely fast inference via Groq LPU hardware (~391ms p50 for the current model,
+/// see the reasoningEffort comment below — the earlier retired Llama model was ~250ms).
 final class GroqPolishingService {
     private let endpoint = "https://api.groq.com/openai/v1/chat/completions"
     /// Groq retired the entire Llama instruct lineup (`llama-3.1-8b-instant` began
