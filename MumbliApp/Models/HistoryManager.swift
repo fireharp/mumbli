@@ -49,7 +49,20 @@ struct DictationEntry: Codable, Identifiable {
 final class HistoryManager: ObservableObject {
     @Published private(set) var entries: [DictationEntry] = []
 
+    /// Total recorded audio across all history, in seconds. Nil until the one-time
+    /// background backfill (below) finishes reading saved WAV files for entries that
+    /// predate per-dictation telemetry — there can be thousands of those, so this is
+    /// never computed synchronously on the main actor.
+    @Published private(set) var totalDictatedSeconds: Double?
+
     private let fileURL: URL
+    /// Per-file duration, keyed by recording filename, so a backfilled file is never
+    /// read from disk twice.
+    private var recordingDurationCache: [String: Double] = [:]
+    /// Duration deltas from addEntry/removeEntry that arrive before the initial
+    /// backfill scan completes. The scan's snapshot is taken at its own start, so
+    /// without this an entry added mid-scan would silently never be counted.
+    private var pendingDurationDelta: Double = 0
 
     init() {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -57,6 +70,7 @@ final class HistoryManager: ObservableObject {
         try? FileManager.default.createDirectory(at: mumbliDir, withIntermediateDirectories: true)
         self.fileURL = mumbliDir.appendingPathComponent("history.json")
         loadEntries()
+        backfillTotalDuration()
     }
 
     /// Add a new dictation entry and persist. Returns the new entry's id so callers
@@ -66,6 +80,7 @@ final class HistoryManager: ObservableObject {
         let entry = DictationEntry(text: text, recordingFilename: recordingFilename, metrics: metrics)
         entries.insert(entry, at: 0)
         saveEntries()
+        addToTotalDuration(entry)
         return entry.id
     }
 
@@ -81,6 +96,7 @@ final class HistoryManager: ObservableObject {
         let entry = DictationEntry(text: "", recordingFilename: recordingFilename, isFailed: true)
         entries.insert(entry, at: 0)
         saveEntries()
+        addToTotalDuration(entry)
     }
 
     /// Mark a previously failed entry as successful with new text.
@@ -91,8 +107,9 @@ final class HistoryManager: ObservableObject {
         saveEntries()
     }
 
-    /// Full URL for a recording filename.
-    static func recordingURL(for filename: String) -> URL {
+    /// Full URL for a recording filename. Not actor-isolated: also called from the
+    /// background backfill scan.
+    nonisolated static func recordingURL(for filename: String) -> URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport.appendingPathComponent("Mumbli/recordings/\(filename)")
     }
@@ -108,12 +125,105 @@ final class HistoryManager: ObservableObject {
     func removeEntry(_ entry: DictationEntry) {
         entries.removeAll { $0.id == entry.id }
         saveEntries()
+        subtractFromTotalDuration(entry)
     }
 
     /// Clear all history.
     func clearAll() {
         entries.removeAll()
         saveEntries()
+        recordingDurationCache.removeAll()
+        pendingDurationDelta = 0
+        totalDictatedSeconds = 0
+    }
+
+    // MARK: - Total duration backfill
+
+    /// One-time background scan that backfills total audio duration for entries
+    /// recorded before PipelineMetrics existed, by reading the WAV header (44 bytes,
+    /// no full decode) of each saved recording. Measured at ~0.7s for 5,000+ files —
+    /// fine off the main actor, not fine as part of rendering a popover.
+    private func backfillTotalDuration() {
+        let snapshot = entries.map { ($0.metrics?.audioDurationSec, $0.recordingFilename) }
+        Task.detached(priority: .utility) { [weak self] in
+            let (total, cache): (Double, [String: Double]) = {
+                var total = 0.0
+                var cache: [String: Double] = [:]
+                for (metricsSeconds, filename) in snapshot {
+                    if let metricsSeconds {
+                        total += metricsSeconds
+                    } else if let filename, let seconds = Self.wavDurationSeconds(filename: filename) {
+                        total += seconds
+                        cache[filename] = seconds
+                    }
+                }
+                return (total, cache)
+            }()
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.recordingDurationCache.merge(cache) { _, new in new }
+                self.totalDictatedSeconds = total + self.pendingDurationDelta
+                self.pendingDurationDelta = 0
+            }
+        }
+    }
+
+    private func durationSeconds(for entry: DictationEntry) -> Double {
+        if let metrics = entry.metrics { return metrics.audioDurationSec }
+        guard let filename = entry.recordingFilename else { return 0 }
+        if let cached = recordingDurationCache[filename] { return cached }
+        let seconds = Self.wavDurationSeconds(filename: filename) ?? 0
+        recordingDurationCache[filename] = seconds
+        return seconds
+    }
+
+    private func addToTotalDuration(_ entry: DictationEntry) {
+        let seconds = durationSeconds(for: entry)
+        if totalDictatedSeconds != nil {
+            totalDictatedSeconds! += seconds
+        } else {
+            pendingDurationDelta += seconds
+        }
+    }
+
+    private func subtractFromTotalDuration(_ entry: DictationEntry) {
+        let seconds = durationSeconds(for: entry)
+        if totalDictatedSeconds != nil {
+            totalDictatedSeconds! -= seconds
+        } else {
+            pendingDurationDelta -= seconds
+        }
+    }
+
+    /// Reads just the RIFF/fmt/data header fields needed to compute duration, rather
+    /// than decoding the file. Bytes are pulled out manually instead of via
+    /// UnsafeRawBufferPointer.load(as:) so there's no reliance on the header's fields
+    /// happening to be aligned within Data's buffer.
+    nonisolated private static func wavDurationSeconds(filename: String) -> Double? {
+        guard let handle = FileHandle(forReadingAtPath: recordingURL(for: filename).path) else { return nil }
+        defer { handle.closeFile() }
+        let header = handle.readData(ofLength: 44)
+        guard header.count == 44,
+              header[0..<4].elementsEqual(Data("RIFF".utf8)),
+              header[8..<12].elementsEqual(Data("WAVE".utf8))
+        else { return nil }
+
+        func u16(_ offset: Int) -> UInt16 {
+            UInt16(header[header.startIndex + offset]) | (UInt16(header[header.startIndex + offset + 1]) << 8)
+        }
+        func u32(_ offset: Int) -> UInt32 {
+            (0..<4).reduce(UInt32(0)) { acc, i in
+                acc | (UInt32(header[header.startIndex + offset + i]) << (8 * i))
+            }
+        }
+
+        let channels = u16(22)
+        let sampleRate = u32(24)
+        let bitsPerSample = u16(34)
+        let dataSize = u32(40)
+        let bytesPerSecond = Double(sampleRate) * Double(channels) * Double(bitsPerSample / 8)
+        guard bytesPerSecond > 0 else { return nil }
+        return Double(dataSize) / bytesPerSecond
     }
 
     // MARK: - Persistence
