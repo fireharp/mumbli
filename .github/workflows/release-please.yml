@@ -41,6 +41,22 @@ jobs:
           fetch-depth: 0
           ref: ${{ needs.release-please.outputs.tag_name }}
 
+      - name: Verify proof-of-use grant matches this release
+        run: |
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          VERSION="${TAG#v}"
+          GRANT_FILE="MumbliApp/ProofOfUse/project-grant.json"
+          GRANT_RELEASE=$(jq -r .release "$GRANT_FILE")
+          if [[ "$GRANT_RELEASE" != "$VERSION" && "$GRANT_RELEASE" != "$VERSION-dev" ]]; then
+            echo "::error::Embedded proof-of-use grant is stale for this release."
+            echo "::error::  $GRANT_FILE has release '$GRANT_RELEASE', but this release is '$VERSION'."
+            echo "::error::  Re-issue the grant before releasing:"
+            echo "::error::    TEAM_ID=667MZXVYD7 scripts/proof/embed-grant.sh $VERSION"
+            echo "::error::  then commit the updated $GRANT_FILE."
+            exit 1
+          fi
+          echo "Grant release '$GRANT_RELEASE' matches release version '$VERSION'."
+
       - name: Install xcodegen
         run: brew install xcodegen
 
