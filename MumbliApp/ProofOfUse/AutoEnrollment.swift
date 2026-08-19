@@ -3,23 +3,37 @@ import Foundation
 /// Offline auto-enrollment from embedded project grant + local app attestation.
 enum AutoEnrollment {
     static func ensureCredential() throws {
+        // Load the embedded grant up front (not just on the re-enrollment path) so a
+        // fresh grant shipped in a new build is detected even when the cached
+        // credential's epoch still matches — otherwise a re-issued grant would sit
+        // unused until the next month, and Settings would keep reporting a grant id
+        // from a release that shipped weeks or months ago.
+        let grant = try ProjectGrantLoader.loadEmbeddedGrant()
+
         if FileManager.default.fileExists(atPath: ProofOfUseConfig.credentialFile.path) {
             if let existing = try? UsageReceiptSigner.loadCredential() {
-                // A credential is only usable within the epoch it was minted for; the
-                // verifier rejects receipts whose credential epoch differs from the
-                // statement epoch. Re-mint instead of signing receipts that cannot verify.
-                if existing.body.epoch == ProofOfUseConfig.epoch {
+                // A credential is only usable within the epoch it was minted for, and
+                // only for the grant it was minted from. Re-mint on either change
+                // instead of signing receipts against a stale epoch or grant.
+                if existing.body.epoch == ProofOfUseConfig.epoch,
+                   existing.body.grant_id == grant.grant_id {
                     return
                 }
-                NSLog(
-                    "[ProofOfUse] Credential epoch %@ is stale (now %@); re-enrolling",
-                    existing.body.epoch, ProofOfUseConfig.epoch
-                )
+                if existing.body.epoch != ProofOfUseConfig.epoch {
+                    NSLog(
+                        "[ProofOfUse] Credential epoch %@ is stale (now %@); re-enrolling",
+                        existing.body.epoch, ProofOfUseConfig.epoch
+                    )
+                } else {
+                    NSLog(
+                        "[ProofOfUse] Credential grant %@ differs from embedded grant %@; re-enrolling",
+                        existing.body.grant_id ?? "nil", grant.grant_id
+                    )
+                }
             }
         }
 
         let attestation = try AppAttestation.verifyRunningApp()
-        let grant = try ProjectGrantLoader.loadEmbeddedGrant()
         try ProjectGrantLoader.matchesRunningApp(grant: grant, attestation: attestation)
 
         let installPub = try InstallIdentity.shared.publicKeyBase64()
