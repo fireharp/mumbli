@@ -517,6 +517,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             historyManager.resolveEntry(id: entryID, text: finalText)
             log.log("[Retry] Successfully reprocessed \(recordingFilename): \(finalText.prefix(80))...")
 
+            if !UserDefaults.standard.bool(forKey: "debugSaveRecordings") {
+                RecordingManager.shared.deleteRecording(named: recordingFilename)
+            }
+
         } catch {
             log.log("[Retry] Failed to reprocess \(recordingFilename): \(error)")
         }
@@ -594,9 +598,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let timer = PipelineTimer()
         let audioDurationSec = Double(capturedAudio.count) / (16000.0 * 2.0)
 
-        // Reject pure silence before sending to STT (prevents hallucinations)
+        // Reject pure silence before sending to STT (prevents hallucinations).
+        // This is a terminal outcome — no history entry is created and there is
+        // nothing to retry — so the recording is cleaned up here rather than
+        // left orphaned on disk.
         if isSilence(capturedAudio) {
             log.log("[Dictation] Audio is silence — skipping transcription")
+            if !UserDefaults.standard.bool(forKey: "debugSaveRecordings") {
+                RecordingManager.shared.deleteRecording(named: recordingFilename)
+            }
             overlayController.dismiss(afterDelay: 0.3)
             return
         }
@@ -613,6 +623,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                     log.log("[Dictation] Empty transcription received")
+                    // Also terminal: no history entry, nothing to retry.
+                    if !UserDefaults.standard.bool(forKey: "debugSaveRecordings") {
+                        RecordingManager.shared.deleteRecording(named: recordingFilename)
+                    }
                     overlayController.dismiss(afterDelay: 0.3)
                     return
                 }
@@ -750,6 +764,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 })
 
                 log.log(metrics.jsonLine)
+
+                // The dictation succeeded and its text is safely in history, so the
+                // audio no longer needs to exist on disk unless the user opted in
+                // (Settings > Debug > Save recordings) — see RecordingManager's
+                // doc comment for why every dictation is saved unconditionally up
+                // to this point.
+                if !UserDefaults.standard.bool(forKey: "debugSaveRecordings") {
+                    RecordingManager.shared.deleteRecording(named: recordingFilename)
+                }
 
                 NotificationCenter.default.post(
                     name: .mumbliDictationCompleted,

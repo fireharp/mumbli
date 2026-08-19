@@ -20,7 +20,7 @@ enum DictationEngine: String, CaseIterable, Identifiable {
     var engineDescription: String {
         switch self {
         case .standard: return "ElevenLabs Scribe + GPT-5.4 Nano"
-        case .fast: return "Groq Whisper + Groq Llama 3.1 8B"
+        case .fast: return "Groq Whisper + Groq polish (gpt-oss-20b)"
         case .deepgram: return "Deepgram Nova-3 + GPT-5.4 Nano"
         }
     }
