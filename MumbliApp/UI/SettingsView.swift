@@ -120,7 +120,8 @@ struct SettingsView: View {
                                 isEditing: $elevenLabsIsEditing,
                                 savedConfirm: elevenLabsSavedConfirm,
                                 accessibilityID: "mumbli-elevenlabs-key",
-                                onCommit: { commitElevenLabsKey() }
+                                onCommit: { commitElevenLabsKey() },
+                                onRemove: { removeElevenLabsKey() }
                             )
                             .accessibilityLabel("ElevenLabs API Key, \(hasElevenLabsKey ? "configured" : "not set")")
 
@@ -180,7 +181,8 @@ struct SettingsView: View {
                                 isEditing: $openAIIsEditing,
                                 savedConfirm: openAISavedConfirm,
                                 accessibilityID: "mumbli-openai-key",
-                                onCommit: { commitOpenAIKey() }
+                                onCommit: { commitOpenAIKey() },
+                                onRemove: { removeOpenAIKey() }
                             )
                             .accessibilityLabel("OpenAI API Key, \(hasOpenAIKey ? "configured" : "not set")")
 
@@ -197,7 +199,8 @@ struct SettingsView: View {
                                 isEditing: $groqIsEditing,
                                 savedConfirm: groqSavedConfirm,
                                 accessibilityID: "mumbli-groq-key",
-                                onCommit: { commitGroqKey() }
+                                onCommit: { commitGroqKey() },
+                                onRemove: { removeGroqKey() }
                             )
                             .accessibilityLabel("Groq API Key, \(hasGroqKey ? "configured" : "not set")")
 
@@ -214,7 +217,8 @@ struct SettingsView: View {
                                 isEditing: $deepgramIsEditing,
                                 savedConfirm: deepgramSavedConfirm,
                                 accessibilityID: "mumbli-deepgram-key",
-                                onCommit: { commitDeepgramKey() }
+                                onCommit: { commitDeepgramKey() },
+                                onRemove: { removeDeepgramKey() }
                             )
                             .accessibilityLabel("Deepgram API Key, \(hasDeepgramKey ? "configured" : "not set")")
 
@@ -598,80 +602,91 @@ struct SettingsView: View {
         }
     }
 
+    // NOTE: commitXKey() is wired to SecureField's deprecated `onCommit`, which macOS
+    // fires not only on Return but whenever the field resigns first responder —
+    // including when the app quits with the field's edit session merely open, buffer
+    // still empty. It must never delete a saved key on empty input: that turned "quit
+    // the app" into "silently wipe all four API keys" once, for real. Deleting a key
+    // is only ever done through the explicit `removeXKey()` actions below.
+
     private func commitElevenLabsKey() {
         let trimmed = elevenLabsKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
-            if hasElevenLabsKey {
-                KeychainManager.shared.delete(key: KeychainManager.elevenLabsAPIKeyKey)
-                hasElevenLabsKey = false
-                elevenLabsMasked = ""
-            }
-        } else {
-            try? KeychainManager.shared.save(key: KeychainManager.elevenLabsAPIKeyKey, value: trimmed)
-            hasElevenLabsKey = true
-            elevenLabsMasked = Self.maskKey(trimmed)
-            elevenLabsKey = ""
-            elevenLabsIsEditing = false
-            elevenLabsSavedConfirm = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { elevenLabsSavedConfirm = false }
-        }
+        guard !trimmed.isEmpty else { return }
+        try? KeychainManager.shared.save(key: KeychainManager.elevenLabsAPIKeyKey, value: trimmed)
+        hasElevenLabsKey = true
+        elevenLabsMasked = Self.maskKey(trimmed)
+        elevenLabsKey = ""
+        elevenLabsIsEditing = false
+        elevenLabsSavedConfirm = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { elevenLabsSavedConfirm = false }
+    }
+
+    private func removeElevenLabsKey() {
+        KeychainManager.shared.delete(key: KeychainManager.elevenLabsAPIKeyKey)
+        hasElevenLabsKey = false
+        elevenLabsMasked = ""
+        elevenLabsKey = ""
+        elevenLabsIsEditing = false
     }
 
     private func commitOpenAIKey() {
         let trimmed = openAIKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
-            if hasOpenAIKey {
-                KeychainManager.shared.delete(key: KeychainManager.openAIAPIKeyKey)
-                hasOpenAIKey = false
-                openAIMasked = ""
-            }
-        } else {
-            try? KeychainManager.shared.save(key: KeychainManager.openAIAPIKeyKey, value: trimmed)
-            hasOpenAIKey = true
-            openAIMasked = Self.maskKey(trimmed)
-            openAIKey = ""
-            openAIIsEditing = false
-            openAISavedConfirm = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { openAISavedConfirm = false }
-        }
+        guard !trimmed.isEmpty else { return }
+        try? KeychainManager.shared.save(key: KeychainManager.openAIAPIKeyKey, value: trimmed)
+        hasOpenAIKey = true
+        openAIMasked = Self.maskKey(trimmed)
+        openAIKey = ""
+        openAIIsEditing = false
+        openAISavedConfirm = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { openAISavedConfirm = false }
+    }
+
+    private func removeOpenAIKey() {
+        KeychainManager.shared.delete(key: KeychainManager.openAIAPIKeyKey)
+        hasOpenAIKey = false
+        openAIMasked = ""
+        openAIKey = ""
+        openAIIsEditing = false
     }
 
     private func commitGroqKey() {
         let trimmed = groqKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
-            if hasGroqKey {
-                KeychainManager.shared.delete(key: KeychainManager.groqAPIKeyKey)
-                hasGroqKey = false
-                groqMasked = ""
-            }
-        } else {
-            try? KeychainManager.shared.save(key: KeychainManager.groqAPIKeyKey, value: trimmed)
-            hasGroqKey = true
-            groqMasked = Self.maskKey(trimmed)
-            groqKey = ""
-            groqIsEditing = false
-            groqSavedConfirm = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { groqSavedConfirm = false }
-        }
+        guard !trimmed.isEmpty else { return }
+        try? KeychainManager.shared.save(key: KeychainManager.groqAPIKeyKey, value: trimmed)
+        hasGroqKey = true
+        groqMasked = Self.maskKey(trimmed)
+        groqKey = ""
+        groqIsEditing = false
+        groqSavedConfirm = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { groqSavedConfirm = false }
+    }
+
+    private func removeGroqKey() {
+        KeychainManager.shared.delete(key: KeychainManager.groqAPIKeyKey)
+        hasGroqKey = false
+        groqMasked = ""
+        groqKey = ""
+        groqIsEditing = false
     }
 
     private func commitDeepgramKey() {
         let trimmed = deepgramKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
-            if hasDeepgramKey {
-                KeychainManager.shared.delete(key: KeychainManager.deepgramAPIKeyKey)
-                hasDeepgramKey = false
-                deepgramMasked = ""
-            }
-        } else {
-            try? KeychainManager.shared.save(key: KeychainManager.deepgramAPIKeyKey, value: trimmed)
-            hasDeepgramKey = true
-            deepgramMasked = Self.maskKey(trimmed)
-            deepgramKey = ""
-            deepgramIsEditing = false
-            deepgramSavedConfirm = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { deepgramSavedConfirm = false }
-        }
+        guard !trimmed.isEmpty else { return }
+        try? KeychainManager.shared.save(key: KeychainManager.deepgramAPIKeyKey, value: trimmed)
+        hasDeepgramKey = true
+        deepgramMasked = Self.maskKey(trimmed)
+        deepgramKey = ""
+        deepgramIsEditing = false
+        deepgramSavedConfirm = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { deepgramSavedConfirm = false }
+    }
+
+    private func removeDeepgramKey() {
+        KeychainManager.shared.delete(key: KeychainManager.deepgramAPIKeyKey)
+        hasDeepgramKey = false
+        deepgramMasked = ""
+        deepgramKey = ""
+        deepgramIsEditing = false
     }
 
     private var selectedEngineMissingRequirements: Bool {
@@ -783,6 +798,9 @@ struct APIKeyRow: View {
     let savedConfirm: Bool
     let accessibilityID: String
     let onCommit: () -> Void
+    /// Explicit removal — the only path that deletes a saved key. Never triggered by
+    /// an empty field losing focus (see the note above commitXKey in SettingsView).
+    let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -821,6 +839,15 @@ struct APIKeyRow: View {
                         .onTapGesture {
                             isEditing = true
                         }
+
+                    Button(action: onRemove) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Remove \(serviceName) key")
+                    .accessibilityLabel("Remove \(serviceName) key")
                 } else {
                     SecureField(placeholder, text: $keyText, onCommit: onCommit)
                         .font(.system(size: 12, design: .monospaced))
