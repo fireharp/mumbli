@@ -65,13 +65,13 @@ Mumbli guards against LLM hallucination with three layers:
 
 1. **XML boundaries** between system instructions and your speech
 2. **Injection-hardened prompts** that prevent the LLM from inventing content
-3. **RepetitionGuard** that catches runaway output and falls back to raw transcription
+3. **RepetitionGuard**, five deterministic checks that catch tag leakage, invented content, runaway length, truncation, and hallucinated URLs — falling back to your raw transcription when polish goes wrong
 
 ## Requirements
 
 - **macOS 13.0+** (Ventura or later)
 - Your own API keys for transcription (ElevenLabs, Groq, or Deepgram) and polishing (OpenAI or Groq)
-- Microphone, Accessibility, and Input Monitoring permissions
+- Microphone and Accessibility permissions
 
 <Card title="Download Mumbli" icon="download" href="https://github.com/fireharp/mumbli/releases/latest">
   Free and open source. Get the latest DMG from GitHub Releases.

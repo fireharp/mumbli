@@ -44,7 +44,7 @@ Mumbli offers three engine configurations:
 | Engine | Transcription | Polish | End-to-end |
 |--------|--------------|--------|------------|
 | **Standard** | ElevenLabs Scribe | GPT-5.4 Nano | ~3-5 seconds |
-| **Fast** | Groq Whisper | Groq Llama 3.1 8B | ~0.5-1 second |
+| **Fast** | Groq Whisper | Groq gpt-oss-20b | ~0.5-1 second |
 | **Deepgram** | Deepgram Nova-3 | GPT-5.4 Nano | ~2-4 seconds |
 
 The Fast engine delivers sub-second transcription — faster than you can move your hands back to the keyboard.
@@ -74,13 +74,12 @@ No integrations to configure. No plugins to install.
 
 ## Permissions
 
-Mumbli needs three macOS permissions to work:
+Mumbli needs two macOS permissions to work:
 
 | Permission | Why |
 |---|---|
 | **Microphone** | Audio capture for dictation |
-| **Accessibility** | Injecting text at the cursor |
-| **Input Monitoring** | Detecting Fn key presses |
+| **Accessibility** | Injecting text at the cursor and detecting Fn key presses |
 
 You'll be prompted on first launch. All processing uses your own API keys — nothing is stored on external servers.
 

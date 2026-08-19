@@ -8,6 +8,10 @@ user_invocable: true
 
 After rebuilding or reinstalling Mumbli, the macOS TCC database may have a stale code signature hash. This causes silent failures: the Accessibility toggle shows ON but the app can't read focused elements or post key events.
 
+## Release vs dev builds
+
+Installed releases (v0.5.0 and later) are signed with a stable Developer ID identity and notarized, so their Accessibility grant survives updates — `/Applications/Mumbli.app` should almost never need a TCC reset. This skill is a remedy for **local dev builds**, whose ad-hoc signature changes on every rebuild.
+
 ## Step 1: Confirm the problem
 
 Check the log for permission errors:

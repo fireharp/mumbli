@@ -4,6 +4,12 @@ A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn ke
 
 ## Install
 
+Download the latest DMG and drag Mumbli into Applications:
+
+**[Download Mumbli.dmg](https://github.com/fireharp/mumbli/releases/latest/download/Mumbli.dmg)** — signed with a Developer ID certificate and notarized by Apple.
+
+Or use the install script, which downloads the same DMG and copies the app across for you:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/fireharp/mumbli/main/install.sh | bash
 ```
@@ -33,16 +39,9 @@ Requires **macOS 13.0+** (Ventura or later). API keys can be configured in the a
 
 3. **Configure API keys**
 
-   Create a `.env` file in the project root (this file is gitignored):
+   Enter your API keys in the app's Settings after first launch (ElevenLabs, OpenAI, Groq, Deepgram — depending on which engines you use). The app never reads a `.env` file.
 
-   ```
-   ELEVENLABS_API_KEY=your_elevenlabs_key
-   OPENAI_API_KEY=your_openai_key
-   GROQ_API_KEY=your_groq_key          # optional, for Fast engine
-   DEEPGRAM_API_KEY=your_deepgram_key  # optional, for Deepgram engine/benchmarks
-   ```
-
-   Alternatively, you can enter API keys in the app's Settings view after first launch.
+   A `.env` file is only used by the Python benchmark harness in `benchmarks/` — see `benchmarks/.env.example` for the keys it expects.
 
 ## Build & Run
 
@@ -62,16 +61,17 @@ xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Debug b
 
 # Release build
 xcodebuild -project MumbliApp.xcodeproj -scheme MumbliApp -configuration Release build
-
-# Run the app
-open build/Debug/Mumbli.app
 ```
+
+Build products land in Xcode's DerivedData directory (there is no local `./build` folder), so the easiest way to run the app is **Product > Run** in Xcode.
 
 ### Run UI tests
 
 ```bash
-xcodebuild test -project MumbliApp.xcodeproj -scheme MumbliAppUITests -destination 'platform=macOS'
+xcodebuild test -project MumbliApp.xcodeproj -scheme MumbliApp -destination 'platform=macOS'
 ```
+
+(`MumbliApp` is the only shared scheme; it includes the `MumbliAppUITests` target.)
 
 ## Permissions
 
@@ -80,14 +80,13 @@ On first launch, macOS will prompt for:
 | Permission | Why |
 |---|---|
 | **Microphone** | Audio capture for dictation |
-| **Accessibility** | Injecting transcribed text at the cursor |
-| **Input Monitoring** | Detecting Fn key presses |
+| **Accessibility** | Injecting transcribed text at the cursor, and detecting Fn key presses |
 
-Grant all three for full functionality.
+Grant both for full functionality. Fn detection uses NSEvent monitors plus a CGEvent tap, which run under the Accessibility permission — these two are the only permissions the app requests.
 
 ## How It Works
 
-1. Press and hold **Fn** (or double-tap, configurable in Settings) to start recording
+1. Press and hold **Fn** (or double-tap for hands-free mode) to start recording — Settings > Shortcuts shows both gestures
 2. Speak — audio is captured via `AVAudioEngine` (PCM 16-bit, 16 kHz mono)
 3. Release Fn — audio is sent to STT API (ElevenLabs, Groq Whisper, or Deepgram)
 4. Transcribed text is optionally polished by LLM (OpenAI or Groq), then injected at the cursor
@@ -111,7 +110,7 @@ Switch between engines in **Settings > Debug > Engine**:
 | Engine | STT | Polish | Typical Latency |
 |--------|-----|--------|-----------------|
 | **Standard** | ElevenLabs Scribe v1 | OpenAI GPT-5.4 Nano | ~3-5s |
-| **Fast** | Groq Whisper large-v3-turbo | Groq Llama 3.1 8B | ~0.5-1s |
+| **Fast** | Groq Whisper large-v3-turbo | Groq gpt-oss-20b | ~0.5-1s |
 | **Deepgram** | Deepgram Nova-3 | OpenAI GPT-5.4 Nano | ~2-4s |
 
 ## Project Structure
@@ -120,13 +119,17 @@ Switch between engines in **Settings > Debug > Engine**:
 MumbliApp/
 ├── MumbliApp.swift              # App entry point
 ├── AppDelegate.swift            # Lifecycle & component wiring
+├── Assets.xcassets              # App icon (cream waveform)
 ├── Core/
-│   ├── HotkeyManager.swift      # Fn key detection (Carbon)
+│   ├── HotkeyManager.swift      # Fn key detection (NSEvent monitors + CGEvent tap)
 │   ├── AudioCaptureManager.swift # Microphone capture
 │   ├── TextInjector.swift        # Cursor text injection (Accessibility)
 │   ├── FileLogger.swift          # Debug logging
 │   ├── PipelineTimer.swift       # Pipeline latency measurement
+│   ├── AppVersion.swift          # Real version & commit for Settings > About
 │   └── RecordingManager.swift    # Save dictation WAVs for benchmarking
+├── Protocols/
+│   └── DictationServiceProtocol.swift # STT / polishing service protocols
 ├── Services/
 │   ├── ElevenLabsSTTService.swift    # ElevenLabs STT (standard engine)
 │   ├── GroqWhisperSTTService.swift   # Groq Whisper STT (fast engine)
@@ -136,6 +139,7 @@ MumbliApp/
 │   ├── VocabularyStore.swift         # Custom vocabulary persistence & formatting
 │   ├── RepetitionGuard.swift        # Post-polish safety guard
 │   └── KeychainManager.swift         # Credential storage
+├── ProofOfUse/                  # Opt-in, local-only signed usage receipts
 ├── Models/
 │   └── HistoryManager.swift     # Dictation history persistence
 └── UI/
@@ -148,14 +152,18 @@ MumbliApp/
 
 ## Safety Guards
 
-Polishing LLMs (especially smaller models like Groq Llama 3.1 8B) can hallucinate, repeat phrases in a loop, or leak system prompt tags when the dictated speech sounds conversational. Mumbli has three layers of defense:
+Polishing LLMs (especially small, fast models) can hallucinate, repeat phrases in a loop, or leak system prompt tags when the dictated speech sounds conversational. Mumbli has three layers of defense:
 
 1. **XML boundary** — Raw transcription is wrapped in `<dictation>` tags before polishing, creating a clear separation between system instructions and user content.
 2. **Injection-hardened prompts** — The polishing prompt explicitly forbids the LLM from adding, inventing, or continuing content beyond what was spoken.
-3. **RepetitionGuard** — A deterministic post-polish check that catches:
-   - **Sentence explosion** — output has more sentences than input
-   - **Length explosion** — output is >2x the input character count
+3. **RepetitionGuard** — A deterministic post-polish check with five guards:
    - **Tag leakage** — system prompt tags (`<dictation>`, `<terms>`) appearing in output
+   - **Invention** — more than 40% of output words never appeared in the raw transcription
+   - **Length explosion** — output is >2x the input character count
+   - **Truncation** — output retains fewer than 60% of the input's words
+   - **Hallucinated URLs** — links the speaker never dictated are stripped
+
+   An earlier sentence-count rule was deliberately removed: recalibrated against 4,657 real dictation pairs, it flagged 7.1% of dictations while catching none of the genuine failures the other guards caught.
 
    If the guard trips on the Groq (Fast) engine, it automatically retries with GPT-5.4 Nano. If that also fails, it falls back to the raw transcription.
 
@@ -186,14 +194,16 @@ Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated relea
 1. Push to `main` (directly or via PR merge)
 2. [release-please](https://github.com/googleapis/release-please) analyzes commits and opens a **Release PR** with a generated changelog
 3. Merge the Release PR → version is bumped, git tag created, GitHub Release published
-4. A DMG is automatically built and attached to the release
+4. CI builds the app, signs it with a Developer ID certificate, notarizes and staples the DMG, computes `checksums.txt` after stapling, attests build provenance, and uploads two byte-identical DMGs: `Mumbli-X.Y.Z.dmg` and the stable-named `Mumbli.dmg`
 
 ### Manual install
 
-1. Go to [Releases](https://github.com/fireharp/mumbli/releases)
-2. Download the latest `Mumbli-x.y.z.dmg`
-3. Mount it, drag **Mumbli** to **Applications**
+1. Go to [Releases](https://github.com/fireharp/mumbli/releases) — or grab the stable URL directly: [`Mumbli.dmg`](https://github.com/fireharp/mumbli/releases/latest/download/Mumbli.dmg)
+2. Download `Mumbli-x.y.z.dmg` (or the byte-identical `Mumbli.dmg`)
+3. Mount it, drag **Mumbli** onto the **Applications** alias in the DMG window
 4. Launch from Applications
+
+To verify a download, `checksums.txt` on the release lists the SHA-256 of both DMGs, and `gh attestation verify Mumbli.dmg --repo fireharp/mumbli` checks the build provenance.
 
 Releases are signed with a Developer ID certificate and notarized by Apple, so
 macOS opens them without a Gatekeeper prompt. The `xattr -cr` workaround older
@@ -214,7 +224,7 @@ Use [conventional commit](https://www.conventionalcommits.org/) prefixes in comm
 
 - The app runs as a **menu bar only** app (no Dock icon)
 - No code signing is required for local development builds
-- The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen)
+- The project can be regenerated from `project.yml` using [XcodeGen](https://github.com/yonaskolb/XcodeGen). Caveat: XcodeGen 2.45 ignores `options.objectVersion` and always writes `objectVersion = 77`, which needs Xcode 16+ to open — the checked-in project is `objectVersion = 56`. The release scripts regenerate only when you pass `REGENERATE=1`
 
 ## License
 

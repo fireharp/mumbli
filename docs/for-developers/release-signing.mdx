@@ -23,7 +23,7 @@ The workflow picks its mode from whether the `MACOS_CERTIFICATE` secret is set.
 
 The fallback exists so a release never fails just because signing secrets are missing. It still produces a real code signature, which is what the usage-proof module needs in order to enroll — before this, releases were built with `CODE_SIGNING_ALLOWED=NO` and the proof module could never enroll on a released build at all.
 
-Ad-hoc releases still show the "Mumbli can't be opened because Apple cannot check it for malicious software" dialog, and users must clear the quarantine attribute manually (`install.sh` does this).
+Ad-hoc releases still show the "Mumbli can't be opened because Apple cannot check it for malicious software" dialog, and users must clear the quarantine attribute manually (`install.sh` does this, but only when `spctl` actually rejects the build — on a notarized release it leaves quarantine alone).
 
 ## Setting it up
 
@@ -87,7 +87,9 @@ ASC_ISSUER_ID=<uuid> \
   scripts/release/build-signed-dmg.sh
 ```
 
-This runs the same sequence as CI — archive, sign with hardened runtime, DMG, notarize, staple, assess — on your own machine, and ends with the `spctl` verdict. Notarization is the only step that needs Apple to agree, and a release is a bad place to discover it doesn't. Omit the credentials and it still builds and signs, then reports `Unnotarized Developer ID`, which is the expected rejection for a signed-but-not-notarized DMG.
+This runs the same sequence as CI — archive, sign with hardened runtime, DMG, notarize, staple, assess — on your own machine, and ends with the `spctl` verdict. Instead of `ASC_*` credentials you can pass `NOTARY_PROFILE=<name>` to use a stored `notarytool` keychain profile.
+
+The DMG itself comes from `scripts/release/make-dmg.sh`, which installs [dmgbuild](https://github.com/dmgbuild/dmgbuild) into a throwaway venv and applies `scripts/release/dmg-settings.py`: a 560×380 icon-view window with the app on the left and an Applications alias (created by the script) on the right — the same designed drag-to-install window CI ships. Notarization is the only step that needs Apple to agree, and a release is a bad place to discover it doesn't. Omit the credentials and it still builds and signs, then reports `Unnotarized Developer ID`, which is the expected rejection for a signed-but-not-notarized DMG.
 
 Two things this deliberately does not reproduce: release-please's tagging, and the provenance attestation (only GitHub can sign that).
 
@@ -101,11 +103,11 @@ The same script adds the commit, since a dev build is normally several commits p
 
 | Info.plist key | Example | Meaning |
 |---|---|---|
-| `CFBundleShortVersionString` | `0.5.0` | Release version, always plain semver |
+| `CFBundleShortVersionString` | `0.6.0` | Release version, always plain semver |
 | `CFBundleVersion` | `83` | `git rev-list --count HEAD` |
-| `MumbliVersionDisplay` | `0.5.0+7.g1a2b3c4.dirty` | One-line build identity |
+| `MumbliVersionDisplay` | `0.6.0+7.g1a2b3c4.dirty` | One-line build identity |
 | `MumbliGitCommit` | `1a2b3c4` | Commit built from |
-| `MumbliGitDescribe` | `v0.5.0-7-g1a2b3c4` | `git describe --tags --always --dirty` |
+| `MumbliGitDescribe` | `v0.6.0-7-g1a2b3c4` | `git describe --tags --always --dirty` |
 | `MumbliCommitsSinceTag` | `7` | Distance from the `v$MARKETING_VERSION` tag |
 | `MumbliSourceState` | `clean` / `dirty` | Working tree at build time |
 
@@ -121,12 +123,12 @@ Because the phase is scheduled after Xcode writes `Info.plist`, it sometimes lan
 
 ## Build provenance
 
-After the DMG is stapled, the workflow computes `checksums.txt` and calls `actions/attest-build-provenance`, which signs a provenance statement via Sigstore binding the DMG's SHA-256 to the source commit, workflow, and runner.
+After the DMG is stapled, the workflow uploads **two byte-identical assets**: the versioned `Mumbli-X.Y.Z.dmg` and a stable-named `Mumbli.dmg`, which gives the site a permanent download URL — `https://github.com/fireharp/mumbli/releases/latest/download/Mumbli.dmg`. It then computes `checksums.txt` (listing both) and calls `actions/attest-build-provenance`, which signs a provenance statement via Sigstore binding each DMG's SHA-256 to the source commit, workflow, and runner. Both assets are attestation subjects.
 
-Anyone can verify a downloaded DMG:
+Anyone can verify a downloaded DMG (either name works):
 
 ```bash
-gh attestation verify Mumbli-0.5.0.dmg --repo fireharp/mumbli
+gh attestation verify Mumbli.dmg --repo fireharp/mumbli
 ```
 
 This proves the DMG was produced by this workflow from a specific commit. It does not by itself say anything about usage receipts — that link is the release binding, described in [the usage proof docs](https://github.com/fireharp/mumbli/blob/main/docs/proof/README.md).
@@ -137,8 +139,6 @@ Digest ordering matters: `stapler staple` rewrites the DMG, so checksums and att
 
 This is **Build L2**: provenance is generated and signed by a hosted build platform, and it is unforgeable by the workflow's own steps. It is not L3, because the build steps and the attestation run in the same user-defined workflow rather than an isolated, trusted build definition. Reaching L3 would mean adopting [slsa-github-generator](https://github.com/slsa-framework/slsa-github-generator)'s generic generator, which requires passing subject digests to a separate reusable workflow and verifying with `slsa-verifier` instead of `gh attestation verify`. That is a deliberate future step, not a current claim.
 
-## Switching an existing install to Developer ID
+## The switch to Developer ID (v0.5.0)
 
-The first Developer ID release changes the app's code signature identity. macOS TCC keys Accessibility permission to the signing identity, so **existing users must re-grant Accessibility permission once** on that update. After that, the permission becomes stable across all future updates — which is the opposite of the ad-hoc situation, where it breaks on every single build.
-
-Mention this in the release notes for the first signed release.
+v0.5.0 was the first Developer ID release, which changed the app's code signature identity. macOS TCC keys Accessibility permission to the signing identity, so users updating across that boundary had to **re-grant Accessibility permission once**. From v0.5.0 on, the identity is stable and the permission survives every update — the opposite of the ad-hoc situation, where it broke on every single build.

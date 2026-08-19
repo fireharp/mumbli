@@ -68,6 +68,8 @@ For local builds without a valid embedded grant:
 
 Requires the `pou` CLI from the [proof-of-use](https://github.com/proof-of-use/proof-of-use) repo.
 
+The `docs/proof/<epoch>/…` paths below are created by the first epoch publish (`scripts/proof/publish-proof.sh`); until an epoch has been published, no such directory exists in the repo.
+
 ### 1. The published epoch proof
 
 ```bash
@@ -82,7 +84,7 @@ pou verify-audit \
   docs/proof/<epoch>/public-proof.json \
   docs/proof/<epoch>/audit-pack.json \
   --trusted-keys docs/proof/trusted-keys.json \
-  --release-binding docs/proof/releases/v0.5.0/release-binding.json \
+  --release-binding docs/proof/releases/v0.6.0/release-binding.json \
   --grant-policy optimistic
 ```
 
@@ -93,16 +95,18 @@ Add `--verify-provenance` to have the verifier run `gh attestation verify` itsel
 ### 3. The released DMG against its build provenance
 
 ```bash
-gh attestation verify Mumbli-0.5.0.dmg --repo fireharp/mumbli
+gh attestation verify Mumbli-0.6.0.dmg --repo fireharp/mumbli
 ```
+
+Each release ships two byte-identical DMGs — the versioned `Mumbli-0.6.0.dmg` and a stable-named `Mumbli.dmg` — and both are attestation subjects, so either name verifies. `checksums.txt` on the release lists both digests.
 
 ### 4. Cross-check the binding by hand
 
 The binding claims a cdhash for the app inside a DMG with a given SHA-256. Both are re-derivable:
 
 ```bash
-shasum -a 256 Mumbli-0.5.0.dmg          # must equal artifacts.dmg_sha256
-hdiutil attach -nobrowse -readonly Mumbli-0.5.0.dmg
+shasum -a 256 Mumbli-0.6.0.dmg          # must equal artifacts.dmg_sha256
+hdiutil attach -nobrowse -readonly Mumbli-0.6.0.dmg
 codesign -dv /Volumes/Mumbli/Mumbli.app  # CDHash must equal app.cdhash
 hdiutil detach /Volumes/Mumbli
 ```
@@ -111,12 +115,12 @@ hdiutil detach /Volumes/Mumbli
 
 ```bash
 # 1. Before building a release: embed a fresh grant (no cdhash — deliberately)
-POU_REPO=$HOME/Prog/Stuff/proof-of-use ./scripts/proof/embed-grant.sh 0.5.0
+POU_REPO=$HOME/Prog/Stuff/proof-of-use ./scripts/proof/embed-grant.sh 0.6.0
 
 # 2. Merge the release PR. CI signs, notarizes, attests, and uploads the DMG.
 
 # 3. After the release exists: measure the shipped artifact and sign the binding
-./scripts/proof/issue-release-binding.sh v0.5.0
+./scripts/proof/issue-release-binding.sh v0.6.0
 
 # 4. At the end of an epoch: aggregate, verify, publish
 ./scripts/proof/publish-proof.sh
@@ -133,7 +137,7 @@ Until a Developer ID certificate is configured, CI signs ad-hoc: the app has a v
 Once CI signs with a real Developer ID, that check must become real. Reissue both with the actual team ID:
 
 ```bash
-TEAM_ID=XXXXXXXXXX POU_REPO=$HOME/Prog/Stuff/proof-of-use ./scripts/proof/embed-grant.sh 0.5.0
+TEAM_ID=XXXXXXXXXX POU_REPO=$HOME/Prog/Stuff/proof-of-use ./scripts/proof/embed-grant.sh 0.6.0
 ```
 
 and set the same value in `ProofOfUseLocal/allowlist/mumbli.json`. Receipts from earlier ad-hoc builds were signed with an empty team ID, so they belong to a different `app_identity` — expected, and handled naturally because bindings are per release.

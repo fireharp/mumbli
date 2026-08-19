@@ -12,6 +12,7 @@ You are guiding the user through Mumbli's automated release pipeline. Follow eac
 - `gh` CLI authenticated
 - On a feature branch (not `main` directly — main is protected)
 - Conventional commit messages (`feat:`, `fix:`, `docs:`, `chore:`, etc.)
+- For a signed, notarized release: the six signing secrets set via `scripts/release/setup-signing-secrets.sh`. Without them the release still succeeds, but ad-hoc signed — see [release-signing.mdx](../../../docs/for-developers/release-signing.mdx)
 
 ## Step 1: Check current state
 
@@ -92,7 +93,7 @@ gh pr merge <release-pr-number> --squash
 This triggers:
 1. release-please creates git tag `vX.Y.Z`
 2. release-please creates GitHub Release with changelog
-3. `build-dmg` job runs on macOS CI → builds archive → creates DMG → uploads to release
+3. `build-dmg` job runs on macOS CI → builds archive → signs with Developer ID → makes the DMG → notarizes + staples → computes `checksums.txt` (after stapling) → attests build provenance → uploads to release
 
 ## Step 7: Verify release
 
@@ -106,8 +107,30 @@ Confirm:
 - [ ] Tag exists (e.g., `v0.2.0`)
 - [ ] GitHub Release created with changelog
 - [ ] `Mumbli-X.Y.Z.dmg` attached as asset
+- [ ] Stable-named `Mumbli.dmg` attached — the site's download button points at `releases/latest/download/Mumbli.dmg`, so a release missing it silently breaks mumbli.app
+- [ ] `checksums.txt` attached (lists both DMG digests)
 
 Report the release URL: `https://github.com/fireharp/mumbli/releases/tag/vX.Y.Z`
+
+## Step 8: Verify the DMG is signed and notarized
+
+The workflow falls back to ad-hoc signing when `MACOS_CERTIFICATE` is unset, and that fallback is quiet by design — a release never fails just for missing secrets. So check the published artifact rather than assuming:
+
+```bash
+gh release download vX.Y.Z --repo fireharp/mumbli --pattern '*.dmg' --pattern 'checksums.txt' --dir /tmp/rel
+spctl -a -t open --context context:primary-signature -vv /tmp/rel/Mumbli-X.Y.Z.dmg
+gh attestation verify /tmp/rel/Mumbli-X.Y.Z.dmg --repo fireharp/mumbli
+(cd /tmp/rel && shasum -a 256 -c checksums.txt)   # both DMG digests must match
+```
+
+`Mumbli-X.Y.Z.dmg` and `Mumbli.dmg` must be byte-identical — `checksums.txt` lists both, so the `shasum -c` line verifies that too.
+
+Read the `spctl` result carefully:
+- `accepted` + `source=Notarized Developer ID` → fully signed and notarized
+- `rejected` + `source=Unnotarized Developer ID` → signed, notarization failed or was skipped
+- `rejected` + no Developer ID origin → ad-hoc fallback; the signing secrets are missing or wrong
+
+For the last two, check the `build-dmg` job log for the `Determine signing mode` warning, and see [release-signing.mdx](../../../docs/for-developers/release-signing.mdx). (Every release since v0.5.0 has been Developer ID signed and notarized — anything else is a regression.)
 
 ## Versioning reference
 
