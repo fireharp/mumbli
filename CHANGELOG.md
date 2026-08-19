@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/fireharp/mumbli/compare/v0.6.1...v0.7.0) (2026-08-19)
+
+
+### Features
+
+* compress dictation recordings to Opus, shrinking the archive 15.6x ([#35](https://github.com/fireharp/mumbli/issues/35)) ([ec65137](https://github.com/fireharp/mumbli/commit/ec6513741f94db6308af0e9cb48c9418a7e16703))
+* replace the signed-receipts badge with dictation count + total duration ([#33](https://github.com/fireharp/mumbli/issues/33)) ([3d6502f](https://github.com/fireharp/mumbli/commit/3d6502ffa890c7e5b3c7d464bc738609022585a0))
+
 ## [0.6.1](https://github.com/fireharp/mumbli/compare/v0.6.0...v0.6.1) (2026-08-19)
 
 
