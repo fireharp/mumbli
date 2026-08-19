@@ -461,14 +461,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         log.log("[Retry] Reprocessing \(recordingFilename)")
 
         do {
-            // Read the WAV file and strip the 44-byte header to get raw PCM
-            let wavData = try Data(contentsOf: fileURL)
-            let pcmData = wavData.count > 44 ? wavData.dropFirst(44) : wavData
+            // Decode whatever container the recording was saved in (WAV, or
+            // compressed Opus/AAC) back to raw PCM. Providers only ever see
+            // PCM re-wrapped in a fresh WAV header by `transcribe`, so this
+            // decode step is the only place the storage format matters.
+            guard let pcmData = RecordingManager.shared.loadPCM(filename: recordingFilename) else {
+                log.log("[Retry] Could not decode recording: \(recordingFilename)")
+                return
+            }
 
             // Transcribe
             let engineRaw = UserDefaults.standard.string(forKey: "dictationEngine") ?? DictationEngine.standard.rawValue
             let engine = DictationEngine(rawValue: engineRaw) ?? .standard
-            let transcription = try await transcribe(audioData: Data(pcmData), engine: engine)
+            let transcription = try await transcribe(audioData: pcmData, engine: engine)
 
             guard !transcription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 log.log("[Retry] Empty transcription for \(recordingFilename)")

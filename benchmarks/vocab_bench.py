@@ -34,6 +34,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
+import audio_io
+
 console = Console()
 
 load_dotenv()
@@ -220,8 +222,8 @@ def find_vocab_recordings(recordings_dir: Path, vocab: list[str]) -> list[tuple[
     """Find recordings whose ground truth contains any vocab word (fuzzy)."""
     matches = []
     for txt_file in sorted(recordings_dir.glob("*.txt")):
-        wav_file = txt_file.with_suffix(".wav")
-        if not wav_file.exists():
+        wav_file = audio_io.find_sibling_recording(txt_file)
+        if wav_file is None:
             continue
         ground_truth = txt_file.read_text().strip()
         if not ground_truth:
@@ -253,7 +255,7 @@ async def benchmark(recordings_dir: Path, vocab: list[str], max_files: int = 20,
     matches = find_vocab_recordings(recordings_dir, vocab)
     if not matches:
         console.print("[yellow]No recordings contain vocab words. Using most recent files.[/yellow]")
-        all_wavs = sorted(recordings_dir.glob("*.wav"), key=lambda p: p.stat().st_mtime, reverse=True)
+        all_wavs = sorted(audio_io.list_recordings(recordings_dir), key=lambda p: p.stat().st_mtime, reverse=True)
         for wav in all_wavs[:max_files]:
             txt = wav.with_suffix(".txt")
             gt = txt.read_text().strip() if txt.exists() else ""
@@ -267,7 +269,7 @@ async def benchmark(recordings_dir: Path, vocab: list[str], max_files: int = 20,
 
     async with httpx.AsyncClient() as client:
         for wav_path, ground_truth in matches:
-            wav_data = wav_path.read_bytes()
+            wav_data = audio_io.load_as_wav_bytes(wav_path)
             file_name = wav_path.name
 
             # --- STT step ---
@@ -336,12 +338,15 @@ async def benchmark(recordings_dir: Path, vocab: list[str], max_files: int = 20,
         console.print(f"\n[bold]False-Positive Checks[/bold] (words that must NOT be replaced)\n")
         async with httpx.AsyncClient() as client:
             for fp_file, preserve_word, resembles in FALSE_POSITIVE_CASES:
-                fp_path = recordings_dir / fp_file
-                if not fp_path.exists():
+                # fp_file names the fixture by its historical .wav filename, but the
+                # background WAV->Opus migration may have since converted it to
+                # .caf (or .m4a) — look for whichever container it lives in now.
+                fp_path = audio_io.find_sibling_recording(recordings_dir / fp_file)
+                if fp_path is None:
                     console.print(f"  [yellow]skip {fp_file} (not found)[/yellow]")
                     continue
 
-                wav_data = fp_path.read_bytes()
+                wav_data = audio_io.load_as_wav_bytes(fp_path)
                 # Full pipeline: vocab STT + vocab polish
                 stt_text, _ = await transcribe_groq(client, wav_data, prompt=vocab_prompt)
                 polished, _ = await polish_openai(client, stt_text, vocab=vocab)

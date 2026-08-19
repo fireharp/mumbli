@@ -26,6 +26,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
+import audio_io
+
 console = Console()
 load_dotenv()
 
@@ -150,8 +152,8 @@ async def run_quality_benchmark(wav_files: list[Path]) -> list[dict]:
 
     async with httpx.AsyncClient() as client:
         for wav_path in wav_files:
-            wav_data = wav_path.read_bytes()
-            duration = (len(wav_data) - 44) / (16000 * 2)
+            wav_data = audio_io.load_as_wav_bytes(wav_path)
+            duration = audio_io.wav_audio_duration_from_bytes(wav_data)
             console.print(f"\n[bold]Quality: {wav_path.name}[/bold] ({duration:.1f}s)")
 
             # Check for existing baseline transcription
@@ -254,10 +256,10 @@ def main():
     if args.file:
         wav_files = [args.file]
     elif args.dir:
-        wav_files = sorted(args.dir.glob("*.wav"))
+        wav_files = audio_io.list_recordings(args.dir)
     else:
         if DEFAULT_RECORDINGS_DIR.exists():
-            wav_files = sorted(DEFAULT_RECORDINGS_DIR.glob("*.wav"))
+            wav_files = audio_io.list_recordings(DEFAULT_RECORDINGS_DIR)
 
     # Filter to files that have a baseline .txt (ground truth)
     wav_with_baseline = [f for f in wav_files if f.with_suffix(".txt").exists()]

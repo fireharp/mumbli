@@ -441,7 +441,7 @@ struct SettingsView: View {
                                         UserDefaults.standard.set(newValue, forKey: "debugSaveRecordings")
                                     }
 
-                                Text("Saves each dictation as a WAV file for benchmarking")
+                                Text("Saves each dictation as a compressed audio file (Opus) for benchmarking")
                                     .font(.system(size: 11))
                                     .foregroundColor(.secondary)
                             }

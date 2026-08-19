@@ -127,7 +127,8 @@ MumbliApp/
 │   ├── FileLogger.swift          # Debug logging
 │   ├── PipelineTimer.swift       # Pipeline latency measurement
 │   ├── AppVersion.swift          # Real version & commit for Settings > About
-│   └── RecordingManager.swift    # Save dictation WAVs for benchmarking
+│   ├── RecordingManager.swift    # Save dictation recordings (Opus, falling back to AAC/WAV)
+│   └── RecordingMigrator.swift   # One-time backlog migration of old WAVs to Opus
 ├── Protocols/
 │   └── DictationServiceProtocol.swift # STT / polishing service protocols
 ├── Services/
