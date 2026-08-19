@@ -50,7 +50,8 @@ MumbliApp/
 │   ├── TextInjector.swift            # Cursor injection (Accessibility API)
 │   ├── PipelineTimer.swift           # Latency measurement
 │   ├── AppVersion.swift              # Real version & commit for Settings > About
-│   └── RecordingManager.swift        # Save WAVs for benchmarking
+│   ├── RecordingManager.swift        # Save recordings (Opus, falling back to AAC/WAV)
+│   └── RecordingMigrator.swift       # One-time backlog migration to Opus
 ├── Protocols/
 │   └── DictationServiceProtocol.swift # STT / polishing protocols
 ├── Services/
@@ -101,7 +102,19 @@ Polishing LLMs can hallucinate. Mumbli has three layers of defense:
 
 1. **XML boundary** — Raw transcription wrapped in `<dictation>` tags
 2. **Injection-hardened prompts** — LLM forbidden from adding content beyond what was spoken
-3. **RepetitionGuard** — Five deterministic post-polish checks: tag leakage, invention (word novelty >0.4), length explosion (>2x), truncation (<60% word retention), and hallucinated-URL stripping. Auto-retries with a better model, then falls back to raw transcription. (An earlier sentence-count rule was removed on purpose — calibrated against real dictation pairs it flagged 7% of dictations and caught zero real failures.)
+3. **RepetitionGuard** — Five deterministic post-polish checks: tag leakage, invention (word novelty >0.4), length explosion (>2x), truncation (below 60% word retention), and hallucinated-URL stripping. Auto-retries with a better model, then falls back to raw transcription. (An earlier sentence-count rule was removed on purpose — calibrated against real dictation pairs it flagged 7% of dictations and caught zero real failures.)
+
+## Recording storage
+
+When Settings > Debug > Save recordings is on, dictations are kept as Opus in a `.caf` container (~16 kbps requested, measured against the real 5,130-file corpus at 5.9 GB → 377 MB, 15.6x smaller than the 16 kHz mono PCM16 WAV this used to write) in `~/Library/Application Support/Mumbli/recordings/`. `RecordingManager` falls back to AAC, then to plain WAV, if Opus encoding isn't available — a recording is never lost to an encoder problem. `RecordingMigrator` runs once per launch to convert any leftover WAV backlog to the current format, deleting each original only after its replacement is verified.
+
+`AVAudioFile` also writes a fixed ~236KB `'free'` padding chunk into every CAF file it produces, regardless of content — `writeCompressed` strips it after writing (CAF chunks are read sequentially with no absolute-offset cross-references, so dropping one is safe). Without this the padding alone would make short recordings *larger* than their original WAV.
+
+The container is Apple-specific — most non-Apple tools (ffmpeg, libsndfile) can't read `.caf`. To get plain WAV files out for use elsewhere:
+
+```bash
+for f in *.caf; do afconvert -f WAVE -d LEI16@16000 -c 1 "$f" "${f%.caf}.wav"; done
+```
 
 ## Benchmarking
 

@@ -29,6 +29,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
+import audio_io
+
 console = Console()
 
 # ---------------------------------------------------------------------------
@@ -49,7 +51,7 @@ DEEPGRAM_KEY = os.getenv("DEEPGRAM_API_KEY", "")
 
 def wav_audio_duration(wav_data: bytes) -> float:
     """Calculate audio duration from WAV data (assumes 16-bit 16kHz mono)."""
-    return (len(wav_data) - 44) / (16000 * 2)
+    return audio_io.wav_audio_duration_from_bytes(wav_data)
 
 
 def split_wav_chunks(wav_data: bytes, chunk_sec: float = 10.0, overlap_sec: float = 2.0) -> list[bytes]:
@@ -410,8 +412,8 @@ async def benchmark_stt(wav_files: list[Path], iterations: int) -> list[dict]:
     results = []
     async with httpx.AsyncClient() as client:
         for wav_path in wav_files:
-            wav_data = wav_path.read_bytes()
-            audio_duration = wav_audio_duration(wav_data)
+            wav_data = audio_io.load_as_wav_bytes(wav_path)
+            audio_duration = audio_io.wav_audio_duration_from_bytes(wav_data)
             console.print(f"\n[bold]STT Benchmark: {wav_path.name}[/bold] ({audio_duration:.1f}s audio)")
 
             for name, func in STT_PROVIDERS.items():
@@ -650,10 +652,10 @@ def main():
     if args.file:
         wav_files = [args.file]
     elif args.dir:
-        wav_files = sorted(args.dir.glob("*.wav"))
+        wav_files = audio_io.list_recordings(args.dir)
     elif not args.polish_only:
         if DEFAULT_RECORDINGS_DIR.exists():
-            wav_files = sorted(DEFAULT_RECORDINGS_DIR.glob("*.wav"))
+            wav_files = audio_io.list_recordings(DEFAULT_RECORDINGS_DIR)
 
     if not wav_files and not args.polish_only:
         console.print("[red]No WAV files found. Use --file, --dir, or enable 'Save recordings' in Mumbli Settings.[/red]")

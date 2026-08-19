@@ -13,7 +13,7 @@ Mumbli is designed around a simple principle: **your voice data stays under your
 
 - **No accounts** — There is no Mumbli account, login, or registration
 - **No telemetry** — The app sends no usage data, analytics, or crash reports to us
-- **No audio storage by default** — Audio is sent to your chosen transcription provider, and the local recording is deleted after a successful dictation unless you turn on "Save recordings" in Settings > Debug. A failed dictation keeps its recording temporarily so you can retry it from history
+- **No audio storage by default** — Audio is sent to your chosen transcription provider, and the local recording is deleted after a successful dictation unless you turn on "Save recordings" in Settings > Debug (kept recordings are stored compressed, as Opus, not the raw audio). A failed dictation keeps its recording temporarily so you can retry it from history
 - **No cloud storage** — Dictation history is stored locally on your Mac, not on any server
 - **No third-party tracking** — No analytics SDKs, no advertising identifiers
 
@@ -55,7 +55,7 @@ Mumbli requests two system permissions:
 
 | Permission | Purpose | Data access |
 |---|---|---|
-| **Microphone** | Record audio for dictation | Audio stream; the local recording is deleted after a successful dictation unless "Save recordings" is on |
+| **Microphone** | Record audio for dictation | Audio stream; the local recording is deleted after a successful dictation unless "Save recordings" is on (kept recordings are compressed, not raw) |
 | **Accessibility** | Inject text at the cursor, and detect Fn key presses | Write access to text fields; Fn key events |
 
 Fn detection runs under the Accessibility permission (NSEvent monitors plus a CGEvent tap), so these two are the only permissions Mumbli requests. Both are standard macOS system permissions managed through System Settings > Privacy & Security.

@@ -12,6 +12,7 @@
 		27A3E7689E9DCFEF202B9835 /* DictationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97D4A6C31E4A30E8B629C545 /* DictationUITests.swift */; };
 		327FDCCE939515139E397501 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D5D4882A5CE31FBB97A63F /* OverlayController.swift */; };
 		34A4C2F16C44D235BBF1EAC9 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D54EC4C9D6F261153B078D4 /* RecordingManager.swift */; };
+		DFF7611208352E8228966CA5 /* RecordingMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F51FB80BBACF69C32DA7F5 /* RecordingMigrator.swift */; };
 		4B95C30CA7F8B5186CE33EC2 /* MumbliAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F32245244E251BF662F7382 /* MumbliAppUITests.swift */; };
 		59541765A3E0EB4CD5BC2D42 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */; };
 		62CB3770743656960D3407B1 /* RepetitionGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A941241C08BB61CF0047C236 /* RepetitionGuard.swift */; };
@@ -75,6 +76,7 @@
 		3559B31B6F4AF05C39C01E9C /* MumbliAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MumbliAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3800F7704BAEA44000E8C14D /* MumbliApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MumbliApp.swift; sourceTree = "<group>"; };
 		3D54EC4C9D6F261153B078D4 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
+		C9F51FB80BBACF69C32DA7F5 /* RecordingMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingMigrator.swift; sourceTree = "<group>"; };
 		49D5D4882A5CE31FBB97A63F /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
 		4F32245244E251BF662F7382 /* MumbliAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MumbliAppUITests.swift; sourceTree = "<group>"; };
 		57BBE39F61D0137B40FEB2CD /* OverlayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayUITests.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				E2CEE11B2902AE531F0D8578 /* HotkeyManager.swift */,
 				791E2056B1E9177F0393E1F2 /* PipelineTimer.swift */,
 				3D54EC4C9D6F261153B078D4 /* RecordingManager.swift */,
+				C9F51FB80BBACF69C32DA7F5 /* RecordingMigrator.swift */,
 				703012D48A2ECBBCBCB9ABEA /* TextInjector.swift */,
 			);
 			path = Core;
@@ -391,6 +394,7 @@
 				P0F00001A1B2C3D4E5F6000C /* ProjectGrant.swift in Sources */,
 				P0F00001A1B2C3D4E5F6000D /* AutoEnrollment.swift in Sources */,
 				34A4C2F16C44D235BBF1EAC9 /* RecordingManager.swift in Sources */,
+				DFF7611208352E8228966CA5 /* RecordingMigrator.swift in Sources */,
 				62CB3770743656960D3407B1 /* RepetitionGuard.swift in Sources */,
 				B902B5C5FAB4D8D23C1F36EA /* SettingsView.swift in Sources */,
 				DAAE90F4203D2034ABFD76DC /* TextInjector.swift in Sources */,

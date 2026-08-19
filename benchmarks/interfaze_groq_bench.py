@@ -42,6 +42,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
+import audio_io
+
 console = Console()
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -90,12 +92,16 @@ OPENAI_TEXT_JUDGE_MODEL = os.getenv("OPENAI_TEXT_JUDGE_MODEL", "gpt-5.4-nano")
 
 def wav_audio_duration(wav_data: bytes) -> float:
     """Calculate duration for 16-bit 16kHz mono WAV files saved by Mumbli."""
-    if len(wav_data) <= 44:
-        return 0.0
-    return max(0.0, (len(wav_data) - 44) / (16000 * 2))
+    return audio_io.wav_audio_duration_from_bytes(wav_data)
 
 
 def encode_wav_data_url(wav_data: bytes) -> str:
+    """Base64-inline WAV bytes as a data URL.
+
+    Callers must pass already-decoded WAV bytes (see audio_io.load_as_wav_bytes) —
+    a raw .caf/.m4a byte stream base64-inlined and labeled audio/wav would be
+    broken for the judge model.
+    """
     encoded = base64.b64encode(wav_data).decode("ascii")
     if len(encoded) > MAX_INTERFAZE_BASE64_CHARS:
         raise ValueError(
@@ -701,14 +707,18 @@ async def benchmark_file(
     judge_mode: str,
     run_seed: str,
 ) -> dict[str, Any]:
-    wav_data = wav_path.read_bytes()
+    wav_data = audio_io.load_as_wav_bytes(wav_path)
     duration = wav_audio_duration(wav_data)
     historical_text = read_text_if_exists(wav_path.with_suffix(".txt"))
+
+    # Providers receive plain WAV bytes regardless of the on-disk container, so
+    # give them a filename with a matching .wav extension.
+    upload_filename = wav_path.with_suffix(".wav").name
 
     console.print(f"\n[bold]{wav_path.name}[/bold] ({duration:.1f}s)")
     provider_entries = await asyncio.gather(
         *[
-            run_provider(client, provider, wav_data, wav_path.name, iterations)
+            run_provider(client, provider, wav_data, upload_filename, iterations)
             for provider in PROVIDERS
         ]
     )
@@ -750,7 +760,14 @@ async def add_missing_providers(
     iterations: int,
 ) -> dict[str, Any]:
     wav_path = Path(result["path"]).expanduser()
-    wav_data = wav_path.read_bytes()
+    if not wav_path.exists():
+        # The background WAV->Opus migration may have renamed this recording
+        # (e.g. .wav -> .caf) since the source JSON was written.
+        sibling = audio_io.find_sibling_recording(wav_path)
+        if sibling is not None:
+            wav_path = sibling
+    wav_data = audio_io.load_as_wav_bytes(wav_path)
+    upload_filename = wav_path.with_suffix(".wav").name
     provider_results = result.setdefault("providers", {})
 
     console.print(f"\n[bold]{result['file']}[/bold] ({result['audio_duration_s']:.1f}s)")
@@ -760,7 +777,7 @@ async def add_missing_providers(
             console.print(f"  {provider}: reused, {len(existing.get('text') or '')} chars")
             continue
 
-        entry = await run_provider(client, provider, wav_data, result["file"], iterations)
+        entry = await run_provider(client, provider, wav_data, upload_filename, iterations)
         provider_results[provider] = entry
         latency = f"{entry['avg_ms']:.0f}ms" if entry["avg_ms"] >= 0 else "error"
         console.print(f"  {provider}: {latency}, {len(entry.get('text') or '')} chars")
@@ -779,7 +796,11 @@ async def rejudge_result(
         return result
 
     wav_path = Path(result["path"]).expanduser()
-    wav_data = wav_path.read_bytes()
+    if not wav_path.exists():
+        sibling = audio_io.find_sibling_recording(wav_path)
+        if sibling is not None:
+            wav_path = sibling
+    wav_data = audio_io.load_as_wav_bytes(wav_path)
     assignment = anonymized_assignment(run_seed, result["file"])
     judgment = await judge_transcripts(
         client,
@@ -801,7 +822,7 @@ def select_wav_files(args: argparse.Namespace) -> list[Path]:
         files = [args.file.expanduser()]
     else:
         directory = (args.dir or DEFAULT_RECORDINGS_DIR).expanduser()
-        files = sorted(directory.glob("*.wav"), key=lambda p: p.name)
+        files = audio_io.list_recordings(directory)
         if args.last and args.last > 0:
             files = files[-args.last :]
     return [p for p in files if p.exists()]
