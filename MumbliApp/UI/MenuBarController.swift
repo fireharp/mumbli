@@ -80,6 +80,19 @@ struct MenuBarDropdownView: View {
     let onSettings: () -> Void
     let onQuit: () -> Void
 
+    /// Nil while HistoryManager's background backfill is still reading old
+    /// recordings' WAV headers — shown as absent rather than "0s" so the badge
+    /// doesn't flash a wrong number on cold launch.
+    private var totalDictatedDurationLabel: String? {
+        guard let seconds = historyManager.totalDictatedSeconds, seconds > 0 else { return nil }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        formatter.unitsStyle = .abbreviated
+        formatter.maximumUnitCount = 2
+        formatter.zeroFormattingBehavior = .dropAll
+        return formatter.string(from: seconds)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -104,9 +117,10 @@ struct MenuBarDropdownView: View {
 
                 Spacer()
 
-                // Entry count badge
+                // Dictation count + total recorded duration, side by side
                 if !historyManager.entries.isEmpty {
-                    Text("\(historyManager.entries.count)")
+                    Text(totalDictatedDurationLabel.map { "\(historyManager.entries.count) · \($0)" }
+                        ?? "\(historyManager.entries.count)")
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 7)
@@ -120,8 +134,6 @@ struct MenuBarDropdownView: View {
                                 )
                         )
                 }
-
-                ProofOfUseMenuBarBadge()
             }
             .padding(.horizontal, 18)
             .padding(.top, 16)
