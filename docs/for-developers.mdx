@@ -106,7 +106,9 @@ Polishing LLMs can hallucinate. Mumbli has three layers of defense:
 
 ## Recording storage
 
-When Settings > Debug > Save recordings is on, dictations are kept as Opus in a `.caf` container (~26 kbps, roughly 10x smaller than the 16 kHz mono PCM16 WAV this used to write) in `~/Library/Application Support/Mumbli/recordings/`. `RecordingManager` falls back to AAC, then to plain WAV, if Opus encoding isn't available — a recording is never lost to an encoder problem. `RecordingMigrator` runs once per launch to convert any leftover WAV backlog to the current format, deleting each original only after its replacement is verified.
+When Settings > Debug > Save recordings is on, dictations are kept as Opus in a `.caf` container (~16 kbps requested, measured against the real 5,130-file corpus at 5.9 GB → 377 MB, 15.6x smaller than the 16 kHz mono PCM16 WAV this used to write) in `~/Library/Application Support/Mumbli/recordings/`. `RecordingManager` falls back to AAC, then to plain WAV, if Opus encoding isn't available — a recording is never lost to an encoder problem. `RecordingMigrator` runs once per launch to convert any leftover WAV backlog to the current format, deleting each original only after its replacement is verified.
+
+`AVAudioFile` also writes a fixed ~236KB `'free'` padding chunk into every CAF file it produces, regardless of content — `writeCompressed` strips it after writing (CAF chunks are read sequentially with no absolute-offset cross-references, so dropping one is safe). Without this the padding alone would make short recordings *larger* than their original WAV.
 
 The container is Apple-specific — most non-Apple tools (ffmpeg, libsndfile) can't read `.caf`. To get plain WAV files out for use elsewhere:
 
