@@ -41,6 +41,23 @@ jobs:
           fetch-depth: 0
           ref: ${{ needs.release-please.outputs.tag_name }}
 
+      # The embedded grant is a static, offline-signed file (docs/proof/README.md) —
+      # CI can only detect staleness, never issue a fresh one. Catches the exact
+      # failure mode that shipped three releases (0.5.0, 0.6.x, 0.7.0) with the same
+      # grant: the embed-grant.sh step before a release is manual and easy to skip.
+      - name: Check embedded proof-of-use grant matches this release
+        run: |
+          set -euo pipefail
+          GRANT_FILE="MumbliApp/ProofOfUse/project-grant.json"
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          VERSION="${TAG#v}"
+          GRANT_RELEASE=$(jq -r .release "$GRANT_FILE")
+          if [[ "$GRANT_RELEASE" != "$VERSION" && "$GRANT_RELEASE" != "$VERSION-dev" ]]; then
+            echo "::error file=$GRANT_FILE::Embedded grant is for release '$GRANT_RELEASE', but this release is '$VERSION'. Run: TEAM_ID=667MZXVYD7 scripts/proof/embed-grant.sh $VERSION"
+            exit 1
+          fi
+          echo "Grant release '$GRANT_RELEASE' matches release version '$VERSION'."
+
       - name: Install xcodegen
         run: brew install xcodegen
 
