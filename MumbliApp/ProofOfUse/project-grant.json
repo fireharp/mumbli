@@ -1,13 +1,13 @@
 {
   "type": "project-grant:v1",
-  "grant_id": "github.com/fireharp/mumbli/0.8.0-dev+428eff72",
+  "grant_id": "github.com/fireharp/mumbli/0.7.2+acb159db",
   "project_id": "github.com/fireharp/mumbli",
   "epoch": "2026-08",
-  "release": "0.8.0-dev",
+  "release": "0.7.2",
   "authorized_app": {
     "bundle_id": "com.mumbli.app",
     "team_id": "667MZXVYD7"
   },
-  "issued_at": "2026-08-19T21:05:22Z",
-  "issuer_signature": "sCAX7lmif-8ejsmr1t8Hf1sme41hi-V8Zv9VP3KrylC1ZcVCx-AguxnacEsazRv6e7dNWApjrOdB1IeZrqc5CA"
+  "issued_at": "2026-08-24T10:32:09Z",
+  "issuer_signature": "P3YjmvIgIhZIiw2ItDRLKiwfdbJCAf0yngzvuM89HnjWaojlK8yJItKeUg-7CN72mI4028ghQo7vOOaLPDBiCQ"
 }
