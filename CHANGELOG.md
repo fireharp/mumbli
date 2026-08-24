@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.2](https://github.com/fireharp/mumbli/compare/v0.7.1...v0.7.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* embed the proof-of-use grant for the pending 0.7.2 release ([#41](https://github.com/fireharp/mumbli/issues/41)) ([124905b](https://github.com/fireharp/mumbli/commit/124905b595953165436b3e94cf23b6d0be5a5b59))
+* stop every release build from reporting itself as dirty ([#39](https://github.com/fireharp/mumbli/issues/39)) ([714ebc3](https://github.com/fireharp/mumbli/commit/714ebc381f12c9667b16776d5407786f0dc6ba61))
+
 ## [0.7.1](https://github.com/fireharp/mumbli/compare/v0.7.0...v0.7.1) (2026-08-24)
 
 
