@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/fireharp/mumbli/compare/v0.7.0...v0.7.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* re-issue stale proof-of-use grant and stop API key wipe on quit ([#37](https://github.com/fireharp/mumbli/issues/37)) ([3a589f6](https://github.com/fireharp/mumbli/commit/3a589f6393ab4cc3c50b1360b4af9bc6070c56c6))
+
 ## [0.7.0](https://github.com/fireharp/mumbli/compare/v0.6.1...v0.7.0) (2026-08-19)
 
 
