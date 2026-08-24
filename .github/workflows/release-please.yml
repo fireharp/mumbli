@@ -41,6 +41,22 @@ jobs:
           fetch-depth: 0
           ref: ${{ needs.release-please.outputs.tag_name }}
 
+      # Captured immediately after checkout, before "Generate Xcode project" gets
+      # a chance to touch anything. xcodegen 2.45 always rewrites project.pbxproj
+      # (it writes objectVersion 77 regardless of what project.yml asks for), so a
+      # dirty-check run later — inside the "Stamp version" build phase, as this
+      # used to be — sees that self-inflicted diff and reports every release build
+      # as dirty, including this exact commit checked out clean from its own tag.
+      # scripts/version-stamp.sh reads $MUMBLI_SOURCE_STATE when set and skips its
+      # own (by-then-unreliable) git diff.
+      - name: Capture pre-xcodegen git state
+        run: |
+          if git diff --quiet HEAD; then
+            echo "MUMBLI_SOURCE_STATE=clean" >> "$GITHUB_ENV"
+          else
+            echo "MUMBLI_SOURCE_STATE=dirty" >> "$GITHUB_ENV"
+          fi
+
       # The embedded grant is a static, offline-signed file (docs/proof/README.md) —
       # CI can only detect staleness, never issue a fresh one. Catches the exact
       # failure mode that shipped three releases (0.5.0, 0.6.x, 0.7.0) with the same

@@ -43,9 +43,20 @@ if in_git_repo; then
   commit="$(git rev-parse --short=7 HEAD 2>/dev/null || echo unknown)"
   describe="$(git describe --tags --always --dirty 2>/dev/null || echo "g$commit")"
   build="$(git rev-list --count HEAD 2>/dev/null || echo 1)"
-  # Tracked changes only, matching what `git describe --dirty` reports: an
-  # untracked scratch file next to the sources did not go into the build.
-  if git diff --quiet HEAD 2>/dev/null; then state="clean"; else state="dirty"; fi
+  # CI sets this right after checkout, before "xcodegen generate" gets a chance
+  # to rewrite project.pbxproj — which it always does (it writes objectVersion 77
+  # no matter what project.yml asks for). Checking git diff here, after xcodegen
+  # has already run, would see that self-inflicted change and call every release
+  # build dirty, including ones built from a pristine tag. Local/interactive runs
+  # have no such variable and fall back to the live check, which is meaningful
+  # there since nothing upstream has touched the tree.
+  if [[ -n "${MUMBLI_SOURCE_STATE:-}" ]]; then
+    state="$MUMBLI_SOURCE_STATE"
+  elif git diff --quiet HEAD 2>/dev/null; then
+    state="clean"
+  else
+    state="dirty"
+  fi
   # Distance from the tag matching the release version. A shallow clone (CI's
   # default checkout) has no tags, so this stays 0 rather than guessing.
   if git rev-parse -q --verify "refs/tags/v$version" > /dev/null 2>&1; then
