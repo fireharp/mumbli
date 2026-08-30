@@ -1,3 +1,5 @@
+
+
 # Mumbli
 
 A macOS menu bar app for voice-to-text dictation. Hold or double-tap the **Fn key** to dictate into any text field. Audio is transcribed via [ElevenLabs STT](https://elevenlabs.io/), [Groq Whisper](https://groq.com/), or [Deepgram](https://deepgram.com/) and optionally polished with [OpenAI](https://openai.com/) or [Groq LLM](https://groq.com/).
@@ -192,7 +194,7 @@ Mumbli uses **semantic versioning** (`0.MINOR.PATCH`) with fully automated relea
 
 ### How it works
 
-1. Push to `main` (directly or via PR merge)
+1. Merge a pull request into `main`
 2. [release-please](https://github.com/googleapis/release-please) analyzes commits and opens a **Release PR** with a generated changelog
 3. Merge the Release PR → version is bumped, git tag created, GitHub Release published
 4. CI builds the app, signs it with a Developer ID certificate, notarizes and staples the DMG, computes `checksums.txt` after stapling, attests build provenance, and uploads two byte-identical DMGs: `Mumbli-X.Y.Z.dmg` and the stable-named `Mumbli.dmg`
